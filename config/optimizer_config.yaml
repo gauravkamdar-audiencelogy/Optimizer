@@ -1,0 +1,95 @@
+# V3 Configuration: Complete Optimizer with Empirical Win Rate Signal
+# optimizer_config.yaml
+#
+# V3 Changes:
+# - Reintroduce target_win_rate (now using empirical rates, not model predictions)
+# - Auto soft-exclusion of low-signal features
+# - Hard exclusions only for technical/structural reasons
+
+# ============================================================================
+# BUSINESS CONTROLS (V3)
+# ============================================================================
+business:
+  # Target margin (bid shading)
+  # bid = EV × (1 - target_margin) × win_rate_adjustment
+  target_margin: 0.30
+
+  # V3: Target win rate (REINTRODUCED)
+  # Uses empirical segment rates with shrinkage, not model predictions
+  target_win_rate: 0.50
+
+  # V3: Win rate sensitivity
+  # How aggressively to adjust bids based on win rate deviation
+  # adjustment = 1 + (target - empirical) × sensitivity
+  win_rate_sensitivity: 0.5
+
+# ============================================================================
+# TECHNICAL CONTROLS (V3)
+# ============================================================================
+technical:
+  # Bid price bounds (CPM)
+  min_bid_cpm: 2.00
+  max_bid_cpm: 50.00
+  default_bid_cpm: 5.00
+
+  # Segment filtering
+  min_observations: 100
+
+  # Feature selection
+  max_features: 3
+
+  # Model shrinkage
+  ctr_shrinkage_k: 30
+  win_rate_shrinkage_k: 30
+
+  # V3: Soft exclusion thresholds (algorithm uses these to auto-exclude)
+  min_signal_score: 50.0
+  min_coverage_at_threshold: 0.5
+  max_null_pct: 30.0
+
+  # V3.1: Effective cardinality filter (prevents dominated features)
+  min_effective_cardinality: 2
+  effective_cardinality_min_share: 0.05
+
+  # V3: Win rate adjustment safety bounds
+  min_win_rate_adjustment: 0.8
+  max_win_rate_adjustment: 1.2
+
+# ============================================================================
+# FEATURE CONFIGURATION (V3)
+# ============================================================================
+features:
+  # Anchor features - always included
+  anchor_features:
+    - internal_adspace_id
+
+  # V3: ALL candidate features - let algorithm decide
+  # No more hardcoded data-driven exclusions
+  candidate_features:
+    - internal_adspace_id
+    - geo_region_name
+    - geo_country_code2    # Let algorithm decide (was excluded in V2)
+    - os_code
+    - page_category
+    - browser_code
+    - hour_of_day          # Let algorithm decide (was excluded in V2)
+    - day_of_week          # Let algorithm decide (was excluded in V2)
+
+  # V3: HARD exclusions only - technical/structural reasons
+  # NOT data-driven decisions
+  hard_exclude_features:
+    - geo_postal_code      # Too sparse (7,027 unique)
+    - geo_city_name        # Too sparse (3,333 unique)
+    - log_txnid            # Technical: join key
+    - internal_txn_id      # Technical: join key
+    - log_dt               # Technical: timestamp
+    - external_userid      # PII / too sparse
+
+# ============================================================================
+# DATA CONFIGURATION
+# ============================================================================
+data:
+  min_bid_date: "2025-12-10"
+  min_view_date: "2025-09-15"
+  remove_zero_bids: true
+  deduplicate_views: true
