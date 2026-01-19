@@ -25,7 +25,13 @@ class DataLoader:
         return df_bids, df_views, df_clicks
 
     def _load_bids(self) -> pd.DataFrame:
-        """Load and clean bid data."""
+        """
+        Load and clean bid data.
+
+        V3.1: Added floor_available handling.
+        - publisher_payout = outbound bid amount (always used)
+        - bid_amount = floor price from SSP (only parsed if floor_available=True)
+        """
         path = self.data_dir / 'drugs_bids.csv'
         print(f"    Loading bids from {path}...")
 
@@ -39,13 +45,23 @@ class DataLoader:
         tqdm.pandas(desc="    Parsing publisher payout")
         df['bid_value'] = df['publisher_payout'].progress_apply(self._parse_first_array_value)
 
+        # V3.1: Parse floor price if available
+        if self.config.technical.floor_available:
+            print("    Parsing floor prices from bid_amount...")
+            df['floor_price'] = df['bid_amount'].apply(self._parse_first_array_value)
+            floor_count = df['floor_price'].notna().sum()
+            print(f"    Found {floor_count:,} bids with floor prices")
+        else:
+            df['floor_price'] = np.nan  # No floor data in Phase 1
+
         # Filter: non-zero bids only
         df = df[df['bid_value'] > 0]
 
         self.load_stats['bids'] = {
             'raw': initial_count,
             'clean': len(df),
-            'removed': initial_count - len(df)
+            'removed': initial_count - len(df),
+            'floor_available': self.config.technical.floor_available
         }
 
         return df

@@ -32,11 +32,15 @@ class TechnicalControls:
     Controls for technical team only.
 
     V3: Added soft exclusion thresholds for algorithm-determined feature filtering.
+    V3.1: Added floor_available toggle for SSPs with floor prices.
     """
     # Bid bounds
     min_bid_cpm: float = 2.00              # Floor (lowered from $5 in V2)
     max_bid_cpm: float = 50.00             # Ceiling
     default_bid_cpm: float = 5.00          # For unmatched segments
+
+    # Floor price handling (Phase 1: disabled)
+    floor_available: bool = False          # If True, parse floor from bid_amount column
 
     # Segment filtering (binary)
     min_observations: int = 100            # Minimum bids per segment

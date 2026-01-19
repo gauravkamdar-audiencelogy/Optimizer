@@ -32,6 +32,9 @@ technical:
   max_bid_cpm: 50.00
   default_bid_cpm: 5.00
 
+  # Floor price handling (Phase 1: no floor available)
+  floor_available: false
+
   # Segment filtering
   min_observations: 100
 

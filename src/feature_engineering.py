@@ -116,19 +116,31 @@ class FeatureEngineer:
         """
         Create joined training dataset for win rate model.
 
+        V3.1: Fixed to use internal_txn_id instead of log_txnid.
+        - Bids can have multiple internal_txn_ids (multiple ads per bid)
+        - A bid is "won" if ANY of its internal_txn_ids appears in views
+        - Each bid is counted once (no inflation for multi-ad bids)
+
         Returns DataFrame with:
         - All bid features
         - 'won' binary column (1 if bid resulted in view)
         """
-        print("    Creating win rate training data (joining bids to views)...")
+        print("    Creating win rate training data (joining bids to views via internal_txn_id)...")
 
-        # Join bids to views on log_txnid
-        df_train = df_bids.merge(
-            df_views[['log_txnid']].assign(won=1),
-            on='log_txnid',
-            how='left'
+        # Build set of all internal_txn_ids from views
+        view_txn_ids = set()
+        for val in df_views['internal_txn_id']:
+            view_txn_ids.update(self._parse_array_to_list(val))
+        print(f"    Found {len(view_txn_ids):,} unique internal_txn_ids in views")
+
+        # Mark bid as won if ANY of its internal_txn_ids is in views
+        df_train = df_bids.copy()
+        df_train['won'] = df_train['internal_txn_id'].apply(
+            lambda x: int(any(txn_id in view_txn_ids for txn_id in self._parse_array_to_list(x)))
         )
-        df_train['won'] = df_train['won'].fillna(0).astype(int)
+
+        won_count = df_train['won'].sum()
+        print(f"    Matched {won_count:,} bids to views ({won_count/len(df_train)*100:.1f}% win rate)")
 
         return df_train
 
