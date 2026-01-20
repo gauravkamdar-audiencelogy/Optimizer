@@ -1,4 +1,5 @@
 # Data files (sensitive/large)
+data
 data/
 data_*/
 meta_data/
