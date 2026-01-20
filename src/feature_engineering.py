@@ -115,12 +115,12 @@ class FeatureEngineer:
         print(f"    Found {len(click_txn_ids)} unique click transaction IDs")
 
         # Mark views that resulted in clicks
+        # Check ALL txn_ids in array, not just first (a view can have multiple ad slots)
         df_views = df_views.copy()
         tqdm.pandas(desc="    Matching clicks to views")
-        df_views['first_txn_id'] = df_views['internal_txn_id'].progress_apply(
-            lambda x: self._parse_array_to_list(x)[0] if self._parse_array_to_list(x) else None
+        df_views['clicked'] = df_views['internal_txn_id'].progress_apply(
+            lambda x: int(any(txn_id in click_txn_ids for txn_id in self._parse_array_to_list(x)))
         )
-        df_views['clicked'] = df_views['first_txn_id'].isin(click_txn_ids).astype(int)
 
         return df_views
 
