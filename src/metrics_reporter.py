@@ -12,7 +12,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List, Optional
-from sklearn.metrics import log_loss, roc_auc_score, brier_score_loss
+from sklearn.metrics import log_loss, roc_auc_score, brier_score_loss, average_precision_score
 
 from .config import OptimizerConfig
 from .data_loader import DataLoader
@@ -33,20 +33,39 @@ class MetricsReporter:
         self,
         y_true: np.ndarray,
         y_pred: np.ndarray,
-        n_bins: int = 10
+        n_bins: int = 10,
+        adaptive: bool = False
     ) -> Dict[str, Any]:
-        """Calculate calibration metrics for a model."""
+        """
+        Calculate calibration metrics for a model.
+
+        Args:
+            adaptive: If True, use percentile-based binning for imbalanced predictions.
+                     Recommended for CTR models where 99%+ predictions cluster near 0.
+                     (Nixon et al. CVPR 2019)
+        """
         if len(np.unique(y_true)) < 2:
             return {'error': 'Insufficient class diversity'}
 
-        bin_boundaries = np.linspace(0, 1, n_bins + 1)
+        # Adaptive binning for imbalanced predictions (e.g., CTR with 0.035% rate)
+        if adaptive:
+            percentiles = np.linspace(0, 100, n_bins + 1)
+            bin_boundaries = np.percentile(y_pred, percentiles)
+            bin_boundaries = np.unique(bin_boundaries)  # Remove duplicates from ties
+            if len(bin_boundaries) < 2:
+                bin_boundaries = np.array([y_pred.min(), y_pred.max()])
+            actual_n_bins = len(bin_boundaries) - 1
+        else:
+            bin_boundaries = np.linspace(0, 1, n_bins + 1)
+            actual_n_bins = n_bins
+
         bin_indices = np.digitize(y_pred, bin_boundaries[1:-1])
 
         calibration_curve = {}
         ece = 0.0
         mce = 0.0
 
-        for i in range(n_bins):
+        for i in range(actual_n_bins):
             mask = bin_indices == i
             if mask.sum() == 0:
                 continue
@@ -60,7 +79,11 @@ class MetricsReporter:
             ece += bin_weight * calibration_error
             mce = max(mce, calibration_error)
 
-            bin_key = f"{bin_boundaries[i]:.2f}-{bin_boundaries[i+1]:.2f}"
+            # Format bin key based on prediction range (more precision for small values)
+            if adaptive and bin_boundaries[i] < 0.01:
+                bin_key = f"{bin_boundaries[i]:.6f}-{bin_boundaries[i+1]:.6f}"
+            else:
+                bin_key = f"{bin_boundaries[i]:.2f}-{bin_boundaries[i+1]:.2f}"
             calibration_curve[bin_key] = {
                 'predicted': round(float(bin_pred_mean), 6),
                 'actual': round(float(bin_true_mean), 6),
@@ -78,7 +101,8 @@ class MetricsReporter:
             'max_calibration_error': round(float(mce), 6),
             'brier_score': round(float(brier), 6) if brier is not None else None,
             'calibration_curve': calibration_curve,
-            'n_bins_with_data': len(calibration_curve)
+            'n_bins_with_data': len(calibration_curve),
+            'binning_method': 'adaptive_percentile' if adaptive else 'uniform'
         }
 
     def _calculate_ranking_metrics(
@@ -87,20 +111,45 @@ class MetricsReporter:
         y_pred: np.ndarray,
         model_name: str
     ) -> Dict[str, Any]:
-        """Calculate discrimination/ranking metrics."""
+        """
+        Calculate discrimination/ranking metrics.
+
+        Includes:
+        - AUC-ROC: Ranking ability (ignores calibration)
+        - PR-AUC: Better for imbalanced data (baseline = prevalence)
+        - Log Loss: Probabilistic accuracy
+        - Normalized Entropy: Comparison to baseline (Facebook 2014)
+        - RIG: Relative Information Gain = 1 - NE (more intuitive)
+        - Calibration Sum Ratio: Total predicted / total actual
+        """
         if len(np.unique(y_true)) < 2:
             return {'error': 'Insufficient class diversity for AUC'}
 
+        # Sample size tracking
+        n_positive = int(y_true.sum())
+        sample_warning = None
+        if n_positive < 1000:
+            sample_warning = f"Only {n_positive} positive events - metrics may be unstable"
+
+        # AUC-ROC
         try:
             auc = roc_auc_score(y_true, y_pred)
         except Exception:
             auc = None
 
+        # PR-AUC (better for imbalanced data like CTR)
+        try:
+            pr_auc = average_precision_score(y_true, y_pred)
+        except Exception:
+            pr_auc = None
+
+        # Log Loss
         try:
             ll = log_loss(y_true, y_pred)
         except Exception:
             ll = None
 
+        # Baseline entropy and Normalized Entropy
         base_rate = y_true.mean()
         if base_rate > 0 and base_rate < 1:
             baseline_entropy = -base_rate * np.log(base_rate + 1e-10) - (1 - base_rate) * np.log(1 - base_rate + 1e-10)
@@ -112,11 +161,24 @@ class MetricsReporter:
         else:
             normalized_entropy = None
 
+        # RIG: Relative Information Gain = 1 - NE (positive = better than baseline)
+        rig = None
+        if normalized_entropy is not None:
+            rig = 1 - normalized_entropy
+
+        # Calibration sum ratio: Σpredictions / Σactuals
+        calibration_sum_ratio = float(y_pred.sum() / max(y_true.sum(), 1e-10))
+
         return {
             'auc_roc': round(float(auc), 4) if auc is not None else None,
+            'pr_auc': round(float(pr_auc), 4) if pr_auc is not None else None,
             'log_loss': round(float(ll), 6) if ll is not None else None,
             'normalized_entropy': round(float(normalized_entropy), 4) if normalized_entropy is not None else None,
-            'baseline_entropy': round(float(baseline_entropy), 6)
+            'relative_information_gain': round(float(rig), 4) if rig is not None else None,
+            'calibration_sum_ratio': round(calibration_sum_ratio, 4),
+            'baseline_entropy': round(float(baseline_entropy), 6),
+            'n_positive_events': n_positive,
+            'sample_warning': sample_warning
         }
 
     def _calculate_economic_metrics(
@@ -351,12 +413,31 @@ class MetricsReporter:
                 y_true_ctr = df_train_ctr['clicked'].values
                 y_pred_ctr = ctr_model.predict_ctr(df_train_ctr)
 
+                # Use adaptive binning for CTR (extreme class imbalance ~0.035% CTR)
+                # With uniform binning, 99.9% of predictions cluster in [0-0.1] bin
                 self.metrics['model_calibration']['ctr_model'] = {
-                    **self._calculate_calibration_metrics(y_true_ctr, y_pred_ctr, n_bins=5),
+                    **self._calculate_calibration_metrics(y_true_ctr, y_pred_ctr, n_bins=5, adaptive=True),
                     **self._calculate_ranking_metrics(y_true_ctr, y_pred_ctr, 'ctr')
                 }
             except Exception as e:
                 self.metrics['model_calibration']['ctr_model'] = {'error': str(e)}
+
+        # Add warnings section for proper interpretation
+        self.metrics['warnings'] = []
+
+        # Warning: Empirical model calibration on training data is tautological
+        self.metrics['warnings'].append(
+            "Empirical model calibration on training data is tautological by construction - "
+            "segment predictions equal segment averages from same data"
+        )
+
+        # Warning: Low click count for CTR model
+        if df_train_ctr is not None:
+            n_clicks = df_train_ctr['clicked'].sum()
+            if n_clicks < 1000:
+                self.metrics['warnings'].append(
+                    f"CTR model has only {n_clicks} clicks - AUC and other metrics may be unstable (recommend 1000+)"
+                )
 
         return self.metrics
 
