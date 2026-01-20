@@ -87,7 +87,8 @@ class FeatureConfig:
                 'geo_region_name',
                 'geo_country_code2',  # V3: Let algorithm decide (was hardcoded excluded)
                 'os_code',
-                'page_category',
+                'pageurl_truncated',  # Full URL truncated at ? (matches bidder format)
+                'domain',             # For future multi-domain SSPs
                 'browser_code',
                 'hour_of_day',        # V3: Let algorithm decide (was hardcoded excluded)
                 'day_of_week'         # V3: Let algorithm decide (was hardcoded excluded)

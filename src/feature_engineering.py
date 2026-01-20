@@ -11,62 +11,6 @@ from tqdm import tqdm
 from .config import OptimizerConfig
 
 
-# Page category aggregation based on CTR analysis from EDA
-# Reduces cardinality from ~1153 to ~10 while preserving CTR signal
-PAGE_CATEGORY_GROUPS = {
-    'high_intent': [
-        'news', 'medical-answers', 'cg', 'monograph', 'answers'
-    ],  # CTR > 0.08%
-
-    'drug_info': [
-        'dosage', 'sfx', 'mtm', 'condition'
-    ],  # CTR 0.04-0.06%
-
-    'interactions': [
-        'drug-interactions', 'drug_interactions.html', 'drug-interactions-all',
-        'food-interactions'
-    ],  # CTR ~0.03%
-
-    'search': [
-        'search.php', 'imprints.php', 'imprints', 'alpha'
-    ],  # CTR 0.02-0.04%
-
-    'professional': [
-        'pro', 'monograph'
-    ],  # HCP-focused
-
-    'interaction_check': [
-        'interaction', 'interactions-check.php'
-    ],  # Very low CTR (<0.02%)
-
-    'community': [
-        'comments'
-    ],  # User-generated
-
-    'drug_class': [
-        'drug-class'
-    ],  # Zero clicks observed
-}
-
-
-def aggregate_page_category(category: str) -> str:
-    """
-    Map raw page category to aggregated group.
-    Reduces cardinality from ~1153 to ~10 while preserving CTR signal.
-    """
-    if pd.isna(category) or category == 'unknown':
-        return 'other'
-
-    category_lower = str(category).lower()
-
-    for group_name, categories in PAGE_CATEGORY_GROUPS.items():
-        if category_lower in [c.lower() for c in categories]:
-            return group_name
-
-    # Default for uncategorized pages
-    return 'other'
-
-
 class FeatureEngineer:
     def __init__(self, config: OptimizerConfig):
         self.config = config
@@ -80,12 +24,12 @@ class FeatureEngineer:
             df['hour_of_day'] = df['log_dt'].dt.hour
             df['day_of_week'] = df['log_dt'].dt.dayofweek
 
-        # Page category from ref_bundle
+        # URL-based features from ref_bundle
         if 'ref_bundle' in df.columns:
-            tqdm.pandas(desc="    Extracting page categories")
-            df['page_category_raw'] = df['ref_bundle'].progress_apply(self._extract_page_category)
-            # Aggregated page category (reduces cardinality ~1153 -> ~10)
-            df['page_category'] = df['page_category_raw'].apply(aggregate_page_category)
+            # pageurl_truncated: full URL without query params (matches bidder format)
+            df['pageurl_truncated'] = df['ref_bundle'].apply(self._truncate_url)
+            # domain: for future multi-domain SSPs
+            df['domain'] = df['ref_bundle'].apply(self._extract_domain)
 
         # Handle nulls in geo_region_name
         if 'geo_region_name' in df.columns:
@@ -94,16 +38,24 @@ class FeatureEngineer:
         return df
 
     @staticmethod
-    def _extract_page_category(url) -> str:
-        """Extract first path segment from URL."""
+    def _truncate_url(url) -> str:
+        """
+        Truncate URL at '?' to match bidder format.
+        Bidder JS: url.split('?')[0].toLowerCase()
+        """
+        if pd.isna(url):
+            return 'unknown'
+        url_str = str(url).split('?')[0].lower()
+        return url_str if url_str else 'unknown'
+
+    @staticmethod
+    def _extract_domain(url) -> str:
+        """Extract domain from URL for future multi-domain SSPs."""
         if pd.isna(url):
             return 'unknown'
         try:
             parsed = urlparse(str(url))
-            parts = [p for p in parsed.path.split('/') if p]
-            if parts:
-                return parts[0]
-            return 'root'
+            return parsed.netloc.lower() if parsed.netloc else 'unknown'
         except Exception:
             return 'unknown'
 

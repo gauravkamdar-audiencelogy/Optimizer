@@ -73,7 +73,8 @@ features:
     - geo_region_name
     - geo_country_code2    # Let algorithm decide (was excluded in V2)
     - os_code
-    - page_category
+    - pageurl_truncated    # Full URL truncated at ? (matches bidder format)
+    - domain               # For future multi-domain SSPs
     - browser_code
     - hour_of_day          # Let algorithm decide (was excluded in V2)
     - day_of_week          # Let algorithm decide (was excluded in V2)
