@@ -9,7 +9,7 @@ V3 Key Changes:
 - Hard exclusions only for technical/structural reasons (config)
 
 Usage:
-    python run_optimizer.py --config config/optimizer_config.yaml --data-dir data/ --output-dir output/
+    python run_optimizer.py --config config/optimizer_config.yaml --data-dir data_drugs/ --output-dir output/
 """
 import argparse
 from pathlib import Path
@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description='RTB Optimizer Pipeline V3')
     parser.add_argument('--config', type=str, default='config/optimizer_config.yaml',
                         help='Path to config file')
-    parser.add_argument('--data-dir', type=str, default='data/',
+    parser.add_argument('--data-dir', type=str, default='data_drugs/',
                         help='Directory with CSV data files')
     parser.add_argument('--output-dir', type=str, default='output/',
                         help='Output directory')
