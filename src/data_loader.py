@@ -77,14 +77,30 @@ class DataLoader:
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
 
+        # Parse clearing price from publisher_payout (what we actually paid)
+        df['clearing_price'] = df['publisher_payout'].apply(self._parse_first_array_value)
+
         # Deduplicate by log_txnid
         df = df.drop_duplicates(subset=['log_txnid'], keep='first')
+        after_dedup = len(df)
+
+        # Filter out invalid clearing prices ($0 or negative)
+        # We paid something to show the ad, so $0 is invalid
+        invalid_price_mask = (df['clearing_price'] <= 0) | (df['clearing_price'].isna())
+        invalid_count = invalid_price_mask.sum()
+        df = df[~invalid_price_mask]
 
         self.load_stats['views'] = {
             'raw': initial_count,
+            'after_dedup': after_dedup,
+            'removed_duplicates': initial_count - after_dedup,
+            'removed_invalid_price': int(invalid_count),
             'clean': len(df),
             'removed': initial_count - len(df)
         }
+
+        if invalid_count > 0:
+            print(f"    Removed {invalid_count:,} views with invalid clearing price (≤$0)")
 
         return df
 

@@ -439,6 +439,39 @@ class MetricsReporter:
                     f"CTR model has only {n_clicks} clicks - AUC and other metrics may be unstable (recommend 1000+)"
                 )
 
+        # Clearing price analysis from VIEWS (what we actually paid for won impressions)
+        if df_train_ctr is not None and 'clearing_price' in df_train_ctr.columns:
+            valid_prices = df_train_ctr[df_train_ctr['clearing_price'] > 0]['clearing_price']
+            if len(valid_prices) > 0:
+                self.metrics['clearing_price_analysis'] = {
+                    'source': 'view_records',
+                    'total_views': len(df_train_ctr),
+                    'views_with_valid_price': len(valid_prices),
+                    'avg_clearing_price': round(float(valid_prices.mean()), 4),
+                    'distribution': {
+                        'min': round(float(valid_prices.min()), 4),
+                        'p25': round(float(valid_prices.quantile(0.25)), 4),
+                        'median': round(float(valid_prices.median()), 4),
+                        'p75': round(float(valid_prices.quantile(0.75)), 4),
+                        'max': round(float(valid_prices.max()), 4)
+                    }
+                }
+
+        # Bid amount analysis from BIDS (our offers)
+        if df_train_wr is not None and 'bid_value' in df_train_wr.columns:
+            self.metrics['bid_amount_analysis'] = {
+                'source': 'bid_records',
+                'total_bids': len(df_train_wr),
+                'won_bids': int(df_train_wr['won'].sum()),
+                'win_rate': round(float(df_train_wr['won'].mean()), 4),
+                'avg_bid_amount': round(float(df_train_wr['bid_value'].mean()), 4),
+                'distribution': {
+                    'min': round(float(df_train_wr['bid_value'].min()), 4),
+                    'median': round(float(df_train_wr['bid_value'].median()), 4),
+                    'max': round(float(df_train_wr['bid_value'].max()), 4)
+                }
+            }
+
         return self.metrics
 
     def _summarize_bids(self, bid_results: List[BidResult]) -> Dict:
