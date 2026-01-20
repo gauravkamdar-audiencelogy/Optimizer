@@ -1,5 +1,6 @@
 # Data files (sensitive/large)
 data/
+data_*/
 meta_data/
 
 # Output files (generated)

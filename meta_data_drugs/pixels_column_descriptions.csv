@@ -1,0 +1,56 @@
+Column,Description
+nid,"Network or SaaS client ID. In self-hosted deployments this is fixed at 1(TN). In SaaS platform, different ad networks (clients) receive unique nids."
+rec_type,"Type of record: IMP (impression on page load or user event), View (viewed), Link (click), Lead (conversion/acquisition), Blk (blocked request), Vbty (viewability pixel), Noad (no ad served)."
+log_txnid,Unique GUID for every pixel record. Used for downstream processing.
+internal_txn_id,GUID generated at request-time when an ad is selected. This ID is carried through the entire pipeline to stitch impression ? click ? conversion events.
+external_txn_id,"Transaction ID supplied by an external system (DSP, SSP, partner)."
+traffic_source_id,"ID assigned to the SSP (e.g., Media.net). When this is present, publisher_id is set to -1"
+publisher_id,"Internal ID for requests coming from fixed network (PAM). When this is present, traffic_source_id is set to 1"
+internal_site_id,Sub-property or subsection of a publisher. Represents the specific section of the publisher’s website/app.
+internal_adspace_id,Widget ID or smallest unit of ad inventory. All fixed-network optimization happens at this level.
+zone_code,"Maps to a zone table that stores the ad slot dimensions. Native units are responsive, but still mapped."
+external_site_id,Site ID sent by the SSP (their publisher ID). Used for SSP optimization and fraud detection.
+external_adspace_id,SSP-defined ad space or widget ID. Used for optimization and fraud detection.
+ref_bundle,"Full URL of the page where the ad was served. If request is from an app, this is the app bundle ID."
+domain,Parsed domain from the URL.
+subid,Unique value injected by publisher per ad request. Used heavily by fixed-network optimizer.
+matched_cats / matched_kw,Categories or keywords matched during contextual targeting.
+content_cats / content_kw,Categories or keywords extracted from page content.
+browser_code,"Code mapped to browser name (Chrome, Safari, Firefox)."
+os_code,Operating system code. Derived from UA.
+carrier_code,Cellular or ISP provider derived from IP.
+make_id,"Manufacturer of device (Apple, Samsung)."
+model_id,Device model.
+ua,"Raw user-agent string. Used to extract make, model, browser, OS."
+advertiser_id,ID of the advertiser(s) tied to the ads in the slot. Stored as an ordered array because widgets can show multiple ads. Sequence is critical and never shuffled.
+campaign_code,Campaign ID corresponding to each advertiser.
+banner_code,Creative / banner / ad ID.
+ad_format,"Display, video, native, etc (mapped to integer codes)."
+paytype,"Payment model: 2 = CPC, 1 = CPM"
+rule_id,Placeholder for future rule-based ad serving.
+total_ads,Number of ads returned in the transaction.
+advertiser_spend,What the advertiser is charged for the event (based on paytype).
+publisher_payout,What the publisher earns for the event.
+bid_amount,Bid amount used for SSP auctions; always 0 for fixed network.
+data_cost,"Cost of third-party data (e.g., IQVIA HCP identification). Often rolled into media cost. Not tracked for fixed network."
+data_revenue,Redundant and typically unused.
+conversion_payout,Conversion-level payout passed by advertiser (CPA events).
+list_id,Cohort or audience segment ID associated with the ad request. Campaigns may map to multiple list_ids.
+external_userid,"Authenticated NPI ID from an external partner (e.g., IQVIA NPI number)."
+userid,Internal cookie ID dropped during impression. Appears back in SSP bidstream as buyer_id.
+ae_endpoint_codes,DSP endpoints involved for programmatic buying.
+ae_response_codes,Response codes from DSP calls.
+ae_response_bids,Bids returned by DSP.
+country_code,ISO country.
+geo_city_name,City name.
+geo_dma_code,DMA market code.
+geo_region_name / geo_region_code,State or region.
+geo_timezone,Timezone.
+geo_country_code2 / geo_country_code3,ISO2 and ISO3 country codes.
+geo_continent_code,Continent code.
+geo_latitude / geo_longitude,Coordinates.
+geo_postal_code,ZIP/postal code.
+geo_country_name,Full country name.
+billing_status,Flag set once event is included in billing run.
+fraud_status,Flag if request was marked fraudulent.
+platform_id,Platform or environment identifier.
