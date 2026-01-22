@@ -51,7 +51,7 @@
 - **Goal**: Learn market prices (bid landscape)
 - **Strategy**: Accept negative margins during learning
 - **Budget**: No constraint - can bid aggressively
-- **Target**: 60-70% win rate (currently ~44%)
+- **Target**: 65% win rate (currently ~30%)
 
 ### NPI Data
 - `external_userid` field contains NPI numbers (10-digit healthcare provider IDs)
@@ -340,6 +340,94 @@ User added more features to evaluate (even if they get rejected):
 - `list_id`, `campaign_code`, `banner_code` - These are demand-side (campaign-specific)
 - `total_ads`, `rule_id` - Internal controls, not from SSP bid request
 
+## Data Management Pipeline (January 22, 2026)
+
+### Directory Structure
+```
+data_drugs/
+├── drugs_data.csv          # Main data file (optimizer reads this)
+├── incoming/               # Drop new files here
+├── processed/              # Processed files with timestamp (audit trail)
+├── archive/                # Original separate files (historical)
+├── NPI_click_data_1year.csv
+└── NPI_click_data_20days.csv
+```
+
+### Production Workflow
+```bash
+# 1. Drop new CSV in incoming/
+cp new_export.csv data_drugs/incoming/
+
+# 2. Run ingest
+python scripts/data_manager.py ingest --data-dir data_drugs/
+
+# 3. Run optimizer
+python run_optimizer.py --config config/optimizer_config.yaml --data-dir data_drugs/ --output-dir output/
+```
+
+### Data Manager Commands
+```bash
+# Initialize directory structure
+python scripts/data_manager.py init --data-dir data_drugs/
+
+# Process incoming files (main workflow)
+python scripts/data_manager.py ingest --data-dir data_drugs/
+
+# Show data statistics and freshness
+python scripts/data_manager.py info --data-dir data_drugs/
+
+# One-time: combine separate files (migration)
+python scripts/data_manager.py combine --data-dir data_drugs/
+```
+
+### Key Learnings
+
+**Column Name Normalization:**
+- Database exports may have UPPERCASE columns (LOG_DT, REC_TYPE)
+- Script normalizes to lowercase automatically
+- Don't assume column case matches
+
+**Deduplication Key:**
+- Key: `(log_txnid, rec_type)`
+- Same transaction can have bid + view events (different rec_type)
+- Dedup removes exact duplicates, keeps distinct event types
+
+**Data Overlap Handling:**
+- New exports may overlap with existing data (e.g., Jan 1-22 overlaps with existing Jan 1-11)
+- Script reports overlap and deduplicates automatically
+- Net rows added = new rows - duplicates
+
+**rec_type Values:**
+- `bid` - Bid placed (win or loss)
+- `view` - Ad was shown (win)
+- `click` - User clicked (conversion)
+- Standardized to lowercase from variations (View, link, etc.)
+
+### Current Data State (January 22, 2026)
+```
+Total rows: 900,111
+Date range: Sep 15, 2025 → Jan 22, 2026 (129 days)
+Data freshness: 0 days old
+
+Rec type distribution:
+  view: 606,705 (67.4%)
+  bid: 293,144 (32.6%)
+  click: 262 (0.0%)
+```
+
+### Data Loader Auto-Detection
+`src/data_loader.py` automatically detects data format:
+1. First checks for `drugs_data.csv` (combined format)
+2. Falls back to separate files (`drugs_bids.csv`, `drugs_views.csv`, `drugs_clicks.csv`)
+3. Backward compatible - no config change needed
+
+### Files Modified for Data Management
+| File | Change |
+|------|--------|
+| `scripts/data_manager.py` | NEW: CLI for init, ingest, info, combine |
+| `src/data_loader.py` | Support combined file, refactored processing |
+| `config/optimizer_config.yaml` | Added data file settings |
+
 ## Virtual Environment
 - Located at `./venv/`
 - Activate: `source ./venv/bin/activate`
@@ -357,5 +445,7 @@ User added more features to evaluate (even if they get rejected):
 - Archive completed tasks with full details
 
 ## Reference
+- `README.md` - Project overview and quick start guide
 - `PLAN_ARCHIVE.md` - Completed work history with full implementation details
 - `SCRATCHPAD.md` - Scratch notes and findings
+- `scripts/data_manager.py --help` - Data management CLI help
