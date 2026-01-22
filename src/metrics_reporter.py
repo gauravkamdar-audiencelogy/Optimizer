@@ -1,10 +1,18 @@
 """
-V3: Metrics reporter with empirical win rate and soft exclusion tracking.
+V5: Metrics reporter with exploration mode support.
 
-V3 Changes:
+V5 Changes:
+- Report asymmetric exploration statistics
+- Track exploration direction (up/down) distribution
+- Report V5 method usage stats
+- Include global stats for baseline
+
+V4 Features (retained for diagnostics):
+- Report BidLandscapeModel metrics (coefficient, calibration by bid bucket)
+
+V3 Features (retained):
 - Report both LogReg (diagnostic) and Empirical win rate metrics
 - Track soft vs hard feature exclusions
-- Report win rate adjustment distribution
 """
 import json
 import numpy as np
@@ -20,6 +28,7 @@ from .feature_selector import FeatureSelector
 from .models.win_rate_model import WinRateModel
 from .models.empirical_win_rate_model import EmpiricalWinRateModel
 from .models.ctr_model import CTRModel
+from .models.bid_landscape_model import BidLandscapeModel  # V4: New
 from .bid_calculator import BidResult
 from .memcache_builder import MemcacheBuilder
 
@@ -183,9 +192,9 @@ class MetricsReporter:
 
     def _calculate_economic_metrics(
         self,
-        bid_results: List[BidResult]
+        bid_results: List
     ) -> Dict[str, Any]:
-        """Calculate economic impact metrics."""
+        """Calculate economic impact metrics (V5: supports exploration adjustments)."""
         if not bid_results:
             return {}
 
@@ -197,7 +206,16 @@ class MetricsReporter:
         final_bids = [r.final_bid for r in bid_results]
         evs = [r.expected_value_cpm for r in bid_results]
         win_rates = [r.win_rate for r in bid_results]
-        adjustments = [r.win_rate_adjustment for r in bid_results]
+
+        # V5: Get adjustments (exploration_adjustment or win_rate_adjustment)
+        adjustments = []
+        for r in bid_results:
+            if hasattr(r, 'exploration_adjustment'):
+                adjustments.append(r.exploration_adjustment)
+            elif hasattr(r, 'win_rate_adjustment'):
+                adjustments.append(r.win_rate_adjustment)
+            else:
+                adjustments.append(1.0)
 
         min_bid = self.config.technical.min_bid_cpm
         max_bid = self.config.technical.max_bid_cpm
@@ -205,7 +223,7 @@ class MetricsReporter:
         clipped_to_floor = sum(1 for r in bid_results if min_bid is not None and r.raw_bid < min_bid)
         clipped_to_ceiling = sum(1 for r in bid_results if max_bid is not None and r.raw_bid > max_bid)
 
-        return {
+        metrics = {
             'total_segments': total_segments,
             'profitable_segments': profitable_segments,
             'unprofitable_segments': unprofitable_segments,
@@ -234,7 +252,6 @@ class MetricsReporter:
                 'median': round(float(np.median(evs)), 4)
             },
 
-            # V3: Win rate and adjustment distributions
             'win_rate_distribution': {
                 'min': round(min(win_rates), 4),
                 'max': round(max(win_rates), 4),
@@ -242,7 +259,8 @@ class MetricsReporter:
                 'median': round(float(np.median(win_rates)), 4)
             },
 
-            'win_rate_adjustment_distribution': {
+            # V5: Exploration/win rate adjustment distribution
+            'adjustment_distribution': {
                 'min': round(min(adjustments), 4),
                 'max': round(max(adjustments), 4),
                 'mean': round(float(np.mean(adjustments)), 4),
@@ -250,6 +268,117 @@ class MetricsReporter:
                 'at_min_bound': sum(1 for a in adjustments if a <= self.config.technical.min_win_rate_adjustment + 0.01),
                 'at_max_bound': sum(1 for a in adjustments if a >= self.config.technical.max_win_rate_adjustment - 0.01)
             }
+        }
+
+        # V5: Exploration direction breakdown
+        exploration_up = sum(1 for r in bid_results if getattr(r, 'exploration_direction', '') == 'up')
+        exploration_down = sum(1 for r in bid_results if getattr(r, 'exploration_direction', '') == 'down')
+        exploration_neutral = sum(1 for r in bid_results if getattr(r, 'exploration_direction', '') == 'neutral')
+
+        if exploration_up > 0 or exploration_down > 0:
+            metrics['exploration_direction_breakdown'] = {
+                'bid_up': exploration_up,
+                'bid_down': exploration_down,
+                'neutral': exploration_neutral,
+                'pct_bid_up': round(exploration_up / total_segments * 100, 2) if total_segments > 0 else 0,
+                'pct_bid_down': round(exploration_down / total_segments * 100, 2) if total_segments > 0 else 0
+            }
+
+        # V5: Bid method breakdown
+        v5_methods = ['v5_explore_zero', 'v5_explore_low', 'v5_explore_medium', 'v5_empirical']
+        v4_methods = ['landscape', 'empirical']
+
+        method_breakdown = {}
+        for method in v5_methods + v4_methods:
+            count = sum(1 for r in bid_results if getattr(r, 'bid_method', '') == method)
+            if count > 0:
+                method_breakdown[f'{method}_count'] = count
+                method_breakdown[f'{method}_pct'] = round(count / total_segments * 100, 2)
+
+        if method_breakdown:
+            metrics['bid_method_breakdown'] = method_breakdown
+
+        return metrics
+
+    def _calculate_bid_landscape_calibration(
+        self,
+        model: BidLandscapeModel,
+        df_test: pd.DataFrame
+    ) -> Dict[str, Any]:
+        """
+        V4: Calculate calibration metrics for bid landscape model.
+
+        Key check: Does higher bid → higher win rate (monotonicity)?
+        """
+        if not model.is_trained:
+            return {'error': 'Model not trained'}
+
+        # Predict on test set
+        try:
+            predictions = model.predict_win_rates_batch(df_test)
+        except Exception as e:
+            return {'error': f'Prediction failed: {str(e)}'}
+
+        y_true = df_test['won'].values
+
+        # Overall calibration
+        global_calibration_ratio = float(predictions.mean() / max(y_true.mean(), 1e-10))
+
+        # Calibration by bid bucket
+        df_cal = df_test.copy()
+        df_cal['pred_win_prob'] = predictions
+
+        try:
+            df_cal['bid_bucket'] = pd.qcut(
+                df_cal['bid_amount_cpm'],
+                q=5,
+                labels=['very_low', 'low', 'medium', 'high', 'very_high'],
+                duplicates='drop'
+            )
+        except ValueError:
+            # Not enough unique values for 5 buckets
+            df_cal['bid_bucket'] = pd.cut(
+                df_cal['bid_amount_cpm'],
+                bins=3,
+                labels=['low', 'medium', 'high']
+            )
+
+        calibration_by_bid = df_cal.groupby('bid_bucket', observed=True).agg({
+            'pred_win_prob': 'mean',
+            'won': 'mean',
+            'bid_amount_cpm': ['mean', 'count']
+        })
+        calibration_by_bid.columns = ['predicted', 'actual', 'avg_bid', 'count']
+        calibration_by_bid['error'] = calibration_by_bid['predicted'] - calibration_by_bid['actual']
+
+        # Check monotonicity: does actual win rate increase with bid?
+        actual_by_bucket = calibration_by_bid['actual'].values
+        is_monotonic = all(
+            actual_by_bucket[i] <= actual_by_bucket[i+1]
+            for i in range(len(actual_by_bucket)-1)
+        )
+
+        # Convert to serializable dict
+        calibration_dict = {}
+        for bucket in calibration_by_bid.index:
+            row = calibration_by_bid.loc[bucket]
+            calibration_dict[str(bucket)] = {
+                'predicted': round(float(row['predicted']), 4),
+                'actual': round(float(row['actual']), 4),
+                'avg_bid': round(float(row['avg_bid']), 2),
+                'count': int(row['count']),
+                'error': round(float(row['error']), 4)
+            }
+
+        return {
+            'bid_coefficient': round(float(model.bid_coefficient), 4),
+            'bid_coefficient_positive': model.bid_coefficient > 0,
+            'global_calibration_ratio': round(global_calibration_ratio, 4),
+            'is_monotonic_by_bid': is_monotonic,
+            'mean_absolute_calibration_error': round(
+                float(abs(calibration_by_bid['error']).mean()), 4
+            ),
+            'calibration_by_bid_bucket': calibration_dict
         }
 
     def _calculate_ctr_calibration_ratio(
@@ -284,32 +413,56 @@ class MetricsReporter:
         data_loader: DataLoader,
         feature_selector: FeatureSelector,
         logreg_win_rate_model: WinRateModel,      # V3: For diagnostic comparison
-        empirical_win_rate_model: EmpiricalWinRateModel,  # V3: Used in bidding
+        empirical_win_rate_model: EmpiricalWinRateModel,  # V3/V4/V5 empirical
         ctr_model: CTRModel,
-        bid_results: List[BidResult],
+        bid_results: List,  # V5: Can be BidResult or BidResultV5
         memcache_path: Path,
         memcache_builder: MemcacheBuilder,
         df_train_wr: Optional[pd.DataFrame] = None,
-        df_train_ctr: Optional[pd.DataFrame] = None
+        df_train_ctr: Optional[pd.DataFrame] = None,
+        bid_landscape_model: Optional[BidLandscapeModel] = None,  # V4: Optional
+        bid_variance_stats: Optional[Dict] = None,  # V4: Optional
+        method_stats: Optional[Dict] = None,  # V4/V5: Method usage
+        exploration_summary: Optional[Dict] = None,  # V5: Exploration stats
+        global_stats: Optional[Dict] = None  # V5: Global baseline stats
     ) -> Dict[str, Any]:
         """Compile all metrics into single report."""
 
         filter_stats = memcache_builder.get_filter_stats()
+
+        # Determine version based on exploration mode
+        v5_enabled = exploration_summary is not None
+        v4_enabled = bid_landscape_model is not None and bid_landscape_model.is_valid()
+
+        if v5_enabled:
+            version = 'v5_volume_first_exploration'
+        elif v4_enabled:
+            version = 'v4_bid_landscape_hybrid'
+        else:
+            version = 'v3_empirical_fallback'
 
         self.metrics = {
             'run_info': {
                 'run_id': run_id,
                 'timestamp': datetime.now().isoformat(),
                 'memcache_file': str(memcache_path.name),
-                'version': 'v3_empirical_win_rate'
+                'version': version,
+                'v5_exploration_enabled': v5_enabled,
+                'v4_landscape_enabled': v4_enabled
             },
 
-            # V3 config with win rate controls
+            # Config with win rate controls
             'config': {
                 'business': {
                     'target_margin': self.config.business.target_margin,
                     'target_win_rate': self.config.business.target_win_rate,
-                    'win_rate_sensitivity': self.config.business.win_rate_sensitivity
+                    'win_rate_sensitivity': self.config.business.win_rate_sensitivity,
+                    # V5: Exploration mode config
+                    'exploration_mode': self.config.business.exploration_mode,
+                    'exploration_up_multiplier': self.config.business.exploration_up_multiplier,
+                    'exploration_down_multiplier': self.config.business.exploration_down_multiplier,
+                    'accept_negative_margin': self.config.business.accept_negative_margin,
+                    'max_negative_margin_pct': self.config.business.max_negative_margin_pct
                 },
                 'technical': {
                     'min_bid_cpm': self.config.technical.min_bid_cpm,
@@ -321,20 +474,36 @@ class MetricsReporter:
                     'win_rate_shrinkage_k': self.config.technical.win_rate_shrinkage_k,
                     'min_signal_score': self.config.technical.min_signal_score,
                     'min_win_rate_adjustment': self.config.technical.min_win_rate_adjustment,
-                    'max_win_rate_adjustment': self.config.technical.max_win_rate_adjustment
+                    'max_win_rate_adjustment': self.config.technical.max_win_rate_adjustment,
+                    # V5: Tiered observation thresholds
+                    'min_observations_for_empirical': self.config.technical.min_observations_for_empirical,
+                    'min_observations_for_landscape': self.config.technical.min_observations_for_landscape,
+                    'exploration_bonus_zero_obs': self.config.technical.exploration_bonus_zero_obs,
+                    'exploration_bonus_low_obs': self.config.technical.exploration_bonus_low_obs,
+                    'exploration_bonus_medium_obs': self.config.technical.exploration_bonus_medium_obs
                 }
             },
 
-            # V3: Bid formula documentation
+            # Bid formula documentation
             'bid_formula': {
-                'version': 'v3_with_win_rate',
-                'formula': 'bid = EV_cpm × (1 - target_margin) × win_rate_adjustment',
+                'version': 'v5_exploration' if v5_enabled else ('v4_hybrid' if v4_enabled else 'v3_empirical_only'),
+                'v5_formula': 'bid = base_bid × exploration_adjustment × npi_multiplier',
+                'v5_exploration_adjustment': {
+                    'under_winning': '1.0 + wr_gap × 1.3 (bid UP)',
+                    'over_winning': '1.0 + wr_gap × 0.7 (bid DOWN)'
+                },
+                'v4_formula': 'optimal_bid = argmax_b [(EV_cpm - b) × P(win | b, segment)]',
+                'v3_fallback_formula': 'bid = EV_cpm × (1 - target_margin) × win_rate_adjustment',
                 'shading_factor': 1 - self.config.business.target_margin,
-                'win_rate_source': 'empirical_with_shrinkage',
-                'adjustment_formula': '1 + (target_wr - empirical_wr) × sensitivity',
                 'adjustment_bounds': [self.config.technical.min_win_rate_adjustment,
                                      self.config.technical.max_win_rate_adjustment]
             },
+
+            # V5: Exploration statistics
+            'exploration_stats': exploration_summary or {},
+
+            # V5: Global baseline stats
+            'global_stats': global_stats or {},
 
             'data_stats': data_loader.load_stats,
 
@@ -347,11 +516,20 @@ class MetricsReporter:
                 'bid_column': 'suggested_bid_cpm'
             },
 
-            # V3: Both model types reported
+            # V4: All model types reported
             'model_performance': {
+                'bid_landscape_model': (
+                    {
+                        **bid_landscape_model.training_stats,
+                        'usage': 'USED_FOR_BIDDING - V4 optimal bid calculation'
+                    } if bid_landscape_model is not None else {
+                        'status': 'NOT_TRAINED',
+                        'reason': bid_variance_stats.get('reason', 'Unknown') if bid_variance_stats else 'Not provided'
+                    }
+                ),
                 'win_rate_model_empirical': {
                     **empirical_win_rate_model.training_stats,
-                    'usage': 'USED_FOR_BIDDING - empirical rates with shrinkage'
+                    'usage': 'V3_FALLBACK - empirical rates with shrinkage'
                 },
                 'win_rate_model_logreg': {
                     **logreg_win_rate_model.training_stats,
@@ -359,6 +537,12 @@ class MetricsReporter:
                 },
                 'ctr_model': ctr_model.training_stats
             },
+
+            # V4: Bid variance statistics
+            'bid_variance_stats': bid_variance_stats or {},
+
+            # V4: Method usage statistics
+            'bid_method_stats': method_stats or {},
 
             'model_calibration': {},
 
@@ -379,12 +563,25 @@ class MetricsReporter:
                 'inclusion_rate': round(
                     filter_stats['included'] /
                     max(1, filter_stats['total_segments']) * 100, 2
-                )
+                ),
+                # V5: Observation tier breakdown
+                'v5_zero_obs': filter_stats.get('v5_included_zero_obs', 0),
+                'v5_low_obs': filter_stats.get('v5_included_low_obs', 0),
+                'v5_medium_obs': filter_stats.get('v5_included_medium_obs', 0),
+                'v5_high_obs': filter_stats.get('v5_included_high_obs', 0)
             }
         }
 
         # Calculate calibration metrics
         if df_train_wr is not None:
+            # V4: Bid landscape model calibration (key check: monotonicity by bid)
+            if bid_landscape_model is not None and bid_landscape_model.is_trained:
+                try:
+                    self.metrics['model_calibration']['bid_landscape_model'] = \
+                        self._calculate_bid_landscape_calibration(bid_landscape_model, df_train_wr)
+                except Exception as e:
+                    self.metrics['model_calibration']['bid_landscape_model'] = {'error': str(e)}
+
             # LogReg model calibration (for comparison)
             try:
                 y_true_wr = df_train_wr['won'].values
@@ -474,8 +671,8 @@ class MetricsReporter:
 
         return self.metrics
 
-    def _summarize_bids(self, bid_results: List[BidResult]) -> Dict:
-        """Summarize bid statistics (V3: includes win rate)."""
+    def _summarize_bids(self, bid_results: List) -> Dict:
+        """Summarize bid statistics (V5: includes exploration breakdown)."""
         if not bid_results:
             return {}
 
@@ -483,7 +680,19 @@ class MetricsReporter:
         ctrs = [r.ctr for r in bid_results]
         win_rates = [r.win_rate for r in bid_results]
 
-        return {
+        # V5: Get exploration adjustments if available
+        exploration_adjustments = []
+        for r in bid_results:
+            if hasattr(r, 'exploration_adjustment'):
+                exploration_adjustments.append(r.exploration_adjustment)
+            elif hasattr(r, 'win_rate_adjustment'):
+                exploration_adjustments.append(r.win_rate_adjustment)
+
+        # V4/V5: Separate by bid method
+        v5_methods = ['v5_explore_zero', 'v5_explore_low', 'v5_explore_medium', 'v5_empirical']
+        v4_methods = ['landscape', 'empirical']
+
+        summary = {
             'count': len(bid_results),
             'bid_min': min(bids),
             'bid_max': max(bids),
@@ -492,6 +701,34 @@ class MetricsReporter:
             'ctr_mean': round(sum(ctrs) / len(ctrs), 8),
             'win_rate_mean': round(sum(win_rates) / len(win_rates), 4)
         }
+
+        # Exploration adjustment distribution
+        if exploration_adjustments:
+            summary['exploration_adjustment_min'] = round(min(exploration_adjustments), 4)
+            summary['exploration_adjustment_max'] = round(max(exploration_adjustments), 4)
+            summary['exploration_adjustment_mean'] = round(float(np.mean(exploration_adjustments)), 4)
+
+        # V5: Method breakdown
+        for method in v5_methods:
+            count = sum(1 for r in bid_results if getattr(r, 'bid_method', '') == method)
+            if count > 0:
+                summary[f'{method}_count'] = count
+
+        # V4: Legacy method breakdown (for backwards compatibility)
+        landscape_results = [r for r in bid_results if getattr(r, 'bid_method', '') == 'landscape']
+        empirical_results = [r for r in bid_results if getattr(r, 'bid_method', '') == 'empirical']
+        if landscape_results or empirical_results:
+            summary['landscape_count'] = len(landscape_results)
+            summary['empirical_count'] = len(empirical_results)
+
+        # V4: Expected surplus stats (only for landscape method)
+        if landscape_results:
+            surpluses = [r.expected_surplus for r in landscape_results if hasattr(r, 'expected_surplus') and r.expected_surplus is not None]
+            if surpluses:
+                summary['expected_surplus_mean'] = round(float(np.mean(surpluses)), 4)
+                summary['expected_surplus_median'] = round(float(np.median(surpluses)), 4)
+
+        return summary
 
     def write_metrics(
         self,

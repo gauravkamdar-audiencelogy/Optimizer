@@ -1,14 +1,67 @@
 """
 Feature engineering for bid optimization.
 Creates derived features from raw data.
+
+V4: Added bid_amount_cpm to training data for BidLandscapeModel.
 """
 import pandas as pd
 import numpy as np
 from urllib.parse import urlparse
-from typing import List, Set
+from typing import List, Set, Dict
 from tqdm import tqdm
 
 from .config import OptimizerConfig
+
+
+def validate_bid_variance(
+    df_train: pd.DataFrame,
+    bid_col: str = 'bid_amount_cpm',
+    min_unique_bids: int = 10,
+    min_std: float = 0.5
+) -> Dict:
+    """
+    Check if data has sufficient bid variance for BidLandscapeModel.
+
+    Args:
+        df_train: Training data with bid_amount_cpm column
+        bid_col: Column name for bid amount
+        min_unique_bids: Minimum unique bid values required
+        min_std: Minimum standard deviation required
+
+    Returns:
+        dict with 'sufficient_variance' bool and diagnostics
+    """
+    if bid_col not in df_train.columns:
+        return {
+            'sufficient_variance': False,
+            'reason': f'Column {bid_col} not found in training data',
+            'n_bids': len(df_train)
+        }
+
+    bid_values = df_train[bid_col].dropna()
+
+    bid_stats = {
+        'n_bids': len(df_train),
+        'n_valid_bids': len(bid_values),
+        'unique_bid_values': int(bid_values.nunique()),
+        'bid_mean': round(float(bid_values.mean()), 4),
+        'bid_std': round(float(bid_values.std()), 4),
+        'bid_min': round(float(bid_values.min()), 4),
+        'bid_max': round(float(bid_values.max()), 4),
+    }
+
+    bid_stats['sufficient_variance'] = (
+        bid_stats['unique_bid_values'] >= min_unique_bids and
+        bid_stats['bid_std'] >= min_std
+    )
+
+    if not bid_stats['sufficient_variance']:
+        if bid_stats['unique_bid_values'] < min_unique_bids:
+            bid_stats['reason'] = f"Only {bid_stats['unique_bid_values']} unique bids (need {min_unique_bids}+)"
+        else:
+            bid_stats['reason'] = f"Bid std ${bid_stats['bid_std']:.2f} < ${min_std:.2f} threshold"
+
+    return bid_stats
 
 
 class FeatureEngineer:
@@ -93,6 +146,12 @@ class FeatureEngineer:
 
         won_count = df_train['won'].sum()
         print(f"    Matched {won_count:,} bids to views ({won_count/len(df_train)*100:.1f}% win rate)")
+
+        # V4: Add bid_amount_cpm for BidLandscapeModel
+        # bid_value is already parsed from publisher_payout in data_loader.py
+        if 'bid_value' in df_train.columns:
+            df_train['bid_amount_cpm'] = df_train['bid_value']
+            print(f"    Added bid_amount_cpm (mean: ${df_train['bid_amount_cpm'].mean():.2f}, std: ${df_train['bid_amount_cpm'].std():.2f})")
 
         return df_train
 

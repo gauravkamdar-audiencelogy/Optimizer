@@ -1,13 +1,20 @@
 """
-V3 Configuration: Complete optimizer with empirical win rate signal.
+V5 Configuration: Volume-first optimizer with asymmetric exploration.
 
-V3 Changes:
-- Reintroduce target_win_rate (now usable with empirical rates)
-- Add win_rate_sensitivity control
-- Split feature exclusions: hard (config) vs soft (algorithm-determined)
+V5 Changes:
+- New exploration_mode for asymmetric bid adjustment
+- Accept negative margins during data collection
+- NPI value integration
+- Include ALL segments (remove min_observations filter effect)
+- Wider adjustment bounds [0.6, 1.8]
 
-Philosophy: Controls should be meaningful and data-backed.
-Algorithm makes data-driven decisions; config handles business/technical constraints.
+V3/V4 Features Retained:
+- Empirical win rate model
+- Bayesian shrinkage
+- Feature auto-exclusion
+
+Philosophy: During data collection phase, prioritize VOLUME over MARGIN.
+Learn the bid landscape through asymmetric exploration.
 """
 from dataclasses import dataclass, field
 from typing import List, Optional
@@ -19,11 +26,24 @@ class BusinessControls:
     """
     Controls exposed to business/product team.
 
-    V3: Reintroduce target_win_rate now that we have empirical (not model) win rates.
+    V5: Volume-first with asymmetric exploration.
     """
     target_margin: float = 0.30           # Bid shading factor (bid at 70% of EV)
-    target_win_rate: float = 0.50         # V3: REINTRODUCE - target auction win rate
-    win_rate_sensitivity: float = 0.5     # V3: How aggressively to adjust (0.3-0.7)
+    target_win_rate: float = 0.65         # V5: Higher target for volume (was 0.50)
+    win_rate_sensitivity: float = 0.5     # How aggressively to adjust (0.3-0.7)
+
+    # V5: Exploration mode
+    exploration_mode: bool = True         # Enable asymmetric exploration
+    exploration_up_multiplier: float = 1.3   # Multiplier for under-winning segments
+    exploration_down_multiplier: float = 0.7 # Multiplier for over-winning segments
+
+    # V5: Accept negative margin during learning
+    accept_negative_margin: bool = True   # Allow bids > EV during data collection
+    max_negative_margin_pct: float = 0.50 # Max 50% overpay (bid up to 1.5x EV)
+
+    # V5: NPI integration
+    use_npi_value: bool = True            # Enable NPI-based bid multipliers
+    npi_data_path: Optional[str] = None   # Path to NPI value CSV
 
 
 @dataclass
@@ -31,39 +51,45 @@ class TechnicalControls:
     """
     Controls for technical team only.
 
-    V3: Added soft exclusion thresholds for algorithm-determined feature filtering.
-    V3.1: Added floor_available toggle for SSPs with floor prices.
+    V5: Volume-first with exploration.
     """
     # Bid bounds
-    min_bid_cpm: float = 2.00              # Floor (lowered from $5 in V2)
-    max_bid_cpm: float = 50.00             # Ceiling
-    default_bid_cpm: float = 5.00          # For unmatched segments
+    min_bid_cpm: float = 2.00              # Floor
+    max_bid_cpm: float = 30.00             # Ceiling
+    default_bid_cpm: float = 7.50          # V5: Raised for exploration (was 5.00)
 
     # Floor price handling (Phase 1: disabled)
     floor_available: bool = False          # If True, parse floor from bid_amount column
 
-    # Segment filtering (binary)
-    min_observations: int = 100            # Minimum bids per segment
+    # V5: Tiered observation thresholds (instead of binary filter)
+    min_observations: int = 1              # V5: Include ALL segments (was 100!)
+    min_observations_for_empirical: int = 10   # V5: Use empirical WR with 10+ obs
+    min_observations_for_landscape: int = 50   # V5: Use landscape model with 50+ obs
 
     # Feature selection
     max_features: int = 3                  # Maximum features in memcache key
 
     # Model shrinkage
     ctr_shrinkage_k: int = 30              # CTR Bayesian shrinkage strength
-    win_rate_shrinkage_k: int = 30         # V3: Win rate shrinkage strength
+    win_rate_shrinkage_k: int = 30         # Win rate shrinkage strength
 
-    # V3: Soft exclusion thresholds (algorithm uses these to auto-exclude)
+    # Soft exclusion thresholds (algorithm uses these to auto-exclude)
     min_signal_score: float = 50.0         # Below this = auto-exclude feature
     min_coverage_at_threshold: float = 0.5 # Must cover 50% of data
     max_null_pct: float = 30.0             # Above this = auto-exclude feature
 
-    # V3.1: Effective cardinality filter (prevents dominated features)
+    # Effective cardinality filter (prevents dominated features)
     min_effective_cardinality: int = 2     # Must have >=2 values with significant share
     effective_cardinality_min_share: float = 0.05  # 5% threshold for "significant"
 
-    # Win rate adjustment clipping (safety bounds)
-    min_win_rate_adjustment: float = 0.8   # Floor for win rate multiplier
-    max_win_rate_adjustment: float = 1.2   # Ceiling for win rate multiplier
+    # V5: WIDER adjustment bounds for exploration
+    min_win_rate_adjustment: float = 0.6   # V5: Lowered (was 0.8)
+    max_win_rate_adjustment: float = 1.8   # V5: Raised (was 1.2)
+
+    # V5: Exploration bonuses for sparse segments
+    exploration_bonus_zero_obs: float = 0.50   # +50% for unknown segments
+    exploration_bonus_low_obs: float = 0.35    # +35% for 1-9 observations
+    exploration_bonus_medium_obs: float = 0.15 # +15% for 10-49 observations
 
 
 @dataclass
@@ -91,20 +117,26 @@ class FeatureConfig:
                 'domain',             # For future multi-domain SSPs
                 'browser_code',
                 'hour_of_day',        # V3: Let algorithm decide (was hardcoded excluded)
-                'day_of_week'         # V3: Let algorithm decide (was hardcoded excluded)
+                'day_of_week',         # V3: Let algorithm decide (was hardcoded excluded)
+                'media_type',
+                'domain',
+                'make_id',
+                'model_id',
+                'carrier_code',
+                
             ]
         if not self.anchor_features:
             self.anchor_features = ['internal_adspace_id']
         if not self.hard_exclude_features:
-            # V3: Only truly technical/structural exclusions
+            # V5: Only truly technical/structural exclusions
             # NOT data-driven decisions
+            # NOTE: external_userid removed - now used for NPI lookup
             self.hard_exclude_features = [
                 'geo_postal_code',    # Too sparse (7,027 unique)
                 'geo_city_name',      # Too sparse (3,333 unique)
                 'log_txnid',          # Technical: join key
                 'internal_txn_id',    # Technical: join key
                 'log_dt',             # Technical: timestamp
-                'external_userid'     # PII / too sparse
             ]
 
 
