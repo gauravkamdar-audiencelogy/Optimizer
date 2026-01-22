@@ -223,7 +223,139 @@ bid = base_bid * adjustment * npi_multiplier
 - `segment_analysis_*.csv` - Analysis file: full bid landscape with metadata
 - `metrics_*.json` - Run metrics and diagnostics
 
+## NPI Value Model Integration (January 22, 2026)
+
+### Data Sources
+- `data_drugs/NPI_click_data_1year.csv`: 64,783 valid NPIs with historical RPU (revenue per user)
+- `data_drugs/NPI_click_data_20days.csv`: 6,770 recent clickers (recency signal)
+- Some non-NPI IDs in 1-year data (32-36 char hashes) - filter to 10-digit NPIs only
+
+### Key Data Findings
+- **Value concentration is EXTREME**:
+  - Top 1% NPIs (647) = 13.4% of revenue
+  - Top 5% NPIs (3,239) = 42.4% of revenue
+  - Top 10% = 55.9% of revenue
+  - Top 20% = 73.5% of revenue
+- **Recency matters**: Recent clickers avg $17.98 RPU vs $11.69 (54% higher!)
+- All 20-day NPIs exist in 1-year data (it's a subset)
+
+### Tiering Logic (Percentile-based)
+| Tier | Percentile | RPU Threshold | Base Multiplier | With Recency (+20%) |
+|------|------------|---------------|-----------------|---------------------|
+| 1 (Elite) | Top 1% | >$135 | 2.5x | 3.0x (capped) |
+| 2 (High) | Top 5% | >$45 | 1.8x | 2.16x |
+| 3 (Medium) | Top 20% | >$15 | 1.3x | 1.56x |
+| 4 (Standard) | Rest | <$15 | 1.0x | 1.2x |
+
+### User Decisions (Ask Questions!)
+1. **Recency handling**: Chose "Recency boost" - use 1-year RPU as base, add boost if in 20-day data
+2. **Max multiplier**: Chose 3.0x (aggressive) - top prescribers are worth capturing
+3. **Output format**: Chose separate `npi_multipliers_*.csv` - NOT embedded in segment memcache
+
+### Architecture Decision: NPI is REQUEST-TIME Multiplier
+**NPI is NOT part of segment key.** This is critical:
+- Memcache: segment → base_bid
+- NPI cache: npi → multiplier
+- Bidder combines at request time: `final_bid = segment_bid × npi_multiplier`
+
+**Why?**
+- Can't cross NPI with segments (1,454 × 64K = 93M rows - explosion)
+- NPI comes in bid request (`external_userid` field)
+- Keeps segment learning separate from prescriber value
+
+### Config Changes
+```yaml
+business:
+  use_npi_value: true
+  npi_1year_path: "data_drugs/NPI_click_data_1year.csv"
+  npi_20day_path: "data_drugs/NPI_click_data_20days.csv"
+  npi_max_multiplier: 3.0
+  npi_recency_boost: 1.2  # +20%
+```
+
+### NPI Model Results
+- 64,783 NPIs loaded
+- Tier 1: 710 (1.1%), Tier 2: 2,583 (4.0%), Tier 3: 11,084 (17.1%), Tier 4: 50,406 (77.8%)
+- 6,770 recent clickers (10.5%) get +20% boost
+- Avg multiplier: 1.12x
+- 203 NPIs get max 3.0x multiplier (Tier 1 + recent)
+
+### Output Files (Complete List)
+```
+output/YYYYMMDD_HHMMSS/
+├── memcache_*.csv           # Segment → bid (production, features + bid ONLY)
+├── npi_multipliers_*.csv    # NPI → multiplier (bidder lookup)
+├── segment_analysis_*.csv   # Full segment metadata (analysis)
+├── bid_summary_*.csv        # Tiered bucket overview
+└── metrics_*.json           # All diagnostics
+```
+
+### Bidder Implementation
+```python
+# At request time:
+segment_key = extract_features(bid_request)
+base_bid = memcache.get(segment_key)
+
+npi = bid_request.external_userid
+npi_mult = npi_cache.get(npi, 1.0)  # Default 1.0 if unknown
+
+final_bid = base_bid * npi_mult
+```
+
+## Config Evaluation Notes (January 22, 2026)
+
+### max_features=3 → OPTIMAL
+- 4th best feature (`hour_of_day`) has signal score 21.80 vs threshold 50.0
+- Adding it would explode segments: 1,454 → ~35,000
+- Would collapse avg observations: 142 → 6 per segment
+- 99.9% would be sparse (<10 obs)
+- **Conclusion**: Limit is bounded by signal quality, not arbitrary cap
+
+### min_observations=1 → OPTIMAL
+- Low-obs segments (1-9) = 43% of segments but only 1.1% of observations
+- They're NOT drowning out signal from high-obs segments
+- Win rates stable across tiers (~31%) - no noise corruption
+- Empirical model ECE = 0.0143 (well-calibrated despite sparse segments)
+- Shrinkage (k=30) successfully handles uncertainty
+- **Conclusion**: Enables volume-first exploration as designed
+
+### Features Evaluated (11 total, 3 selected)
+Selected: `internal_adspace_id`, `geo_region_name`, `os_code`
+
+Auto-excluded (data-driven):
+- `geo_country_code2`: eff_card=1 (98.7% US)
+- `domain`: eff_card=1 (100% www.drugs.com)
+- `browser_code`: eff_card=1 (93.9% is '14')
+- `hour_of_day`: signal=21.80 < 50 threshold
+- `day_of_week`: signal=10.56 < 50 threshold
+- `media_type`: eff_card=1 (97.5% display)
+- `make_id`, `model_id`, `carrier_code`: eff_card=1 (100% is '-1')
+
+### Candidate Features in Config
+User added more features to evaluate (even if they get rejected):
+- `media_type`, `make_id`, `model_id`, `carrier_code`
+- These are correctly auto-excluded due to single dominant value
+
+### Features NOT Worth Adding (Demand-Side)
+- `list_id`, `campaign_code`, `banner_code` - These are demand-side (campaign-specific)
+- `total_ads`, `rule_id` - Internal controls, not from SSP bid request
+
+## Virtual Environment
+- Located at `./venv/`
+- Activate: `source ./venv/bin/activate`
+- Run optimizer: `python run_optimizer.py --config config/optimizer_config.yaml --data-dir data_drugs/ --output-dir output/`
+
+## Git Workflow
+- Always use good commit messages
+- Co-author line: `Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>`
+- Push after committing
+
+## Plan File Management
+- Active plans: `/Users/gaurav_kamdar/.claude/plans/foamy-frolicking-lemon.md`
+- Completed work: `PLAN_ARCHIVE.md`
+- Keep active plan file SHORT - only pending/future work
+- Archive completed tasks with full details
+
 ## Reference
-- `PIPELINE_SPEC.md` - Full technical specification and code examples
-- `EDA_*.md` - Data analysis findings
-- `SCRATCHPAD.md` - Feel free to use this to make notes for yourself and your findings. Use it to offload things from working memory, and context into this file for you to come back and refernce it later.
+- `PLAN_ARCHIVE.md` - Completed work history with full implementation details
+- `SCRATCHPAD.md` - Scratch notes and findings
