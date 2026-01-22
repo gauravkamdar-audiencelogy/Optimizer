@@ -106,3 +106,59 @@ Bid higher for high-value prescribers based on historical click/revenue data.
 - 710 Tier 1 (1.1%), 2,583 Tier 2 (4.0%), 11,084 Tier 3 (17.1%)
 - 6,770 recent clickers get +20% boost
 - Avg multiplier: 1.12x, Max: 3.0x
+
+---
+
+## Data Management Pipeline (COMPLETED - Jan 22, 2026)
+
+### Goal
+Create production-ready data ingestion workflow for ongoing data collection.
+
+### Directory Structure
+```
+data_drugs/
+├── drugs_data.csv      # Main data file (optimizer reads this)
+├── incoming/           # Drop new files here
+├── processed/          # Processed files with timestamp (audit trail)
+└── archive/            # Original separate files (historical)
+```
+
+### Commands Created
+```bash
+# Initialize directory structure
+python scripts/data_manager.py init --data-dir data_drugs/
+
+# Process incoming files (main workflow)
+python scripts/data_manager.py ingest --data-dir data_drugs/
+
+# Show data statistics
+python scripts/data_manager.py info --data-dir data_drugs/
+
+# One-time: combine separate files
+python scripts/data_manager.py combine --data-dir data_drugs/
+```
+
+### Files Created/Modified
+| File | Change |
+|------|--------|
+| `scripts/data_manager.py` | NEW: Data management CLI |
+| `src/data_loader.py` | Support combined file format, auto-detect |
+| `config/optimizer_config.yaml` | Add data file settings |
+| `README.md` | NEW: Project documentation |
+
+### Key Features
+- **Deduplication**: By `(log_txnid, rec_type)` - handles overlapping date ranges
+- **Case normalization**: Handles UPPERCASE column names from exports
+- **Audit trail**: Processed files moved to `processed/` with timestamp
+- **Backward compatible**: Falls back to separate files if combined doesn't exist
+
+### Production Workflow
+1. Export new data from database (single CSV with all rec_types)
+2. Drop file in `data_drugs/incoming/`
+3. Run `python scripts/data_manager.py ingest --data-dir data_drugs/`
+4. File is appended, deduped, and moved to `processed/`
+
+### Results (First Ingest)
+- Combined 3 files → 785K rows (45K duplicates removed)
+- Ingested new data: +115K rows (90K duplicates from overlap)
+- Final: 900,111 rows, Sep 15 2025 → Jan 22 2026
