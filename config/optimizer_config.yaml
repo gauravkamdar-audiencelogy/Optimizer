@@ -128,7 +128,19 @@ features:
 # DATA CONFIGURATION
 # ============================================================================
 data:
+  # Primary combined data file (auto-detected by data_loader)
+  combined_file: "drugs_data.csv"
+
+  # Legacy separate files (fallback if combined doesn't exist)
+  # Used automatically by data_loader when combined_file is missing
+  legacy_bids_file: "drugs_bids.csv"
+  legacy_views_file: "drugs_views.csv"
+  legacy_clicks_file: "drugs_clicks.csv"
+
+  # Date filters
   min_bid_date: "2025-12-10"
   min_view_date: "2025-09-15"
+
+  # Data quality options
   remove_zero_bids: true
   deduplicate_views: true

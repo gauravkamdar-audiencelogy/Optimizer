@@ -1,6 +1,10 @@
 """
 Load and clean bid/view/click data from CSV files.
 Handles: malformed rows, duplicates, zero bids, date filtering.
+
+Supports two data layouts:
+1. Combined: single drugs_data.csv with rec_type column
+2. Separate: drugs_bids.csv, drugs_views.csv, drugs_clicks.csv
 """
 import pandas as pd
 import numpy as np
@@ -16,33 +20,63 @@ class DataLoader:
         self.data_dir = Path(data_dir)
         self.config = config
         self.load_stats: Dict = {}
+        self._combined_data: pd.DataFrame = None
 
     def load_all(self) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        """Load and clean all three datasets."""
-        df_bids = self._load_bids()
-        df_views = self._load_views()
-        df_clicks = self._load_clicks()
-        return df_bids, df_views, df_clicks
+        """Load and clean all three datasets.
 
-    def _load_bids(self) -> pd.DataFrame:
+        Checks for combined drugs_data.csv first, falls back to separate files.
         """
-        Load and clean bid data.
+        combined_path = self.data_dir / 'drugs_data.csv'
 
-        V3.1: Added floor_available handling.
-        - publisher_payout = outbound bid amount (always used)
-        - bid_amount = floor price from SSP (only parsed if floor_available=True)
-        """
-        path = self.data_dir / 'drugs_bids.csv'
-        print(f"    Loading bids from {path}...")
+        if combined_path.exists():
+            print(f"    Found combined data file: {combined_path.name}")
+            return self._load_from_combined(combined_path)
+        else:
+            print("    No combined file found, loading separate files...")
+            df_bids = self._load_bids()
+            df_views = self._load_views()
+            df_clicks = self._load_clicks()
+            return df_bids, df_views, df_clicks
+
+    def _load_from_combined(self, path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """Load bids, views, clicks from combined drugs_data.csv."""
+        print(f"    Loading combined data from {path}...")
 
         df = pd.read_csv(path, on_bad_lines='skip', engine='python')
         initial_count = len(df)
+        print(f"    Total rows: {initial_count:,}")
 
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
 
+        # Standardize rec_type
+        df['rec_type'] = df['rec_type'].str.lower().str.strip()
+
+        # Split by rec_type
+        df_bids = df[df['rec_type'] == 'bid'].copy()
+        df_views = df[df['rec_type'] == 'view'].copy()
+        df_clicks = df[df['rec_type'] == 'click'].copy()
+
+        print(f"    Split: {len(df_bids):,} bids, {len(df_views):,} views, {len(df_clicks):,} clicks")
+
+        # Process bids
+        df_bids = self._process_bids(df_bids)
+
+        # Process views
+        df_views = self._process_views(df_views)
+
+        # Process clicks
+        df_clicks = self._process_clicks(df_clicks)
+
+        return df_bids, df_views, df_clicks
+
+    def _process_bids(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Process bid data (common logic for both load paths)."""
+        initial_count = len(df)
+
         # Parse publisher payout from postgres array format (actual clearing price)
-        tqdm.pandas(desc="    Parsing publisher payout")
+        tqdm.pandas(desc="    Parsing bid values")
         df['bid_value'] = df['publisher_payout'].progress_apply(self._parse_first_array_value)
 
         # V3.1: Parse floor price if available
@@ -52,7 +86,7 @@ class DataLoader:
             floor_count = df['floor_price'].notna().sum()
             print(f"    Found {floor_count:,} bids with floor prices")
         else:
-            df['floor_price'] = np.nan  # No floor data in Phase 1
+            df['floor_price'] = np.nan
 
         # Filter: non-zero bids only
         df = df[df['bid_value'] > 0]
@@ -66,26 +100,18 @@ class DataLoader:
 
         return df
 
-    def _load_views(self) -> pd.DataFrame:
-        """Load and clean view data."""
-        path = self.data_dir / 'drugs_views.csv'
-        print(f"    Loading views from {path}...")
-
-        df = pd.read_csv(path, on_bad_lines='skip', engine='python')
+    def _process_views(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Process view data (common logic for both load paths)."""
         initial_count = len(df)
 
-        # Parse datetime
-        df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
-
-        # Parse clearing price from publisher_payout (what we actually paid)
+        # Parse clearing price from publisher_payout
         df['clearing_price'] = df['publisher_payout'].apply(self._parse_first_array_value)
 
         # Deduplicate by log_txnid
         df = df.drop_duplicates(subset=['log_txnid'], keep='first')
         after_dedup = len(df)
 
-        # Filter out invalid clearing prices ($0 or negative)
-        # We paid something to show the ad, so $0 is invalid
+        # Filter out invalid clearing prices
         invalid_price_mask = (df['clearing_price'] <= 0) | (df['clearing_price'].isna())
         invalid_count = invalid_price_mask.sum()
         df = df[~invalid_price_mask]
@@ -100,20 +126,12 @@ class DataLoader:
         }
 
         if invalid_count > 0:
-            print(f"    Removed {invalid_count:,} views with invalid clearing price (≤$0)")
+            print(f"    Removed {invalid_count:,} views with invalid clearing price")
 
         return df
 
-    def _load_clicks(self) -> pd.DataFrame:
-        """Load click data."""
-        path = self.data_dir / 'drugs_clicks.csv'
-        print(f"    Loading clicks from {path}...")
-
-        df = pd.read_csv(path, on_bad_lines='skip', engine='python')
-
-        # Parse datetime
-        df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
-
+    def _process_clicks(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Process click data (common logic for both load paths)."""
         # Parse CPC from postgres array format
         df['cpc_value'] = df['advertiser_spend'].apply(self._parse_first_array_value)
 
@@ -124,6 +142,42 @@ class DataLoader:
         }
 
         return df
+
+    def _load_bids(self) -> pd.DataFrame:
+        """Load and clean bid data from separate file."""
+        path = self.data_dir / 'drugs_bids.csv'
+        print(f"    Loading bids from {path}...")
+
+        df = pd.read_csv(path, on_bad_lines='skip', engine='python')
+
+        # Parse datetime
+        df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
+
+        return self._process_bids(df)
+
+    def _load_views(self) -> pd.DataFrame:
+        """Load and clean view data from separate file."""
+        path = self.data_dir / 'drugs_views.csv'
+        print(f"    Loading views from {path}...")
+
+        df = pd.read_csv(path, on_bad_lines='skip', engine='python')
+
+        # Parse datetime
+        df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
+
+        return self._process_views(df)
+
+    def _load_clicks(self) -> pd.DataFrame:
+        """Load click data from separate file."""
+        path = self.data_dir / 'drugs_clicks.csv'
+        print(f"    Loading clicks from {path}...")
+
+        df = pd.read_csv(path, on_bad_lines='skip', engine='python')
+
+        # Parse datetime
+        df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
+
+        return self._process_clicks(df)
 
     @staticmethod
     def _parse_first_array_value(val) -> float:
