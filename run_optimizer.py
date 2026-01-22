@@ -147,8 +147,17 @@ def main():
 
     # V5: Load NPI model if configured
     npi_model = None
-    if config.business.use_npi_value and config.business.npi_data_path:
-        print(f"\n  Loading NPI value model...")
+    if config.business.use_npi_value and config.business.npi_1year_path:
+        print(f"\n  Loading NPI value model from click data...")
+        npi_model = NPIValueModel.from_click_data(
+            path_1year=config.business.npi_1year_path,
+            path_20day=config.business.npi_20day_path,
+            max_multiplier=config.business.npi_max_multiplier,
+            recency_boost=config.business.npi_recency_boost
+        )
+    elif config.business.use_npi_value and config.business.npi_data_path:
+        # Legacy: single file format
+        print(f"\n  Loading NPI value model (legacy format)...")
         npi_model = NPIValueModel.from_csv(config.business.npi_data_path)
     else:
         print(f"\n  NPI model: disabled (no data path configured)")
@@ -217,6 +226,11 @@ def main():
     df_analysis = memcache_builder.build_segment_analysis(bid_results, selected_features)
     analysis_path = memcache_builder.write_segment_analysis(df_analysis, output_dir, run_id)
 
+    # V5: NPI multiplier cache (for bidder lookup)
+    npi_cache_path = None
+    if npi_model and npi_model.is_loaded:
+        npi_cache_path = memcache_builder.write_npi_cache(npi_model, output_dir, run_id)
+
     # V5: Aggregated bid summary (tiered buckets for overview)
     df_bid_summary = memcache_builder.build_bid_summary(bid_results, selected_features)
     bid_summary_path = memcache_builder.write_bid_summary(df_bid_summary, output_dir, run_id)
@@ -270,6 +284,8 @@ def main():
     print(f"  - Memcache CSV: {memcache_path.name} (features + bid only)")
     print(f"  - Segment Analysis: {analysis_path.name} (full bid landscape)")
     print(f"  - Bid Summary: {bid_summary_path.name} (tiered bucket overview)")
+    if npi_cache_path:
+        print(f"  - NPI Multipliers: {npi_cache_path.name} (NPI -> multiplier)")
     print(f"  - Metrics JSON: {metrics_path.name}")
 
     print(f"\nV5 Bid Summary:")
@@ -303,6 +319,21 @@ def main():
     print(f"  - Bids at floor: {bid_clip.get('pct_at_floor', 0):.1f}%")
     print(f"  - Bids at ceiling: {bid_clip.get('pct_at_ceiling', 0):.1f}%")
     print(f"  - Natural bids: {bid_clip.get('pct_natural', 0):.1f}%")
+
+    # NPI Model Summary
+    if npi_model and npi_model.is_loaded:
+        npi_stats = npi_model.get_tier_stats()
+        print(f"\nNPI Value Model:")
+        print(f"  - Total NPIs: {npi_stats.get('total_profiles', 0):,}")
+        tier_counts = npi_stats.get('tier_counts', {})
+        for tier in sorted(tier_counts.keys()):
+            count = tier_counts[tier]
+            pct = count / npi_stats['total_profiles'] * 100 if npi_stats['total_profiles'] > 0 else 0
+            mult = npi_model.TIER_MULTIPLIERS.get(tier, 1.0)
+            print(f"  - Tier {tier}: {count:,} ({pct:.1f}%) → {mult}x base")
+        print(f"  - Recent clickers: {npi_stats.get('recent_clickers', 0):,} (+{(config.business.npi_recency_boost-1)*100:.0f}% boost)")
+        print(f"  - Avg multiplier: {npi_stats.get('avg_multiplier', 1.0):.2f}x")
+        print(f"  - Max multiplier: {config.business.npi_max_multiplier}x")
 
     print(f"\nV5 Formula: bid = base × exploration_adjustment × npi_multiplier")
     print(f"Exploration: UNDER-winning → bid UP (×{config.business.exploration_up_multiplier})")

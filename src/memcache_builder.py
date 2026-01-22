@@ -379,3 +379,52 @@ class MemcacheBuilder:
         df.to_csv(filepath, index=False)
 
         return filepath
+
+    def write_npi_cache(
+        self,
+        npi_model,
+        output_dir: Path,
+        timestamp: str = None
+    ) -> Path:
+        """
+        Write NPI multiplier cache for bidder lookup.
+
+        Output format:
+            external_userid,multiplier,tier,is_recent,rpu_1year,rpu_20day
+
+        Args:
+            npi_model: NPIValueModel instance
+            output_dir: Output directory
+            timestamp: Optional timestamp string
+
+        Returns:
+            Path to written CSV file
+        """
+        if timestamp is None:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        # Get all profiles as DataFrame
+        df = npi_model.get_all_profiles_df()
+
+        if df.empty:
+            print("    WARNING: No NPI profiles to export")
+            return None
+
+        filename = f'npi_multipliers_{timestamp}.csv'
+        filepath = output_dir / filename
+
+        df.to_csv(filepath, index=False)
+
+        # Print summary
+        tier_counts = df['tier'].value_counts().sort_index()
+        recent_count = df['is_recent'].sum()
+
+        print(f"\n  NPI Cache Summary:")
+        print(f"    Total NPIs: {len(df):,}")
+        for tier in sorted(tier_counts.index):
+            print(f"    Tier {tier}: {tier_counts[tier]:,} ({tier_counts[tier]/len(df)*100:.1f}%)")
+        print(f"    Recent clickers: {recent_count:,} ({recent_count/len(df)*100:.1f}%)")
+        print(f"    Multiplier range: {df['multiplier'].min():.2f}x - {df['multiplier'].max():.2f}x")
+        print(f"    Avg multiplier: {df['multiplier'].mean():.2f}x")
+
+        return filepath

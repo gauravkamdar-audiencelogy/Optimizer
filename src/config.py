@@ -41,9 +41,13 @@ class BusinessControls:
     accept_negative_margin: bool = True   # Allow bids > EV during data collection
     max_negative_margin_pct: float = 0.50 # Max 50% overpay (bid up to 1.5x EV)
 
-    # V5: NPI integration
+    # V5: NPI integration (updated for click data)
     use_npi_value: bool = True            # Enable NPI-based bid multipliers
-    npi_data_path: Optional[str] = None   # Path to NPI value CSV
+    npi_data_path: Optional[str] = None   # Legacy: single NPI file (deprecated)
+    npi_1year_path: Optional[str] = None  # Path to 1-year NPI click data
+    npi_20day_path: Optional[str] = None  # Path to 20-day NPI click data (recency)
+    npi_max_multiplier: float = 3.0       # Maximum NPI bid multiplier
+    npi_recency_boost: float = 1.2        # Boost for recent clickers (+20%)
 
 
 @dataclass

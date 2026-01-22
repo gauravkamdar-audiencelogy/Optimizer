@@ -41,9 +41,12 @@ business:
   accept_negative_margin: true
   max_negative_margin_pct: 0.50  # Cap at 50% overpay (bid up to 1.5x EV)
 
-  # V5: NPI integration
+  # V5: NPI integration (click data based)
   use_npi_value: true
-  npi_data_path: null  # Set to CSV path when data available
+  npi_1year_path: "data_drugs/NPI_click_data_1year.csv"   # Historical RPU
+  npi_20day_path: "data_drugs/NPI_click_data_20days.csv"  # Recency signal
+  npi_max_multiplier: 3.0    # Max multiplier for top NPIs
+  npi_recency_boost: 1.2     # +20% boost for recent clickers
 
 # ============================================================================
 # TECHNICAL CONTROLS (V5)
