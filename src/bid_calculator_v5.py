@@ -35,6 +35,7 @@ from tqdm import tqdm
 from .config import OptimizerConfig
 from .models.ctr_model import CTRModel
 from .models.empirical_win_rate_model import EmpiricalWinRateModel
+from .models.bid_landscape_model import BidLandscapeModel
 
 
 @dataclass
@@ -57,12 +58,19 @@ class BidResultV5:
     exploration_direction: str  # 'up', 'down', or 'neutral'
     bid_method: str  # 'v5_explore_zero', 'v5_explore_low', 'v5_explore_medium', 'v5_empirical'
     exclusion_reason: Optional[str] = None
+    ev_used_for_bidding: bool = False  # V7: True only in margin_optimize mode
 
 
 class VolumeFirstBidCalculator:
     """
-    V5: Asymmetric exploration to learn bid landscape.
+    V5/V6: Asymmetric exploration to learn bid landscape.
 
+    V6 Enhancements:
+    - Config-driven strategy selection (volume_first, margin_optimize, adaptive)
+    - Optional bid landscape model for volume targeting
+    - Per-segment adaptive strategy when configured
+
+    Core behavior:
     - Losing segments → bid UP to learn ceiling
     - Winning segments → bid DOWN to find floor
     - Include ALL segments (no filtering)
@@ -75,13 +83,22 @@ class VolumeFirstBidCalculator:
         ctr_model: CTRModel,
         empirical_win_rate_model: EmpiricalWinRateModel,
         npi_model: Optional['NPIValueModel'] = None,
+        bid_landscape_model: Optional[BidLandscapeModel] = None,
         global_stats: Optional[Dict] = None
     ):
         self.config = config
         self.ctr_model = ctr_model
         self.empirical_model = empirical_win_rate_model
         self.npi_model = npi_model
+        self.bid_landscape_model = bid_landscape_model
         self.avg_cpc: float = 0.0
+
+        # Check if bid landscape can be used for volume targeting
+        self.use_landscape_for_volume = (
+            self.config.bidding.use_bid_landscape_for_volume and
+            bid_landscape_model is not None and
+            bid_landscape_model.is_valid()
+        )
 
         # Global stats for exploration baseline
         self.global_stats = global_stats or {}
@@ -92,15 +109,25 @@ class VolumeFirstBidCalculator:
             'v5_explore_zero': 0,
             'v5_explore_low': 0,
             'v5_explore_medium': 0,
-            'v5_empirical': 0
+            'v5_empirical': 0,
+            'v6_landscape_volume': 0,
+            'v6_landscape_margin': 0
         }
         self.exploration_directions = {'up': 0, 'down': 0, 'neutral': 0}
+        self.strategy_counts = {'volume_first': 0, 'margin_optimize': 0}
 
-        print(f"    V5: VolumeFirstBidCalculator initialized")
+        # Log configuration
+        strategy = config.bidding.strategy
+        print(f"    V6: VolumeFirstBidCalculator initialized")
+        print(f"    Strategy: {strategy}")
         print(f"    Target win rate: {config.business.target_win_rate:.0%}")
         print(f"    Exploration mode: {config.business.exploration_mode}")
         print(f"    Global median bid baseline: ${self.global_median_bid:.2f}")
+        print(f"    Bid landscape for volume: {'enabled' if self.use_landscape_for_volume else 'disabled'}")
         print(f"    NPI model: {'enabled' if npi_model else 'disabled'}")
+
+        if strategy == 'adaptive':
+            print(f"    Adaptive thresholds: WR>={config.bidding.min_win_rate_for_margin:.0%}, obs>={config.bidding.min_observations_for_margin}")
 
     def set_average_cpc(self, df_clicks: pd.DataFrame) -> None:
         """Calculate average CPC from click data."""
@@ -138,31 +165,63 @@ class VolumeFirstBidCalculator:
         npi: Optional[str] = None
     ) -> BidResultV5:
         """
-        Calculate bid for a single segment with asymmetric exploration.
+        Calculate bid for a single segment.
 
-        V5: Bid based on win rate gap from target:
-        - Under-winning → bid UP (aggressive, multiplier 1.3)
-        - Over-winning → bid DOWN (cautious, multiplier 0.7)
+        V6: Strategy-driven bid calculation:
+        - volume_first: Use asymmetric exploration or bid landscape to achieve target WR
+        - margin_optimize: Use bid landscape to maximize surplus
+        - adaptive: Per-segment strategy based on maturity
+
+        Falls back to heuristic (V5) if bid landscape unavailable.
         """
         # Get CTR prediction
         ctr = self.ctr_model.get_ctr_for_segment(segment_key)
 
-        # Expected value calculation
+        # V7: Expected value calculation - FOR REPORTING/METRICS ONLY
+        # In volume_first mode, actual bid is driven by win rate gap, NOT by EV.
+        # EV uses avg_cpc which is demand-side confounded (depends on campaign payouts).
+        # We keep EV for profitability monitoring, but it doesn't affect volume_first bids.
         expected_value_per_impression = ctr * self.avg_cpc
         expected_value_cpm = expected_value_per_impression * 1000
 
         # Get current win rate for segment
         current_wr = self.empirical_model.get_win_rate_for_segment(segment_key)
 
-        # Determine base bid and method based on observation count
-        base_bid, bid_method = self._get_base_bid_and_method(
-            segment_key, observation_count
-        )
+        # Determine which strategy to use for this segment
+        strategy = self._select_strategy_for_segment(current_wr, observation_count)
+        self.strategy_counts[strategy] += 1
 
-        # Calculate asymmetric exploration adjustment
-        exploration_adjustment, direction = self._calculate_exploration_adjustment(
-            current_wr, observation_count
-        )
+        # V7: Track whether EV actually affects bidding (only in margin_optimize)
+        ev_used_for_bidding = False
+
+        # Calculate bid based on selected strategy
+        if strategy == 'margin_optimize' and self.bid_landscape_model and self.bid_landscape_model.is_valid():
+            # Use bid landscape for margin optimization - EV IS used here
+            base_bid, bid_method = self._calculate_margin_optimized_bid(
+                segment_key, expected_value_cpm, observation_count
+            )
+            exploration_adjustment = 1.0
+            direction = 'neutral'
+            ev_used_for_bidding = True  # V7: EV affects bid in margin mode
+
+        elif strategy == 'volume_first' and self.use_landscape_for_volume and observation_count >= 50:
+            # Use bid landscape for volume targeting (find bid for target WR)
+            # V7: EV NOT used - we find bid for target WR, not for margin
+            base_bid, bid_method, achieved_wr = self._calculate_volume_landscape_bid(
+                segment_key, observation_count
+            )
+            exploration_adjustment = 1.0
+            direction = 'up' if achieved_wr < self.config.business.target_win_rate else 'neutral'
+
+        else:
+            # V5 heuristic: Asymmetric exploration
+            # V7: EV NOT used - bid driven by win rate gap
+            base_bid, bid_method = self._get_base_bid_and_method(
+                segment_key, observation_count
+            )
+            exploration_adjustment, direction = self._calculate_exploration_adjustment(
+                current_wr, observation_count
+            )
 
         # Apply NPI multiplier
         npi_multiplier = 1.0
@@ -172,10 +231,13 @@ class VolumeFirstBidCalculator:
         # Calculate raw bid
         raw_bid = base_bid * exploration_adjustment * npi_multiplier
 
-        # Check profitability (V5: allow negative margin during learning)
+        # Check profitability (allow negative margin during learning in volume mode)
         min_bid = self.config.technical.min_bid_cpm
         is_profitable = expected_value_cpm >= min_bid
-        allows_negative_margin = self.config.business.accept_negative_margin
+        allows_negative_margin = (
+            self.config.business.accept_negative_margin and
+            strategy == 'volume_first'
+        )
 
         # Apply guardrails
         final_bid = self._apply_guardrails(
@@ -183,7 +245,8 @@ class VolumeFirstBidCalculator:
         )
 
         # Track method usage
-        self.method_counts[bid_method] += 1
+        if bid_method in self.method_counts:
+            self.method_counts[bid_method] += 1
         self.exploration_directions[direction] += 1
 
         exclusion_reason = None
@@ -207,8 +270,88 @@ class VolumeFirstBidCalculator:
             allows_negative_margin=allows_negative_margin,
             exploration_direction=direction,
             bid_method=bid_method,
-            exclusion_reason=exclusion_reason
+            exclusion_reason=exclusion_reason,
+            ev_used_for_bidding=ev_used_for_bidding
         )
+
+    def _select_strategy_for_segment(
+        self,
+        current_wr: float,
+        observation_count: int
+    ) -> str:
+        """
+        Select bidding strategy for this segment.
+
+        V6: Config-driven with per-segment adaptation.
+        """
+        strategy = self.config.bidding.strategy
+
+        if strategy in ['volume_first', 'margin_optimize']:
+            return strategy
+
+        elif strategy == 'adaptive':
+            # Per-segment automatic switching based on maturity
+            thresholds = self.config.bidding
+            if (current_wr >= thresholds.min_win_rate_for_margin and
+                observation_count >= thresholds.min_observations_for_margin):
+                return 'margin_optimize'  # Mature segment
+            else:
+                return 'volume_first'  # Still learning
+
+        else:
+            return 'volume_first'  # Default fallback
+
+    def _calculate_volume_landscape_bid(
+        self,
+        segment_key: Dict[str, any],
+        observation_count: int
+    ) -> tuple:
+        """
+        Use bid landscape to find bid that achieves target win rate.
+
+        V6: This is the "proper" volume-first approach - use P(win|bid)
+        to determine exact bid needed for target WR.
+        """
+        try:
+            target_wr = self.config.business.target_win_rate
+
+            # Use bid landscape with uncertainty buffer
+            buffered_bid, base_bid, buffer = self.bid_landscape_model.find_bid_for_win_rate_with_buffer(
+                target_win_rate=target_wr,
+                segment_values=segment_key,
+                observation_count=observation_count
+            )
+
+            achieved_wr = self.bid_landscape_model.predict_win_rate(buffered_bid, segment_key)
+            return buffered_bid, 'v6_landscape_volume', achieved_wr
+
+        except Exception as e:
+            # Fall back to heuristic if landscape fails
+            base_bid, method = self._get_base_bid_and_method(segment_key, observation_count)
+            return base_bid, method, 0.0
+
+    def _calculate_margin_optimized_bid(
+        self,
+        segment_key: Dict[str, any],
+        expected_value_cpm: float,
+        observation_count: int
+    ) -> tuple:
+        """
+        Use bid landscape for margin optimization.
+
+        Classic surplus maximization: argmax_b [(EV - b) × P(win|b)]
+        """
+        try:
+            optimal_bid, expected_surplus = self.bid_landscape_model.find_optimal_bid(
+                expected_value_cpm=expected_value_cpm,
+                segment_values=segment_key
+            )
+            return optimal_bid, 'v6_landscape_margin'
+
+        except Exception as e:
+            # Fall back to heuristic
+            base_bid, method = self._get_base_bid_and_method(segment_key, observation_count)
+            return base_bid, method
 
     def _get_base_bid_and_method(
         self,
@@ -324,22 +467,27 @@ class VolumeFirstBidCalculator:
         """
         Apply bid guardrails.
 
-        V5: Allow negative margins during learning, but cap at max_negative_margin_pct.
-        Floor is ALWAYS respected regardless of EV.
+        V6 FIX: Removed EV cap in volume_first mode.
+        The EV cap (max_negative_margin_pct) caused a cliff effect where
+        segments with EV just below threshold got full bids while those
+        just above got heavily capped. In learning phase, just use floor/ceiling.
+
+        The EV cap should only apply in margin_optimize mode.
         """
         min_bid = self.config.technical.min_bid_cpm
         max_bid = self.config.technical.max_bid_cpm
 
-        # V5: Cap at max overpay (e.g., 1.5x EV for 50% negative margin)
-        # But NEVER go below floor
-        if allows_negative_margin and expected_value_cpm > 0:
+        # V6: Only apply EV cap in margin_optimize mode
+        # In volume_first mode, we want to explore - just use floor/ceiling
+        strategy = self.config.bidding.strategy
+        if strategy == 'margin_optimize' and expected_value_cpm > 0:
+            # Only cap in margin mode to ensure profitability
             max_overpay = expected_value_cpm * (1.0 + self.config.business.max_negative_margin_pct)
-            # Only apply max_overpay cap if it's above the floor
             if max_overpay >= min_bid:
                 max_bid = min(max_bid, max_overpay)
-            # If max_overpay < floor, we'll still bid at floor (exploration)
+        # In volume_first or adaptive (during learning), no EV cap
 
-        # Apply floor and ceiling - floor is ALWAYS enforced
+        # Apply floor and ceiling
         final_bid = np.clip(raw_bid, min_bid, max_bid)
 
         return round(final_bid, 2)
@@ -350,17 +498,26 @@ class VolumeFirstBidCalculator:
 
         stats = {
             'total': total,
+            'config_strategy': self.config.bidding.strategy,
         }
 
         # Method breakdown
         for method, count in self.method_counts.items():
-            stats[f'{method}_count'] = count
-            stats[f'{method}_pct'] = round(100 * count / total, 1) if total > 0 else 0
+            if count > 0:  # Only include used methods
+                stats[f'{method}_count'] = count
+                stats[f'{method}_pct'] = round(100 * count / total, 1) if total > 0 else 0
 
         # Direction breakdown
         for direction, count in self.exploration_directions.items():
             stats[f'exploration_{direction}_count'] = count
             stats[f'exploration_{direction}_pct'] = round(100 * count / total, 1) if total > 0 else 0
+
+        # V6: Strategy breakdown (for adaptive mode)
+        total_strategy = sum(self.strategy_counts.values())
+        for strategy, count in self.strategy_counts.items():
+            if count > 0:
+                stats[f'strategy_{strategy}_count'] = count
+                stats[f'strategy_{strategy}_pct'] = round(100 * count / total_strategy, 1) if total_strategy > 0 else 0
 
         return stats
 

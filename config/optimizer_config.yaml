@@ -43,6 +43,7 @@ business:
 
   # V5: NPI integration (click data based)
   use_npi_value: true
+  npi_exists: true           # True for HCP targeting (drugs.com = 100% NPI coverage)
   npi_1year_path: "data_drugs/NPI_click_data_1year.csv"   # Historical RPU
   npi_20day_path: "data_drugs/NPI_click_data_20days.csv"  # Recency signal
   npi_max_multiplier: 3.0    # Max multiplier for top NPIs
@@ -123,6 +124,37 @@ features:
     - internal_txn_id      # Technical: join key
     - log_dt               # Technical: timestamp
     - pageurl_truncated    # Too sparse (creates 78K+ segments, OOM issues)
+
+# ============================================================================
+# BIDDING STRATEGY (V6: Config-driven strategy selection)
+# ============================================================================
+# Strategy options: volume_first, margin_optimize, adaptive
+# Config selects which strategy to use; models are built optimally.
+#
+# NOTE: Optimizer should be run DAILY during learning phase.
+# Market conditions change frequently; faster iteration = faster learning.
+bidding:
+  strategy: "adaptive"             # V7: Auto-switch when segments mature (WR>=55%, obs>=100)
+
+  # Adaptive thresholds (used when strategy="adaptive")
+  min_win_rate_for_margin: 0.55    # Switch to margin when segment WR >= 55%
+  min_observations_for_margin: 100 # Need 100+ obs for margin optimization
+
+  # Volume-first settings
+  use_bid_landscape_for_volume: true  # Use P(win|bid) to find target WR bid
+
+  # Margin optimization settings
+  min_margin_pct: 0.20             # Target 20% margin when optimizing
+
+# ============================================================================
+# CALIBRATION GATE (V6: Data-agnostic model selection)
+# ============================================================================
+# Models are built optimally, then gated at runtime based on calibration quality.
+# If a model's ECE exceeds threshold, automatically fall back to simpler model.
+calibration_gate:
+  max_ece_threshold: 0.10          # ECE must be < 10% to use LogReg model
+  min_observations_for_eval: 1000  # Need enough data to evaluate calibration
+  log_gate_decisions: true         # Log why model was/wasn't used
 
 # ============================================================================
 # DATA CONFIGURATION

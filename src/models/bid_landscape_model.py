@@ -35,6 +35,7 @@ class BidLandscapeModel:
         self.config = config
         self.model: Optional[Pipeline] = None
         self.feature_names: List[str] = []
+        self.bid_col: str = 'bid_amount_cpm'  # V6 FIX: Store bid column name for predict
         self.bid_coefficient: float = 0.0
         self.bid_scaler_mean: float = 0.0
         self.bid_scaler_std: float = 1.0
@@ -58,6 +59,7 @@ class BidLandscapeModel:
             target: Target column name ('won')
         """
         self.feature_names = segment_features
+        self.bid_col = bid_col  # V6 FIX: Store for predict methods
 
         # Features = bid_amount + segment features
         X = df_train[[bid_col] + segment_features].copy()
@@ -151,21 +153,22 @@ class BidLandscapeModel:
         if not self.is_trained:
             raise ValueError("Model not trained. Call train() first.")
 
-        row = {'bid_amount_cpm': bid_amount, **segment_values}
+        # V6 FIX: Use stored bid column name (not hardcoded 'bid_amount_cpm')
+        row = {self.bid_col: bid_amount, **segment_values}
         df = pd.DataFrame([row])
         return float(self.model.predict_proba(df)[0, 1])
 
     def predict_win_rates_batch(
         self,
         df: pd.DataFrame,
-        bid_col: str = 'bid_amount_cpm'
+        bid_col: Optional[str] = None
     ) -> np.ndarray:
         """
         Predict win rates for a batch of records.
 
         Args:
-            df: DataFrame with bid_amount_cpm and segment features
-            bid_col: Column name for bid amount
+            df: DataFrame with bid column and segment features
+            bid_col: Column name for bid amount (defaults to stored name)
 
         Returns:
             Array of win probabilities
@@ -173,6 +176,8 @@ class BidLandscapeModel:
         if not self.is_trained:
             raise ValueError("Model not trained. Call train() first.")
 
+        # V6 FIX: Use stored bid column name if not specified
+        bid_col = bid_col or self.bid_col
         X = df[[bid_col] + self.feature_names]
         return self.model.predict_proba(X)[:, 1]
 
@@ -266,3 +271,109 @@ class BidLandscapeModel:
     def is_valid(self) -> bool:
         """Check if model is valid (trained with positive bid coefficient)."""
         return self.is_trained and self.bid_coefficient > 0
+
+    def find_bid_for_win_rate(
+        self,
+        target_win_rate: float,
+        segment_values: Dict,
+        min_bid: Optional[float] = None,
+        max_bid: Optional[float] = None,
+        tolerance: float = 0.01
+    ) -> Tuple[float, float]:
+        """
+        Find the LOWEST bid that achieves at least target_win_rate.
+
+        V6: This enables volume-first bidding using the bid landscape.
+        Instead of heuristics ("bid 30% higher"), we use the model to answer:
+        "What bid do I need to achieve 65% win rate?"
+
+        Uses binary search since P(win|bid) is monotonically increasing.
+
+        Args:
+            target_win_rate: Target win rate to achieve (e.g., 0.65)
+            segment_values: Dict of segment feature values
+            min_bid: Minimum bid to consider (defaults to config min)
+            max_bid: Maximum bid to consider (defaults to config max)
+            tolerance: Stop when within this tolerance of target
+
+        Returns:
+            (bid_for_target, actual_win_rate)
+            If target is unachievable, returns (max_bid, achieved_win_rate)
+        """
+        if not self.is_trained:
+            raise ValueError("Model not trained. Call train() first.")
+
+        if self.bid_coefficient <= 0:
+            raise ValueError("Model has non-positive bid coefficient - cannot use for bid optimization")
+
+        min_bid = min_bid or self.config.technical.min_bid_cpm
+        max_bid = max_bid or self.config.technical.max_bid_cpm
+
+        # Check if target is achievable at max bid
+        max_win_rate = self.predict_win_rate(max_bid, segment_values)
+        if max_win_rate < target_win_rate:
+            # Target not achievable even at max bid
+            return max_bid, max_win_rate
+
+        # Check if we already achieve target at min bid
+        min_win_rate = self.predict_win_rate(min_bid, segment_values)
+        if min_win_rate >= target_win_rate:
+            # Already achieving target at floor
+            return min_bid, min_win_rate
+
+        # Binary search for the bid that achieves target
+        low, high = min_bid, max_bid
+        while high - low > 0.1:  # $0.10 precision
+            mid = (low + high) / 2
+            mid_win_rate = self.predict_win_rate(mid, segment_values)
+
+            if mid_win_rate < target_win_rate:
+                low = mid
+            else:
+                high = mid
+
+        # Return the slightly higher value to ensure we meet target
+        result_bid = round(high, 2)
+        result_win_rate = self.predict_win_rate(result_bid, segment_values)
+
+        return result_bid, result_win_rate
+
+    def find_bid_for_win_rate_with_buffer(
+        self,
+        target_win_rate: float,
+        segment_values: Dict,
+        observation_count: int,
+        min_bid: Optional[float] = None,
+        max_bid: Optional[float] = None
+    ) -> Tuple[float, float, float]:
+        """
+        Find bid for target win rate with uncertainty buffer.
+
+        V6: For sparse segments, we over-bid slightly to account for
+        model uncertainty. Buffer scales inversely with observation count.
+
+        Args:
+            target_win_rate: Target win rate to achieve
+            segment_values: Dict of segment feature values
+            observation_count: Number of observations for this segment
+            min_bid: Minimum bid (defaults to config)
+            max_bid: Maximum bid (defaults to config)
+
+        Returns:
+            (buffered_bid, base_bid, buffer_multiplier)
+        """
+        base_bid, actual_wr = self.find_bid_for_win_rate(
+            target_win_rate, segment_values, min_bid, max_bid
+        )
+
+        # Buffer based on observation count (more uncertainty → higher buffer)
+        if observation_count < 10:
+            buffer = 1.10  # +10% for very sparse
+        elif observation_count < 50:
+            buffer = 1.05  # +5% for sparse
+        else:
+            buffer = 1.02  # +2% for well-observed
+
+        buffered_bid = min(base_bid * buffer, max_bid or self.config.technical.max_bid_cpm)
+
+        return round(buffered_bid, 2), round(base_bid, 2), buffer

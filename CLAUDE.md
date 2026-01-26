@@ -55,9 +55,11 @@
 
 ### NPI Data
 - `external_userid` field contains NPI numbers (10-digit healthcare provider IDs)
+- **drugs.com = HCP targeting = 100% NPI coverage** (always have NPI in requests)
 - 30-day revenue/click likelihood data is AVAILABLE
 - High-value NPIs should get higher bids
-- This is HCP (Healthcare Provider) targeting data
+- Bidder currently uses NPI for bid/no-bid decision only
+- NPI multiplier logic output by optimizer but NOT YET deployed in production bidder
 
 ### V4 vs V5 Strategy
 | Aspect | V4 (Wrong) | V5 (Correct) |
@@ -103,10 +105,15 @@
 - **Fix**: Remove class_weight, implement Bayesian shrinkage toward global CTR
 - **Lesson**: With extreme imbalance, class weighting destroys the calibration you need for bidding
 
-### Win Rate Model Miscalibration (Open)
-- **Symptom**: ECE=0.176, consistently overestimates by ~1.7x
-- **Current state**: Removed from bid formula (diagnostic only)
-- **TODO**: Investigate if same class_weight issue; fix and restore to capture market signals
+### Win Rate Model Miscalibration (Path Forward Identified)
+- **Symptom**: LogReg ECE=0.176, overestimates by ~1.7x
+- **Root cause**: Likely class_weight='balanced' + no post-hoc calibration
+- **Current state**: Hard-coded as diagnostic only (NOT data-agnostic)
+- **Fix**: Implement calibration gate pattern:
+  1. Remove class_weight='balanced'
+  2. Add isotonic regression post-hoc calibration
+  3. Runtime gate: use if ECE < 0.10, else fall back to empirical
+- **Note**: Empirical model (ECE=0.0143) is well-calibrated and used for bidding
 
 ### Bid Floor Clipping (Resolved)
 - **Symptom**: 92.67% of bids clipped to $5 floor
@@ -427,6 +434,339 @@ Rec type distribution:
 | `scripts/data_manager.py` | NEW: CLI for init, ingest, info, combine |
 | `src/data_loader.py` | Support combined file, refactored processing |
 | `config/optimizer_config.yaml` | Added data file settings |
+
+## ML Models Review & Architecture Guidelines (January 22, 2026)
+
+### Core Architectural Principles
+
+**1. Config Drives Model SELECTION, Not Implementation**
+- Models are built using best practices (no compromises)
+- Config determines WHICH model/strategy to use at runtime
+- Never change model implementation based on current data characteristics
+- Use runtime gates (calibration checks) to override if model quality is poor
+
+**2. Calibration Gate Pattern**
+- Build models optimally, then gate their usage at runtime
+- If model ECE > threshold → fall back to simpler model
+- Log WHY model was/wasn't used (transparency)
+```python
+# Example: Calibration gate for LogReg model
+ece = evaluate_calibration(logreg_model, validation_data)
+if ece < config.calibration_gate.max_ece_threshold:
+    use_logreg = True   # Model is calibrated, use it
+else:
+    use_logreg = False  # Fall back to empirical
+    log.warning(f"LogReg ECE={ece:.3f} exceeds threshold, using empirical")
+```
+
+**3. Data-Agnostic Pipeline**
+- Pipeline should work regardless of data characteristics
+- Don't hard-code "use empirical because ECE=0.176"
+- Instead: "use empirical IF ECE > threshold"
+- Automatic adaptation when data quality changes
+
+### Model-Specific Guidelines
+
+**CTR Model - GOOD, No Changes**
+- Empirical segment CTRs with Bayesian shrinkage (k=30)
+- NO class_weight (destroys calibration with 0.037% positive rate)
+- Research-aligned: Facebook, Google use same approach
+
+**Empirical Win Rate Model - GOOD, No Changes**
+- Pure counting with Bayesian shrinkage
+- "By definition calibrated" - empirical rates are ground truth
+- ECE = 0.0143 (well-calibrated)
+
+**LogReg Win Rate Model - NEEDS CALIBRATION GATE**
+- Current: Hard-coded as "diagnostic only" (bad - data-specific)
+- Target: Build optimally, use calibration gate
+- Remove `class_weight='balanced'` (destroys calibration)
+- Add post-hoc calibration (isotonic regression)
+- Gate: use if ECE < 0.10, else fall back to empirical
+
+**Bid Landscape Model - USE FOR BOTH OBJECTIVES**
+- Currently: Built but not used in V5
+- Insight: Bid landscape is useful for BOTH volume and margin
+
+| Objective | Formula | What it does |
+|-----------|---------|--------------|
+| Margin | `argmax_b [(EV - b) × P(win|b)]` | Find bid that maximizes profit |
+| Volume | `argmin_b [b] s.t. P(win|b) >= target_wr` | Find LOWEST bid that achieves target WR |
+
+- Need: `find_bid_for_win_rate(segment, target_wr)` - inverse prediction
+- Current V5 heuristic is a proxy; bid landscape is the proper solution
+
+**NPI Value Model - ADD EXISTS TOGGLE**
+- drugs.com = always HCP targeting = 100% NPI coverage
+- Add `npi_exists: true` config flag
+- When false: Skip NPI processing entirely
+- When true: Load model, output multipliers
+- Bidder currently uses NPI for bid/no-bid only (multiplier logic not yet deployed)
+
+**V5 Bid Calculator - CONFIG-DRIVEN STRATEGY**
+- Strategies: "volume_first", "margin_optimize", "adaptive"
+- "adaptive" = per-segment automatic switching based on maturity
+- Config selects strategy, doesn't change implementation
+
+```yaml
+bidding:
+  strategy: "adaptive"  # or "volume_first", "margin_optimize"
+  adaptive_thresholds:
+    min_win_rate_for_margin: 0.55   # Switch when WR >= 55%
+    min_observations_for_margin: 100 # Need 100+ obs
+```
+
+### Research Alignment
+
+| Our Approach | Research Best Practice | Source |
+|--------------|----------------------|--------|
+| Empirical rates + shrinkage | Thompson Sampling, Empirical Bayes | Chapelle & Li 2011 |
+| No class_weight for CTR | Calibration literature | ALIGNED |
+| Asymmetric exploration | Exploration-exploitation | Multi-armed bandits |
+| NPI as request-time multiplier | Contextual bandit pattern | ALIGNED |
+
+**Key Papers:**
+- Thompson Sampling (Chapelle & Li 2011) - exploration
+- RTB Papers Collection (github.com/wnzhang/rtb-papers)
+- Optimal RTB (Zhang et al., KDD 2014) - bid landscape
+- RL for RTB (WSDM 2017) - future direction
+
+### Implementation Priorities
+
+**Priority 1: Calibration Gate for LogReg** (data-agnostic)
+- Files: `src/models/win_rate_model.py`, `src/config.py`
+- Remove class_weight, add isotonic calibration
+- Implement ECE threshold gate
+
+**Priority 2: Bid Landscape for Volume**
+- Files: `src/models/bid_landscape_model.py`, `src/bid_calculator_v5.py`
+- Add `find_bid_for_win_rate(segment, target_wr)` method
+- Use bid landscape to answer "what bid achieves target WR?"
+
+**Priority 3: Config-Driven Strategy Selection**
+- Files: `src/bid_calculator_v5.py`, `config/optimizer_config.yaml`
+- Add `bidding.strategy` config
+- Implement per-segment adaptive switching
+
+**Priority 4: NPI Exists Toggle**
+- Files: `src/config.py`, `run_optimizer.py`
+- Add `npi_exists` flag, skip processing when False
+- Set `npi_exists: true` for drugs.com
+
+### Future Work (User Interested)
+- RL-based bidding (MDP/CMDP approaches) - 7-17% improvement in literature
+- Exploration decay as segments mature
+- Multi-objective optimization (balance volume + margin)
+
+## V6 Review Fixes (January 22, 2026)
+
+### Issue 1: Tautological ECE Calibration (FIXED)
+**Severity:** HIGH - Calibration gate was meaningless
+
+**Problem:**
+- LogReg showed ECE ≈ 0 (passed gate)
+- But we fit isotonic regression on training data and evaluated on SAME data
+- Isotonic regression perfectly memorizes training → ECE = 0 (tautological)
+- Original raw ECE was 0.176 (the real calibration error)
+
+**Fix:** Use 5-fold cross-validation for ECE evaluation
+```python
+# In win_rate_model.py
+y_pred_cv = cross_val_predict(
+    IsotonicRegression(out_of_bounds='clip'),
+    y_pred_raw.reshape(-1, 1), y, cv=5, method='predict'
+)
+ece = _calculate_ece(y, y_pred_cv)
+```
+
+**Result:** ECE now shows realistic 0.0324 (still passes 0.10 threshold)
+
+### Issue 2: Bid Landscape Column Mismatch (FIXED)
+**Severity:** HIGH - Bid landscape model was not being used at all
+
+**Problem:**
+- Model trained on column `bid_value`
+- `predict_win_rate()` created row with hardcoded `bid_amount_cpm`
+- Mismatch caused exception → fell back to heuristic
+- All 1,454 segments used v5_* methods, NONE used v6_landscape_*
+
+**Fix:** Store and reuse bid column name
+```python
+# In bid_landscape_model.py
+def __init__(self, config):
+    self.bid_col: str = 'bid_amount_cpm'  # Store for predict
+
+def train(self, ..., bid_col='bid_amount_cpm'):
+    self.bid_col = bid_col  # Store for predict methods
+
+def predict_win_rate(self, bid_amount, segment_values):
+    row = {self.bid_col: bid_amount, **segment_values}  # Use stored name
+```
+
+**Result:** 432 segments (29.7%) now use `v6_landscape_volume` method
+
+### Issue 3: Guardrail Cliff Effect (FIXED)
+**Severity:** MEDIUM - Inconsistent bidding behavior
+
+**Problem:**
+- `max_negative_margin_pct=0.50` capped bids at 1.5×EV
+- But if 1.5×EV < floor ($3.00), cap was NOT applied
+- Created cliff: EV=$2.02 → bid=$3.03, but EV=$1.96 → bid=$12.50!
+
+**Fix:** Remove EV cap in volume_first mode
+```python
+# In bid_calculator_v5.py _apply_guardrails:
+if strategy == 'margin_optimize' and expected_value_cpm > 0:
+    # Only cap in margin mode
+    max_overpay = expected_value_cpm * (1.0 + self.config.business.max_negative_margin_pct)
+    if max_overpay >= min_bid:
+        max_bid = min(max_bid, max_overpay)
+# In volume_first mode, no EV cap - just use floor/ceiling
+```
+
+**Result:** Bid median increased from $7.25 to $22.68 (no artificial capping)
+
+### V6 Run Results (20260122_144800)
+**Method Distribution:**
+| Method | Count | Percentage |
+|--------|-------|------------|
+| v5_explore_low (1-9 obs) | 633 | 43.5% |
+| v5_explore_medium (10-49 obs) | 389 | 26.8% |
+| v6_landscape_volume (50+ obs) | 432 | 29.7% |
+
+**Bid Distribution:**
+- Bid median: $22.68 (was $7.25)
+- Bid range: $3.06 - $30.00
+- 100% natural bids (no floor/ceiling clipping)
+- 95.7% segments bid UP (global WR 30% < target 65%)
+
+**Model Calibration:**
+- LogReg ECE: 0.0324 (passes 0.10 threshold)
+- Empirical ECE: 0.0143 (well-calibrated)
+- Bid landscape coefficient: positive (correct direction)
+
+### Config Simplification Note
+During review, identified that too many interacting configs can cause issues:
+- `max_negative_margin_pct` - Now only applies in margin_optimize mode
+- `exploration_bonus_*` (three tiers) - Could consolidate into formula
+- Keep configs to minimum needed; avoid micromanaging the model
+
+## Key Learnings (January 22, 2026 - Model Review Session)
+
+### Auction Type: First-Price
+- We pay what we bid (no second-price discount)
+- Bid shading is critical — bid landscape model is essential
+- Need to find market clearing price, not bid true value
+
+### Production State
+- Production currently runs intermediate model with bid variation (not flat $7.50)
+- This is why we have varied bid data to learn from
+- V5/V6 optimizer output not yet deployed
+
+### Data Quality for Bid Landscape
+```
+Loss records: 205,434
+Date range: Dec 10, 2025 → Jan 22, 2026 (43 days)
+Win rate: 29.9%
+Weekly volume: 17K-55K losses/week
+```
+**Conclusion:** Sufficient data to train bid landscape model reliably.
+
+### Revenue is DEMAND-SIDE Signal (Critical Insight)
+**Problem:** Revenue = Click × Campaign_Payout
+- Campaign_Payout is controlled by advertisers (demand side)
+- Same NPI clicking generates different revenue depending on which campaign was active
+- Revenue is CONFOUNDED — doesn't purely measure NPI value
+
+**Recommendation:** Use **click COUNT** to value NPIs, not revenue.
+- Click count = "Does this NPI engage?" (pure supply-side signal)
+- Stable across campaign changes
+- Revenue makes NPI valuations dependent on advertiser behavior we don't control
+
+### Auto-Switch NOT Enabled (Config Issue)
+Current config:
+```yaml
+bidding:
+  strategy: "volume_first"  # NOT adaptive!
+```
+
+To enable auto-switch per-segment:
+```yaml
+bidding:
+  strategy: "adaptive"
+```
+
+**Decision:** Keep as volume_first for now. We're at 30% WR, far from 65% target. Enable adaptive later when we're closer to target.
+
+### Optimization Frequency Recommendation
+**Daily or every 2-3 days** during learning phase.
+- Market conditions change (campaigns start/end)
+- Faster iteration = faster learning
+- 43 days of loss data is already sufficient
+- Weekly is too slow for exploration phase
+
+### Win/Loss Data Model
+- `bid` record = outbound bid (win or loss)
+- `view` record = ad was served = WON
+- Join: `bid.log_txnid` → `view.log_txnid`
+- Bid with matching view = WON
+- Bid without matching view = LOST
+
+## V7: Supply-Side Signals (January 22, 2026)
+
+### Key Insight: Demand vs Supply Side Signals
+**Problem:** Revenue-based signals (RPU, avg_cpc) are DEMAND-SIDE confounded.
+- Revenue = Click × Campaign_Payout
+- Campaign_Payout depends on which advertisers were bidding (demand side)
+- Same NPI clicking generates different revenue depending on active campaigns
+- This makes revenue-based valuations unstable and outside our control
+
+**Solution:** Use supply-side signals that measure USER behavior, not advertiser behavior.
+
+### Changes Made
+
+**1. NPI Model: Click COUNT instead of RPU**
+- Before: Tiers based on revenue per user (RPU)
+- After: Tiers based on click COUNT (number of times NPI clicked)
+- Click count measures "does this NPI engage?" — pure supply-side signal
+- File: `src/models/npi_value_model.py`
+
+**2. EV Calculation: Reporting Only in Volume-First Mode**
+- In volume_first mode, EV doesn't affect bidding (only WR gap does)
+- EV kept for profitability metrics/monitoring
+- Added `ev_used_for_bidding` flag to track when EV affects bids
+- File: `src/bid_calculator_v5.py`
+
+**3. Adaptive Strategy Enabled**
+- Changed from `strategy: "volume_first"` to `strategy: "adaptive"`
+- At 30% WR, all segments stay in volume_first mode (threshold is 55%)
+- As segments mature (WR >= 55%, obs >= 100), they auto-switch to margin_optimize
+- File: `config/optimizer_config.yaml`
+
+### Optimization Cadence
+**Production cadence: DAILY**
+- Market conditions change (campaigns start/end, competition shifts)
+- Faster iteration = faster learning during exploration phase
+- 43+ days of loss data provides sufficient signal for bid landscape
+
+### V7 Verification Results (Run 20260122_154734)
+```
+Bid method distribution:
+  v5_explore_low: 633 (43.5%)
+  v6_landscape_volume: 404 (27.8%)
+  v5_explore_medium: 389 (26.8%)
+  v6_landscape_margin: 28 (1.9%)  ← Adaptive auto-switched!
+
+NPI tiers (by click COUNT):
+  Tier1 (>=6 clicks): 788 (1.2%) → 2.5x
+  Tier2 (>=3 clicks): 5,561 (8.6%) → 1.8x
+  Tier3 (>=2 clicks): 10,653 (16.4%) → 1.3x
+  Tier4 (rest): 47,781 (73.8%) → 1.0x
+
+Strategy distribution:
+  volume_first: 1,426 (98.1%)
+  margin_optimize: 28 (1.9%)  ← Mature segments auto-switched
+```
 
 ## Virtual Environment
 - Located at `./venv/`

@@ -22,6 +22,43 @@ import yaml
 
 
 @dataclass
+class BiddingStrategy:
+    """
+    Bidding strategy configuration.
+
+    V6: Config-driven strategy selection.
+    Models are built optimally, config selects WHICH strategy to use.
+    """
+    # Strategy selection: volume_first, margin_optimize, adaptive
+    strategy: str = "volume_first"
+
+    # Adaptive thresholds (for per-segment switching when strategy="adaptive")
+    min_win_rate_for_margin: float = 0.55  # Switch to margin when WR >= 55%
+    min_observations_for_margin: int = 100  # Need 100+ obs to trust margin optimization
+
+    # Volume-first settings (used when strategy="volume_first" or adaptive segment is learning)
+    use_bid_landscape_for_volume: bool = True  # Use bid landscape to find target WR bid
+
+    # Margin optimization settings (used when strategy="margin_optimize" or adaptive segment is mature)
+    min_margin_pct: float = 0.20  # Target 20% margin
+
+
+@dataclass
+class CalibrationGate:
+    """
+    Runtime calibration gate settings.
+
+    Models are built optimally, then gated at runtime based on calibration quality.
+    If a model's ECE exceeds threshold, fall back to simpler model.
+
+    This makes the pipeline data-agnostic - no hard-coding "don't use model X".
+    """
+    max_ece_threshold: float = 0.10  # ECE must be < 10% to use model
+    min_observations_for_eval: int = 1000  # Need enough data to evaluate calibration
+    log_gate_decisions: bool = True  # Log why model was/wasn't used
+
+
+@dataclass
 class BusinessControls:
     """
     Controls exposed to business/product team.
@@ -43,6 +80,7 @@ class BusinessControls:
 
     # V5: NPI integration (updated for click data)
     use_npi_value: bool = True            # Enable NPI-based bid multipliers
+    npi_exists: bool = True               # True for HCP targeting (drugs.com), False for non-HCP
     npi_data_path: Optional[str] = None   # Legacy: single NPI file (deprecated)
     npi_1year_path: Optional[str] = None  # Path to 1-year NPI click data
     npi_20day_path: Optional[str] = None  # Path to 20-day NPI click data (recency)
@@ -150,6 +188,8 @@ class OptimizerConfig:
     business: BusinessControls = field(default_factory=BusinessControls)
     technical: TechnicalControls = field(default_factory=TechnicalControls)
     features: FeatureConfig = field(default_factory=FeatureConfig)
+    calibration_gate: CalibrationGate = field(default_factory=CalibrationGate)
+    bidding: BiddingStrategy = field(default_factory=BiddingStrategy)
 
     @classmethod
     def from_yaml(cls, path: str) -> 'OptimizerConfig':
@@ -160,11 +200,15 @@ class OptimizerConfig:
         business_data = data.get('business', {})
         technical_data = data.get('technical', {})
         features_data = data.get('features', {})
+        calibration_gate_data = data.get('calibration_gate', {})
+        bidding_data = data.get('bidding', {})
 
         return cls(
             business=BusinessControls(**business_data) if business_data else BusinessControls(),
             technical=TechnicalControls(**technical_data) if technical_data else TechnicalControls(),
-            features=FeatureConfig(**features_data) if features_data else FeatureConfig()
+            features=FeatureConfig(**features_data) if features_data else FeatureConfig(),
+            calibration_gate=CalibrationGate(**calibration_gate_data) if calibration_gate_data else CalibrationGate(),
+            bidding=BiddingStrategy(**bidding_data) if bidding_data else BiddingStrategy()
         )
 
     def to_yaml(self, path: str) -> None:

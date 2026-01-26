@@ -2,21 +2,24 @@
 NPI Value Model: Maps National Provider Identifiers to bid multipliers.
 
 V5 Addition: Use NPI data to adjust bids for high-value prescribers.
+V7 Update: Tier by click COUNT instead of RPU (revenue).
+           RPU is demand-side confounded (depends on which campaigns ran).
+           Click count is supply-side (measures NPI engagement behavior).
 
 The external_userid field contains NPI numbers. This model:
-1. Loads NPI click/revenue data from CSV files
-2. Assigns tiers based on revenue percentiles
+1. Loads NPI click data from CSV files
+2. Assigns tiers based on click COUNT percentiles (supply-side signal)
 3. Applies recency boost for recent clickers
 4. Returns bid multipliers (up to 3.0x for top prescribers)
 
 Data sources:
-- 1-year click data: Historical RPU (revenue per user)
+- 1-year click data: Historical click count per NPI
 - 20-day click data: Recent activity signal
 
-Tier definitions (percentile-based on 1-year RPU):
-- Tier 1 (Elite): Top 1% (RPU > $72) → 2.5x base
-- Tier 2 (High): Top 5% (RPU > $32) → 1.8x base
-- Tier 3 (Medium): Top 20% (RPU > $12) → 1.3x base
+Tier definitions (percentile-based on 1-year click COUNT):
+- Tier 1 (Elite): Top 1% by clicks → 2.5x base
+- Tier 2 (High): Top 5% by clicks → 1.8x base
+- Tier 3 (Medium): Top 20% by clicks → 1.3x base
 - Tier 4 (Standard): Rest → 1.0x base
 
 Recency boost: +20% if NPI clicked in last 20 days
@@ -56,7 +59,7 @@ class NPIValueModel:
         self.load_stats: Dict = {}
         self.max_multiplier = max_multiplier
         self.recency_boost = recency_boost
-        self.percentile_thresholds: Dict[int, float] = {}  # tier -> RPU threshold
+        self.percentile_thresholds: Dict[int, int] = {}  # tier -> click count threshold
 
     @classmethod
     def from_csv(cls, path: str) -> 'NPIValueModel':
@@ -111,7 +114,10 @@ class NPIValueModel:
         recency_boost: float = 1.2
     ) -> 'NPIValueModel':
         """
-        Load NPI profiles from click/revenue data files.
+        Load NPI profiles from click data files.
+
+        V7: Tiers by click COUNT (supply-side), not RPU (demand-side).
+        Click count measures NPI engagement behavior, independent of campaign payouts.
 
         Args:
             path_1year: Path to 1-year click data CSV (external_userid, rpu, count)
@@ -120,7 +126,7 @@ class NPIValueModel:
             recency_boost: Boost factor for recent clickers (default 1.2 = +20%)
 
         Returns:
-            Initialized NPIValueModel with tier assignments
+            Initialized NPIValueModel with tier assignments based on click count
         """
         model = cls(max_multiplier=max_multiplier, recency_boost=recency_boost)
 
@@ -142,26 +148,27 @@ class NPIValueModel:
 
             # Load 20-day data for recency
             recent_npis = set()
-            recent_rpu = {}
+            recent_counts = {}
             if path_20day:
                 path_20d = Path(path_20day)
                 if path_20d.exists():
                     df_20d = pd.read_csv(path_20d)
                     df_20d['external_userid'] = df_20d['external_userid'].astype(str)
                     recent_npis = set(df_20d['external_userid'])
-                    recent_rpu = dict(zip(df_20d['external_userid'], df_20d['rpu']))
+                    recent_counts = dict(zip(df_20d['external_userid'], df_20d['count']))
                     print(f"    Recent clickers (20-day): {len(recent_npis):,}")
 
-            # Calculate percentile thresholds from 1-year RPU
-            rpu_values = df_1y['rpu'].values
+            # V7: Calculate percentile thresholds from click COUNT (supply-side signal)
+            # NOT from RPU which is demand-side confounded
+            click_counts = df_1y['count'].values
             model.percentile_thresholds = {
-                1: np.percentile(rpu_values, 99),   # Top 1%
-                2: np.percentile(rpu_values, 95),   # Top 5%
-                3: np.percentile(rpu_values, 80),   # Top 20%
+                1: int(np.percentile(click_counts, 99)),   # Top 1% by clicks
+                2: int(np.percentile(click_counts, 95)),   # Top 5% by clicks
+                3: int(np.percentile(click_counts, 80)),   # Top 20% by clicks
             }
-            print(f"    RPU thresholds: Tier1>${model.percentile_thresholds[1]:.2f}, "
-                  f"Tier2>${model.percentile_thresholds[2]:.2f}, "
-                  f"Tier3>${model.percentile_thresholds[3]:.2f}")
+            print(f"    Click count thresholds: Tier1>={model.percentile_thresholds[1]}, "
+                  f"Tier2>={model.percentile_thresholds[2]}, "
+                  f"Tier3>={model.percentile_thresholds[3]}")
 
             # Assign tiers and build profiles
             tier_counts = {1: 0, 2: 0, 3: 0, 4: 0}
@@ -169,14 +176,14 @@ class NPIValueModel:
 
             for _, row in df_1y.iterrows():
                 npi = row['external_userid']
-                rpu_1y = float(row['rpu'])
+                click_count_1y = int(row['count'])
 
-                # Assign tier based on RPU percentile
-                if rpu_1y >= model.percentile_thresholds[1]:
+                # V7: Assign tier based on click COUNT percentile (supply-side)
+                if click_count_1y >= model.percentile_thresholds[1]:
                     tier = 1
-                elif rpu_1y >= model.percentile_thresholds[2]:
+                elif click_count_1y >= model.percentile_thresholds[2]:
                     tier = 2
-                elif rpu_1y >= model.percentile_thresholds[3]:
+                elif click_count_1y >= model.percentile_thresholds[3]:
                     tier = 3
                 else:
                     tier = 4
@@ -197,8 +204,8 @@ class NPIValueModel:
 
                 model.profiles[npi] = {
                     'tier': tier,
-                    'rpu_1year': rpu_1y,
-                    'rpu_20day': recent_rpu.get(npi),
+                    'click_count_1year': click_count_1y,
+                    'click_count_20day': recent_counts.get(npi),
                     'is_recent': is_recent,
                     'multiplier': round(final_mult, 2),
                 }
@@ -211,9 +218,10 @@ class NPIValueModel:
                 'total_npis': len(model.profiles),
                 'tier_counts': tier_counts,
                 'recent_clickers': recency_count,
-                'percentile_thresholds': {k: round(v, 2) for k, v in model.percentile_thresholds.items()},
+                'percentile_thresholds': model.percentile_thresholds,
                 'max_multiplier': max_multiplier,
                 'recency_boost': recency_boost,
+                'tiering_signal': 'click_count',  # V7: Document we use click count
             }
 
             print(f"    Tier distribution: {tier_counts}")
@@ -312,8 +320,10 @@ class NPIValueModel:
         """
         Get all NPI profiles as a DataFrame for export.
 
+        V7: Exports click_count instead of rpu (supply-side signal).
+
         Returns:
-            DataFrame with columns: external_userid, multiplier, tier, is_recent, rpu_1year, rpu_20day
+            DataFrame with columns: external_userid, multiplier, tier, is_recent, click_count_1year, click_count_20day
         """
         if not self.is_loaded or not self.profiles:
             return pd.DataFrame()
@@ -325,8 +335,8 @@ class NPIValueModel:
                 'multiplier': profile.get('multiplier', 1.0),
                 'tier': profile.get('tier', 4),
                 'is_recent': profile.get('is_recent', False),
-                'rpu_1year': profile.get('rpu_1year', 0),
-                'rpu_20day': profile.get('rpu_20day'),
+                'click_count_1year': profile.get('click_count_1year', 0),
+                'click_count_20day': profile.get('click_count_20day'),
             })
 
         df = pd.DataFrame(rows)

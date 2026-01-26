@@ -38,6 +38,7 @@ from src.feature_selector import FeatureSelector
 from src.models.win_rate_model import WinRateModel  # For diagnostics comparison
 from src.models.empirical_win_rate_model import EmpiricalWinRateModel
 from src.models.ctr_model import CTRModel
+from src.models.bid_landscape_model import BidLandscapeModel  # V6: For volume/margin
 from src.models.npi_value_model import NPIValueModel  # V5: New
 from src.bid_calculator_v5 import VolumeFirstBidCalculator  # V5: New
 from src.memcache_builder import MemcacheBuilder
@@ -145,9 +146,28 @@ def main():
     ctr_model.train(df_train_ctr, selected_features, target='clicked')
     print(f"  CTR model: global_ctr={ctr_model.training_stats['global_ctr']:.4%}")
 
-    # V5: Load NPI model if configured
+    # V6: Bid landscape model (for volume/margin optimization)
+    bid_landscape_model = None
+    if config.bidding.use_bid_landscape_for_volume or config.bidding.strategy in ['margin_optimize', 'adaptive']:
+        print(f"\n  Training bid landscape model...")
+        bid_landscape_model = BidLandscapeModel(config)
+        try:
+            bid_landscape_model.train(df_train_wr, selected_features, bid_col='bid_value', target='won')
+            if bid_landscape_model.is_valid():
+                print(f"  Bid landscape: VALID (coefficient={bid_landscape_model.bid_coefficient:.4f})")
+            else:
+                print(f"  Bid landscape: INVALID (negative coefficient - will use heuristics)")
+        except Exception as e:
+            print(f"  Bid landscape: FAILED ({str(e)}) - will use heuristics")
+            bid_landscape_model = None
+
+    # V6: Load NPI model if configured AND NPI exists in data
     npi_model = None
-    if config.business.use_npi_value and config.business.npi_1year_path:
+    if not config.business.npi_exists:
+        print(f"\n  NPI model: disabled (npi_exists=False - non-HCP targeting)")
+    elif not config.business.use_npi_value:
+        print(f"\n  NPI model: disabled (use_npi_value=False)")
+    elif config.business.npi_1year_path:
         print(f"\n  Loading NPI value model from click data...")
         npi_model = NPIValueModel.from_click_data(
             path_1year=config.business.npi_1year_path,
@@ -155,7 +175,7 @@ def main():
             max_multiplier=config.business.npi_max_multiplier,
             recency_boost=config.business.npi_recency_boost
         )
-    elif config.business.use_npi_value and config.business.npi_data_path:
+    elif config.business.npi_data_path:
         # Legacy: single file format
         print(f"\n  Loading NPI value model (legacy format)...")
         npi_model = NPIValueModel.from_csv(config.business.npi_data_path)
@@ -165,12 +185,13 @@ def main():
     # Step 5: Calculate bids
     print(f"\n[5/8] Calculating V5 bids (asymmetric exploration)...")
 
-    # V5: VolumeFirstBidCalculator with asymmetric exploration
+    # V6: VolumeFirstBidCalculator with asymmetric exploration + optional bid landscape
     bid_calculator = VolumeFirstBidCalculator(
         config=config,
         ctr_model=ctr_model,
         empirical_win_rate_model=empirical_win_rate_model,
         npi_model=npi_model,
+        bid_landscape_model=bid_landscape_model,
         global_stats=global_stats
     )
     bid_calculator.set_average_cpc(df_clicks)
