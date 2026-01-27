@@ -223,15 +223,14 @@ class MemcacheBuilder:
         output_dir: Path,
         timestamp: str = None
     ) -> Path:
-        """Write memcache to TSV file."""
+        """Write suggested bids to CSV file."""
         if timestamp is None:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
-        filename = f'memcache_{timestamp}.csv'
+        filename = f'suggested_bids_{timestamp}.csv'
         filepath = output_dir / filename
 
-        # Write as tab-separated
-        df.to_csv(filepath, sep='\t', index=False)
+        df.to_csv(filepath, index=False)
 
         return filepath
 
@@ -385,12 +384,13 @@ class MemcacheBuilder:
         npi_model,
         output_dir: Path,
         timestamp: str = None
-    ) -> Path:
+    ) -> tuple:
         """
-        Write NPI multiplier cache for bidder lookup.
+        Write NPI files: multipliers (production) and summary (analysis).
 
-        Output format:
-            external_userid,multiplier,tier,is_recent,rpu_1year,rpu_20day
+        Creates two files:
+        1. npi_multipliers_*.csv - Production file with only external_userid, multiplier
+        2. npi_summary_*.csv - Analysis file with all columns (tier, is_recent, etc.)
 
         Args:
             npi_model: NPIValueModel instance
@@ -398,7 +398,7 @@ class MemcacheBuilder:
             timestamp: Optional timestamp string
 
         Returns:
-            Path to written CSV file
+            Tuple of (multipliers_path, summary_path)
         """
         if timestamp is None:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -408,18 +408,23 @@ class MemcacheBuilder:
 
         if df.empty:
             print("    WARNING: No NPI profiles to export")
-            return None
+            return None, None
 
-        filename = f'npi_multipliers_{timestamp}.csv'
-        filepath = output_dir / filename
+        # 1. Write production file (only external_userid and multiplier)
+        multipliers_filename = f'npi_multipliers_{timestamp}.csv'
+        multipliers_filepath = output_dir / multipliers_filename
+        df[['external_userid', 'multiplier']].to_csv(multipliers_filepath, index=False)
 
-        df.to_csv(filepath, index=False)
+        # 2. Write analysis file (all columns)
+        summary_filename = f'npi_summary_{timestamp}.csv'
+        summary_filepath = output_dir / summary_filename
+        df.to_csv(summary_filepath, index=False)
 
         # Print summary
         tier_counts = df['tier'].value_counts().sort_index()
         recent_count = df['is_recent'].sum()
 
-        print(f"\n  NPI Cache Summary:")
+        print(f"\n  NPI Output:")
         print(f"    Total NPIs: {len(df):,}")
         for tier in sorted(tier_counts.index):
             print(f"    Tier {tier}: {tier_counts[tier]:,} ({tier_counts[tier]/len(df)*100:.1f}%)")
@@ -427,4 +432,4 @@ class MemcacheBuilder:
         print(f"    Multiplier range: {df['multiplier'].min():.2f}x - {df['multiplier'].max():.2f}x")
         print(f"    Avg multiplier: {df['multiplier'].mean():.2f}x")
 
-        return filepath
+        return multipliers_filepath, summary_filepath

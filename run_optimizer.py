@@ -196,23 +196,24 @@ def main():
     # Step 6: Build outputs
     print(f"\n[6/8] Building outputs...")
     memcache_builder = MemcacheBuilder(config, v5_mode=True)
-    df_memcache = memcache_builder.build_memcache(bid_results, selected_features)
-    memcache_path = memcache_builder.write_memcache(df_memcache, output_dir, run_id)
+    df_bids = memcache_builder.build_memcache(bid_results, selected_features)
+    suggested_bids_path = memcache_builder.write_memcache(df_bids, output_dir, run_id)
 
     df_analysis = memcache_builder.build_segment_analysis(bid_results, selected_features)
     analysis_path = memcache_builder.write_segment_analysis(df_analysis, output_dir, run_id)
 
-    npi_cache_path = None
+    npi_multipliers_path, npi_summary_path = None, None
     if npi_model and npi_model.is_loaded:
-        npi_cache_path = memcache_builder.write_npi_cache(npi_model, output_dir, run_id)
+        npi_multipliers_path, npi_summary_path = memcache_builder.write_npi_cache(npi_model, output_dir, run_id)
 
     df_bid_summary = memcache_builder.build_bid_summary(bid_results, selected_features)
     bid_summary_path = memcache_builder.write_bid_summary(df_bid_summary, output_dir, run_id)
 
-    print(f"  Memcache: {memcache_path.name} ({len(df_memcache):,} segments)")
+    print(f"  Suggested bids: {suggested_bids_path.name} ({len(df_bids):,} segments)")
     print(f"  Analysis: {analysis_path.name}")
-    if npi_cache_path:
-        print(f"  NPI cache: {npi_cache_path.name}")
+    if npi_multipliers_path:
+        print(f"  NPI multipliers: {npi_multipliers_path.name}")
+        print(f"  NPI summary: {npi_summary_path.name}")
 
     # Step 7: Metrics
     print(f"\n[7/8] Generating metrics...")
@@ -225,7 +226,7 @@ def main():
         empirical_win_rate_model=empirical_win_rate_model,
         ctr_model=ctr_model,
         bid_results=bid_results,
-        memcache_path=memcache_path,
+        memcache_path=suggested_bids_path,
         memcache_builder=memcache_builder,
         df_train_wr=df_train_wr,
         df_train_ctr=df_train_ctr,

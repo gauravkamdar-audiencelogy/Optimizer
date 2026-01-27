@@ -116,13 +116,14 @@ Each run creates a timestamped folder (e.g., `output_drugs/20260127_143000/`):
 
 | File | Purpose |
 |------|---------|
-| `memcache_*.csv` | **Production**: segment features + bid (load into bidder) |
+| `suggested_bids_*.csv` | **Production**: segment features + bid (load into bidder) |
 | `npi_multipliers_*.csv` | **Production**: NPI → multiplier lookup (drugs.com only) |
+| `npi_summary_*.csv` | Analysis: full NPI details (tier, recency, etc.) |
 | `segment_analysis_*.csv` | Analysis: full segment metadata |
 | `bid_summary_*.csv` | Analysis: tiered bucket overview |
 | `metrics_*.json` | Diagnostics: model calibration, distributions |
 
-### Memcache Format
+### Suggested Bids Format
 ```csv
 internal_adspace_id,geo_region_name,os_code,suggested_bid_cpm
 111563,California,8,19.20
@@ -131,9 +132,9 @@ internal_adspace_id,geo_region_name,os_code,suggested_bid_cpm
 
 ### NPI Multipliers Format (drugs.com only)
 ```csv
-external_userid,multiplier,tier,is_recent
-1234567890,2.5,1,True
-9876543210,1.0,4,False
+external_userid,multiplier
+1234567890,2.5
+9876543210,1.0
 ```
 
 ## Configuration
