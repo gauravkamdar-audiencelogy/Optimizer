@@ -1,128 +1,60 @@
-# V9 Configuration: nativo_consumer Dataset
-# optimizer_config_nativo_consumer.yaml
-#
-# Dataset: nativo_consumer (Consumer targeting, no NPI data, HAS floor prices)
-#
-# V9 Philosophy:
-# - Separate config per dataset for clean parameter management
-# - Dataset-specific settings: npi_exists=false, floor_available=true
-#
-# V8 Philosophy (retained):
-# - Priority is DATA COLLECTION, not margin optimization
-# - Losing segments → Bid HIGHER to learn ceiling
-# - Winning segments → Bid LOWER to find floor
-# - Target: 65% win rate to learn the full bid landscape
-# - Include ALL segments (no min_observations filter)
-# - Config-driven exploration aggressiveness (gradual vs aggressive)
+# Optimizer Config: nativo_consumer (Consumer Targeting)
+# ======================================================
+# Run: python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml
 
-# ============================================================================
-# DATASET CONFIGURATION (V9)
-# ============================================================================
 dataset:
-  name: "nativo_consumer"  # Determines data_dir (data_nativo_consumer/) and output_dir (output_nativo_consumer/)
+  name: "nativo_consumer"  # → data_nativo_consumer/, output_nativo_consumer/
 
-# ============================================================================
-# BUSINESS CONTROLS (V5)
-# ============================================================================
+# -----------------------------------------------------------------------------
+# WHAT TO CHANGE REGULARLY
+# -----------------------------------------------------------------------------
 business:
-  # Target margin (bid shading) - used as fallback
-  target_margin: 0.30
-
-  # V5: Higher target win rate for volume (was 0.50)
   target_win_rate: 0.65
-
-  # Win rate sensitivity (for non-exploration mode)
-  win_rate_sensitivity: 0.5
-
-  # V5: Exploration mode - asymmetric bid adjustment
   exploration_mode: true
 
-  # V5: Asymmetric exploration multipliers
-  # Under-winning (WR < target) → bid UP
-  # Over-winning (WR > target) → bid DOWN
-  exploration_up_multiplier: 1.3    # Aggressive on losers
-  exploration_down_multiplier: 0.7  # Cautious on winners
-
-  # V5: Accept negative margin during learning phase
-  accept_negative_margin: true
-  max_negative_margin_pct: 0.50  # Cap at 50% overpay (bid up to 1.5x EV)
-
-  # V9: NPI disabled for consumer targeting (no HCP data)
-  use_npi_value: false
-  npi_exists: false          # False for consumer targeting (no NPI in bid requests)
-  npi_1year_path: null
-  npi_20day_path: null
-  npi_max_multiplier: 1.0    # No NPI multiplier
-  npi_recency_boost: 1.0     # No recency boost
-
-# ============================================================================
-# TECHNICAL CONTROLS (V5)
-# ============================================================================
 technical:
-  # Bid price bounds (CPM)
-  min_bid_cpm: 0.50          # Lower floor for consumer inventory
-  max_bid_cpm: 30.00         # V8: Fallback; actual max comes from active exploration preset
-  default_bid_cpm: 5.00      # Lower default for consumer inventory
+  aggressive_exploration: false
+  min_bid_cpm: 0.50            # Lower floor for consumer inventory
+  max_bid_cpm: 20.00
 
-  # V9: Floor price handling - ENABLED for nativo_consumer
-  # Floor is in bid_amount column, represents minimum price to win
-  floor_available: true
+bidding:
+  strategy: "adaptive"
 
-  # V5: Tiered observation thresholds (instead of binary filter)
-  min_observations: 1              # V5: Include ALL segments (was 100!)
-  min_observations_for_empirical: 10   # Use empirical WR with 10+ obs
-  min_observations_for_landscape: 50   # Use landscape model with 50+ obs
+data:
+  min_bid_date: "2025-11-01"
+  min_view_date: "2025-11-01"
 
-  # Feature selection
-  max_features: 3
+# -----------------------------------------------------------------------------
+# NPI SETTINGS (nativo_consumer = consumer targeting = NO NPI data)
+# -----------------------------------------------------------------------------
+npi:
+  enabled: false
 
-  # Model shrinkage
-  ctr_shrinkage_k: 30
-  win_rate_shrinkage_k: 30
-
-  # Soft exclusion thresholds (algorithm uses these to auto-exclude)
-  min_signal_score: 50.0
-  min_coverage_at_threshold: 0.5
-  max_null_pct: 30.0
-
-  # Effective cardinality filter (prevents dominated features)
-  min_effective_cardinality: 2
-  effective_cardinality_min_share: 0.05
-
-  # V5: WIDER adjustment bounds for exploration (base - overridden by preset)
-  min_win_rate_adjustment: 0.6   # V5: Lowered (was 0.8)
-
-  # V8: Exploration aggressiveness toggle
-  # true = aggressive (larger bid increases, faster learning, higher risk)
-  # false = gradual (smaller bid increases, slower learning, lower risk)
-  aggressive_exploration: false  # Default to gradual
-
-  # V8: Aggressive mode settings
+# -----------------------------------------------------------------------------
+# EXPLORATION PRESETS
+# -----------------------------------------------------------------------------
+exploration_presets:
   aggressive:
-    exploration_bonus_zero_obs: 0.50   # +50% for unknown segments
-    exploration_bonus_low_obs: 0.35    # +35% for 1-9 observations
-    exploration_bonus_medium_obs: 0.15 # +15% for 10-49 observations
-    max_win_rate_adjustment: 1.8       # Up to 1.8x base bid
-    max_bid_cpm: 30.00                 # Hard ceiling
+    bonus_zero_obs: 0.50
+    bonus_low_obs: 0.35
+    bonus_medium_obs: 0.15
+    max_adjustment: 1.8
+    max_bid_cpm: 30.00
 
-  # V8: Gradual mode settings (used when aggressive_exploration: false)
   gradual:
-    exploration_bonus_zero_obs: 0.25   # +25% (half of aggressive)
-    exploration_bonus_low_obs: 0.15    # +15% (half of aggressive)
-    exploration_bonus_medium_obs: 0.08 # +8% (half of aggressive)
-    max_win_rate_adjustment: 1.4       # Up to 1.4x base bid
-    max_bid_cpm: 20.00                 # Lower ceiling
+    bonus_zero_obs: 0.25
+    bonus_low_obs: 0.15
+    bonus_medium_obs: 0.08
+    max_adjustment: 1.4
+    max_bid_cpm: 20.00
 
-# ============================================================================
-# FEATURE CONFIGURATION (V5)
-# ============================================================================
+# -----------------------------------------------------------------------------
+# FEATURES
+# -----------------------------------------------------------------------------
 features:
-  # Anchor features - always included
-  anchor_features:
-    - internal_adspace_id
+  anchor: [internal_adspace_id]
 
-  # Candidate features - let algorithm decide
-  candidate_features:
+  candidates:
     - internal_adspace_id
     - geo_region_name
     - geo_country_code2
@@ -132,63 +64,29 @@ features:
     - hour_of_day
     - day_of_week
     - media_type
-    - make_id
-    - model_id
-    - carrier_code
 
-  # V5: HARD exclusions only - technical/structural reasons
-  hard_exclude_features:
-    - geo_postal_code      # Too sparse
-    - geo_city_name        # Too sparse
-    - log_txnid            # Technical: join key
-    - internal_txn_id      # Technical: join key
-    - log_dt               # Technical: timestamp
-    - ref_bundle           # URL field - too sparse
-    - ua                   # User agent string - too sparse
+  exclude:
+    - geo_postal_code
+    - geo_city_name
+    - log_txnid
+    - internal_txn_id
+    - log_dt
+    - ref_bundle              # URL field - too sparse
+    - ua                      # User agent - too sparse
 
-# ============================================================================
-# BIDDING STRATEGY (V6: Config-driven strategy selection)
-# ============================================================================
-# Strategy options: volume_first, margin_optimize, adaptive
-# Config selects which strategy to use; models are built optimally.
-#
-# NOTE: Optimizer should be run DAILY during learning phase.
-# Market conditions change frequently; faster iteration = faster learning.
-bidding:
-  strategy: "adaptive"             # V7: Auto-switch when segments mature (WR>=55%, obs>=100)
-
-  # Adaptive thresholds (used when strategy="adaptive")
-  min_win_rate_for_margin: 0.55    # Switch to margin when segment WR >= 55%
-  min_observations_for_margin: 100 # Need 100+ obs for margin optimization
-
-  # Volume-first settings
-  use_bid_landscape_for_volume: true  # Use P(win|bid) to find target WR bid
-
-  # Margin optimization settings
-  min_margin_pct: 0.20             # Target 20% margin when optimizing
-
-# ============================================================================
-# CALIBRATION GATE (V6: Data-agnostic model selection)
-# ============================================================================
-# Models are built optimally, then gated at runtime based on calibration quality.
-# If a model's ECE exceeds threshold, automatically fall back to simpler model.
-calibration_gate:
-  max_ece_threshold: 0.10          # ECE must be < 10% to use LogReg model
-  min_observations_for_eval: 1000  # Need enough data to evaluate calibration
-  log_gate_decisions: true         # Log why model was/wasn't used
-
-# ============================================================================
-# DATA CONFIGURATION
-# ============================================================================
-data:
-  # Primary combined data file (auto-detected by data_loader)
-  # V9: Filename derived from dataset.name: data_{name}.csv
-  combined_file: "data_nativo_consumer.csv"
-
-  # Date filters (adjust based on data availability)
-  min_bid_date: "2025-11-01"
-  min_view_date: "2025-11-01"
-
-  # Data quality options
-  remove_zero_bids: true
-  deduplicate_views: true
+# -----------------------------------------------------------------------------
+# ADVANCED
+# -----------------------------------------------------------------------------
+advanced:
+  min_observations: 1
+  min_observations_for_empirical: 10
+  min_observations_for_landscape: 50
+  min_win_rate_for_margin: 0.55
+  min_observations_for_margin: 100
+  shrinkage_k: 30
+  calibration_ece_threshold: 0.10
+  min_signal_score: 50.0
+  max_features: 3
+  default_bid_cpm: 5.00        # Lower default for consumer inventory
+  floor_available: true        # Nativo has floor prices
+  target_margin: 0.30

@@ -1,194 +1,104 @@
-# V9 Configuration: drugs.com Dataset
-# optimizer_config_drugs.yaml
-#
-# Dataset: drugs (HCP targeting with NPI data, no floor prices)
-#
-# V9 Philosophy:
-# - Separate config per dataset for clean parameter management
-# - Dataset-specific settings: npi_exists=true, floor_available=false
-#
-# V8 Philosophy (retained):
-# - Priority is DATA COLLECTION, not margin optimization
-# - Losing segments → Bid HIGHER to learn ceiling
-# - Winning segments → Bid LOWER to find floor
-# - Target: 65% win rate to learn the full bid landscape
-# - Include ALL segments (no min_observations filter)
-# - Config-driven exploration aggressiveness (gradual vs aggressive)
+# Optimizer Config: drugs.com (HCP Targeting)
+# ============================================
+# Run: python run_optimizer.py --config config/optimizer_config_drugs.yaml
 
-# ============================================================================
-# DATASET CONFIGURATION (V9)
-# ============================================================================
 dataset:
-  name: "drugs"  # Determines data_dir (data_drugs/) and output_dir (output_drugs/)
+  name: "drugs"  # → data_drugs/, output_drugs/
 
-# ============================================================================
-# BUSINESS CONTROLS (V5)
-# ============================================================================
+# -----------------------------------------------------------------------------
+# WHAT TO CHANGE REGULARLY
+# -----------------------------------------------------------------------------
 business:
-  # Target margin (bid shading) - used as fallback
-  target_margin: 0.30
+  target_win_rate: 0.65        # Current target (we're at ~30%)
+  exploration_mode: true       # Bid up on losers, down on winners
 
-  # V5: Higher target win rate for volume (was 0.50)
-  target_win_rate: 0.65
-
-  # Win rate sensitivity (for non-exploration mode)
-  win_rate_sensitivity: 0.5
-
-  # V5: Exploration mode - asymmetric bid adjustment
-  exploration_mode: true
-
-  # V5: Asymmetric exploration multipliers
-  # Under-winning (WR < target) → bid UP
-  # Over-winning (WR > target) → bid DOWN
-  exploration_up_multiplier: 1.3    # Aggressive on losers
-  exploration_down_multiplier: 0.7  # Cautious on winners
-
-  # V5: Accept negative margin during learning phase
-  accept_negative_margin: true
-  max_negative_margin_pct: 0.50  # Cap at 50% overpay (bid up to 1.5x EV)
-
-  # V5: NPI integration (click data based)
-  use_npi_value: true
-  npi_exists: true           # True for HCP targeting (drugs.com = 100% NPI coverage)
-  npi_1year_path: "data_drugs/NPI_click_data_1year.csv"   # Historical RPU
-  npi_20day_path: "data_drugs/NPI_click_data_20days.csv"  # Recency signal
-  npi_max_multiplier: 3.0    # Max multiplier for top NPIs
-  npi_recency_boost: 1.2     # +20% boost for recent clickers
-
-# ============================================================================
-# TECHNICAL CONTROLS (V5)
-# ============================================================================
 technical:
-  # Bid price bounds (CPM)
+  aggressive_exploration: false  # true = faster learning, higher risk
   min_bid_cpm: 3.00
-  max_bid_cpm: 30.00      # V8: Fallback; actual max comes from active exploration preset
-  default_bid_cpm: 12.50  # V5: Raised for exploration baseline (was 5.00)
+  max_bid_cpm: 20.00           # Overridden by exploration preset below
 
-  # Floor price handling (Phase 1: no floor available)
-  floor_available: false
+bidding:
+  strategy: "adaptive"         # volume_first | margin_optimize | adaptive
 
-  # V5: Tiered observation thresholds (instead of binary filter)
-  min_observations: 1              # V5: Include ALL segments (was 100!)
-  min_observations_for_empirical: 10   # Use empirical WR with 10+ obs
-  min_observations_for_landscape: 50   # Use landscape model with 50+ obs
+data:
+  min_bid_date: "2025-12-10"   # When loss logging started
+  min_view_date: "2025-09-15"
 
-  # Feature selection
-  max_features: 3
+# -----------------------------------------------------------------------------
+# NPI SETTINGS (drugs.com = HCP targeting = has NPI data)
+# -----------------------------------------------------------------------------
+npi:
+  enabled: true
+  data_1year: "data_drugs/NPI_click_data_1year.csv"
+  data_20day: "data_drugs/NPI_click_data_20days.csv"
+  max_multiplier: 3.0          # Top NPIs get up to 3x bid
+  recency_boost: 1.2           # Recent clickers get +20%
 
-  # Model shrinkage
-  ctr_shrinkage_k: 30
-  win_rate_shrinkage_k: 30
-
-  # Soft exclusion thresholds (algorithm uses these to auto-exclude)
-  min_signal_score: 50.0
-  min_coverage_at_threshold: 0.5
-  max_null_pct: 30.0
-
-  # Effective cardinality filter (prevents dominated features)
-  min_effective_cardinality: 2
-  effective_cardinality_min_share: 0.05
-
-  # V5: WIDER adjustment bounds for exploration (base - overridden by preset)
-  min_win_rate_adjustment: 0.6   # V5: Lowered (was 0.8)
-
-  # V8: Exploration aggressiveness toggle
-  # true = aggressive (larger bid increases, faster learning, higher risk)
-  # false = gradual (smaller bid increases, slower learning, lower risk)
-  aggressive_exploration: false  # Default to gradual
-
-  # V8: Aggressive mode settings (used when aggressive_exploration: false)
+# -----------------------------------------------------------------------------
+# EXPLORATION PRESETS (selected by aggressive_exploration toggle)
+# -----------------------------------------------------------------------------
+exploration_presets:
   aggressive:
-    exploration_bonus_zero_obs: 0.50   # +50% for unknown segments
-    exploration_bonus_low_obs: 0.35    # +35% for 1-9 observations
-    exploration_bonus_medium_obs: 0.15 # +15% for 10-49 observations
-    max_win_rate_adjustment: 1.8       # Up to 1.8x base bid
-    max_bid_cpm: 30.00                 # Hard ceiling
+    bonus_zero_obs: 0.50       # +50% for unknown segments
+    bonus_low_obs: 0.35        # +35% for 1-9 observations
+    bonus_medium_obs: 0.15     # +15% for 10-49 observations
+    max_adjustment: 1.8
+    max_bid_cpm: 30.00
 
-  # V8: Gradual mode settings (used when aggressive_exploration: false)
   gradual:
-    exploration_bonus_zero_obs: 0.25   # +25% (half of aggressive)
-    exploration_bonus_low_obs: 0.15    # +15% (half of aggressive)
-    exploration_bonus_medium_obs: 0.08 # +8% (half of aggressive)
-    max_win_rate_adjustment: 1.4       # Up to 1.4x base bid
-    max_bid_cpm: 20.00                 # Lower ceiling
+    bonus_zero_obs: 0.25
+    bonus_low_obs: 0.15
+    bonus_medium_obs: 0.08
+    max_adjustment: 1.4
+    max_bid_cpm: 20.00
 
-# ============================================================================
-# FEATURE CONFIGURATION (V5)
-# ============================================================================
+# -----------------------------------------------------------------------------
+# FEATURES (algorithm auto-selects best 3 from candidates)
+# -----------------------------------------------------------------------------
 features:
-  # Anchor features - always included
-  anchor_features:
-    - internal_adspace_id
+  anchor: [internal_adspace_id]
 
-  # Candidate features - let algorithm decide
-  candidate_features:
+  candidates:
     - internal_adspace_id
     - geo_region_name
     - geo_country_code2
     - os_code
-    - pageurl_truncated
     - domain
     - browser_code
     - hour_of_day
     - day_of_week
     - media_type
-    - make_id
-    - model_id
-    - carrier_code
 
-  # V5: HARD exclusions only - technical/structural reasons
-  # NOTE: external_userid REMOVED - now used for NPI lookup
-  hard_exclude_features:
-    - geo_postal_code      # Too sparse (7,027 unique)
-    - geo_city_name        # Too sparse (3,333 unique)
-    - log_txnid            # Technical: join key
-    - internal_txn_id      # Technical: join key
-    - log_dt               # Technical: timestamp
-    - pageurl_truncated    # Too sparse (creates 78K+ segments, OOM issues)
+  exclude:
+    - geo_postal_code          # Too sparse
+    - geo_city_name            # Too sparse
+    - pageurl_truncated        # Creates 78K+ segments (OOM)
+    - log_txnid                # Join key
+    - internal_txn_id          # Join key
+    - log_dt                   # Timestamp
 
-# ============================================================================
-# BIDDING STRATEGY (V6: Config-driven strategy selection)
-# ============================================================================
-# Strategy options: volume_first, margin_optimize, adaptive
-# Config selects which strategy to use; models are built optimally.
-#
-# NOTE: Optimizer should be run DAILY during learning phase.
-# Market conditions change frequently; faster iteration = faster learning.
-bidding:
-  strategy: "adaptive"             # V7: Auto-switch when segments mature (WR>=55%, obs>=100)
+# -----------------------------------------------------------------------------
+# ADVANCED (rarely need to change)
+# -----------------------------------------------------------------------------
+advanced:
+  # Observation thresholds
+  min_observations: 1                    # Include all segments
+  min_observations_for_empirical: 10     # Use empirical model at 10+ obs
+  min_observations_for_landscape: 50     # Use bid landscape at 50+ obs
 
-  # Adaptive thresholds (used when strategy="adaptive")
-  min_win_rate_for_margin: 0.55    # Switch to margin when segment WR >= 55%
-  min_observations_for_margin: 100 # Need 100+ obs for margin optimization
+  # Adaptive strategy thresholds
+  min_win_rate_for_margin: 0.55
+  min_observations_for_margin: 100
 
-  # Volume-first settings
-  use_bid_landscape_for_volume: true  # Use P(win|bid) to find target WR bid
+  # Model settings
+  shrinkage_k: 30
+  calibration_ece_threshold: 0.10
 
-  # Margin optimization settings
-  min_margin_pct: 0.20             # Target 20% margin when optimizing
+  # Feature selection thresholds
+  min_signal_score: 50.0
+  max_features: 3
 
-# ============================================================================
-# CALIBRATION GATE (V6: Data-agnostic model selection)
-# ============================================================================
-# Models are built optimally, then gated at runtime based on calibration quality.
-# If a model's ECE exceeds threshold, automatically fall back to simpler model.
-calibration_gate:
-  max_ece_threshold: 0.10          # ECE must be < 10% to use LogReg model
-  min_observations_for_eval: 1000  # Need enough data to evaluate calibration
-  log_gate_decisions: true         # Log why model was/wasn't used
-
-# ============================================================================
-# DATA CONFIGURATION
-# ============================================================================
-data:
-  # Primary combined data file (auto-detected by data_loader)
-  # V9: Filename derived from dataset.name: data_{name}.csv
-  combined_file: "data_drugs.csv"
-
-  # Date filters
-  min_bid_date: "2025-12-10"
-  min_view_date: "2025-09-15"
-
-  # Data quality options
-  remove_zero_bids: true
-  deduplicate_views: true
+  # Other
+  default_bid_cpm: 12.50
+  floor_available: false
+  target_margin: 0.30
