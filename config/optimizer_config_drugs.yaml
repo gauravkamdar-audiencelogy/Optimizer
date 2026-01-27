@@ -1,18 +1,25 @@
-# V8 Configuration: Volume-First Optimizer with Exploration Toggle
-# optimizer_config.yaml
+# V9 Configuration: drugs.com Dataset
+# optimizer_config_drugs.yaml
 #
-# V8 Philosophy:
+# Dataset: drugs (HCP targeting with NPI data, no floor prices)
+#
+# V9 Philosophy:
+# - Separate config per dataset for clean parameter management
+# - Dataset-specific settings: npi_exists=true, floor_available=false
+#
+# V8 Philosophy (retained):
 # - Priority is DATA COLLECTION, not margin optimization
 # - Losing segments → Bid HIGHER to learn ceiling
 # - Winning segments → Bid LOWER to find floor
 # - Target: 65% win rate to learn the full bid landscape
 # - Include ALL segments (no min_observations filter)
 # - Config-driven exploration aggressiveness (gradual vs aggressive)
-#
-# V8 Changes from V7:
-# - Added aggressive_exploration toggle (default: false = gradual)
-# - Exploration settings moved into aggressive/gradual presets
-# - Toggle allows easy experimentation without code changes
+
+# ============================================================================
+# DATASET CONFIGURATION (V9)
+# ============================================================================
+dataset:
+  name: "drugs"  # Determines data_dir (data_drugs/) and output_dir (output_drugs/)
 
 # ============================================================================
 # BUSINESS CONTROLS (V5)
@@ -175,13 +182,8 @@ calibration_gate:
 # ============================================================================
 data:
   # Primary combined data file (auto-detected by data_loader)
-  combined_file: "drugs_data.csv"
-
-  # Legacy separate files (fallback if combined doesn't exist)
-  # Used automatically by data_loader when combined_file is missing
-  legacy_bids_file: "drugs_bids.csv"
-  legacy_views_file: "drugs_views.csv"
-  legacy_clicks_file: "drugs_clicks.csv"
+  # V9: Filename derived from dataset.name: data_{name}.csv
+  combined_file: "data_drugs.csv"
 
   # Date filters
   min_bid_date: "2025-12-10"

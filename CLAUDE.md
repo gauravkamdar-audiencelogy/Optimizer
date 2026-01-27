@@ -983,10 +983,96 @@ Max WR adjustment: 1.4x
 Final bid median: $20.00
 ```
 
+## V9: Multi-Dataset Architecture (January 27, 2026)
+
+### Problem Addressed
+Need to support multiple datasets (drugs.com, nativo_consumer) with different characteristics:
+- drugs.com: HCP targeting, NPI data, no floor prices
+- nativo_consumer: Consumer targeting, no NPI, HAS floor prices
+
+### Solution: Separate Config Files Per Dataset
+
+```
+config/
+├── optimizer_config_drugs.yaml           # drugs settings
+└── optimizer_config_nativo_consumer.yaml # nativo settings
+```
+
+### Directory Structure (V9)
+```
+optimizer_drugs_hcp/
+├── config/
+│   ├── optimizer_config_drugs.yaml
+│   └── optimizer_config_nativo_consumer.yaml
+├── data_drugs/
+│   └── data_drugs.csv               # Renamed from drugs_data.csv
+├── data_nativo_consumer/
+│   └── data_nativo_consumer.csv
+├── output_drugs/                    # Dataset-specific outputs
+├── output_nativo_consumer/
+├── EDA_drugs/
+├── meta_data_drugs/
+└── archive/                         # Legacy files
+```
+
+### Dataset Differences
+
+| Aspect | drugs | nativo_consumer |
+|--------|-------|-----------------|
+| NPI data | Yes (`npi_exists: true`) | No (`npi_exists: false`) |
+| Floor prices | No (`floor_available: false`) | Yes (`floor_available: true`) |
+| Records | ~207K | ~1.7M |
+| Targeting | HCP (healthcare providers) | Consumer |
+
+### Usage
+
+```bash
+# Run with drugs.com data
+python run_optimizer.py --config config/optimizer_config_drugs.yaml
+
+# Run with nativo_consumer data
+python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml
+
+# Override auto-derived paths if needed
+python run_optimizer.py --config config/optimizer_config_drugs.yaml --data-dir custom/ --output-dir custom_out/
+```
+
+### Config Structure (V9)
+
+New `dataset` section added to config:
+```yaml
+dataset:
+  name: "drugs"  # or "nativo_consumer"
+  # Auto-derived paths:
+  #   data_dir: data_{name}/
+  #   output_dir: output_{name}/
+  #   data_file: data_{name}.csv
+```
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `config/optimizer_config.yaml` | Renamed to `optimizer_config_drugs.yaml`, added `dataset` section |
+| `config/optimizer_config_nativo_consumer.yaml` | NEW - nativo config with `floor_available: true`, `npi_exists: false` |
+| `src/config.py` | Added `DatasetConfig` class with path derivation methods |
+| `src/data_loader.py` | Dataset-aware filenames, column name normalization (handles UPPERCASE) |
+| `run_optimizer.py` | Auto-derive `data_dir` and `output_dir` from config.dataset |
+| `.gitignore` | Added `output_*/`, `archive/` patterns |
+| `data_drugs/drugs_data.csv` | Renamed to `data_drugs/data_drugs.csv` |
+
+### Key Features
+
+1. **Auto-path derivation**: CLI only needs `--config`, paths auto-derived from dataset name
+2. **Column normalization**: Handles UPPERCASE columns from different SSPs
+3. **Dataset-specific settings**: Each config has correct `npi_exists`, `floor_available` values
+4. **Backward compatible**: Can still override paths with `--data-dir` and `--output-dir`
+
 ## Virtual Environment
 - Located at `./venv/`
 - Activate: `source ./venv/bin/activate`
-- Run optimizer: `python run_optimizer.py --config config/optimizer_config.yaml --data-dir data_drugs/ --output-dir output/`
+- Run optimizer (drugs): `python run_optimizer.py --config config/optimizer_config_drugs.yaml`
+- Run optimizer (nativo): `python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml`
 
 ## Git Workflow
 - Always use good commit messages

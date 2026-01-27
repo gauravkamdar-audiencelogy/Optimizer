@@ -3,8 +3,12 @@ Load and clean bid/view/click data from CSV files.
 Handles: malformed rows, duplicates, zero bids, date filtering.
 
 Supports two data layouts:
-1. Combined: single drugs_data.csv with rec_type column
-2. Separate: drugs_bids.csv, drugs_views.csv, drugs_clicks.csv
+1. Combined: single data_{dataset}.csv with rec_type column
+2. Separate: {dataset}_bids.csv, {dataset}_views.csv, {dataset}_clicks.csv
+
+V9 Changes:
+- Dataset-aware filenames (data_drugs.csv, data_nativo_consumer.csv)
+- Automatic column name normalization (handles UPPERCASE from different SSPs)
 """
 import pandas as pd
 import numpy as np
@@ -22,12 +26,17 @@ class DataLoader:
         self.load_stats: Dict = {}
         self._combined_data: pd.DataFrame = None
 
+        # V9: Derive dataset name from data_dir (e.g., "data_drugs" -> "drugs")
+        self.dataset_name = self.data_dir.name.replace('data_', '')
+
     def load_all(self) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Load and clean all three datasets.
 
-        Checks for combined drugs_data.csv first, falls back to separate files.
+        Checks for combined data_{dataset}.csv first, falls back to separate files.
         """
-        combined_path = self.data_dir / 'drugs_data.csv'
+        # V9: Dataset-aware filename
+        combined_filename = f'data_{self.dataset_name}.csv'
+        combined_path = self.data_dir / combined_filename
 
         if combined_path.exists():
             print(f"    Found combined data file: {combined_path.name}")
@@ -39,13 +48,21 @@ class DataLoader:
             df_clicks = self._load_clicks()
             return df_bids, df_views, df_clicks
 
+    def _normalize_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        """V9: Normalize column names to lowercase for cross-SSP compatibility."""
+        df.columns = df.columns.str.lower()
+        return df
+
     def _load_from_combined(self, path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        """Load bids, views, clicks from combined drugs_data.csv."""
+        """Load bids, views, clicks from combined data file."""
         print(f"    Loading combined data from {path}...")
 
         df = pd.read_csv(path, on_bad_lines='skip', engine='python')
         initial_count = len(df)
         print(f"    Total rows: {initial_count:,}")
+
+        # V9: Normalize column names (handles UPPERCASE from different SSPs)
+        df = self._normalize_columns(df)
 
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
@@ -145,10 +162,12 @@ class DataLoader:
 
     def _load_bids(self) -> pd.DataFrame:
         """Load and clean bid data from separate file."""
-        path = self.data_dir / 'drugs_bids.csv'
+        # V9: Dataset-aware filename
+        path = self.data_dir / f'{self.dataset_name}_bids.csv'
         print(f"    Loading bids from {path}...")
 
         df = pd.read_csv(path, on_bad_lines='skip', engine='python')
+        df = self._normalize_columns(df)
 
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
@@ -157,10 +176,12 @@ class DataLoader:
 
     def _load_views(self) -> pd.DataFrame:
         """Load and clean view data from separate file."""
-        path = self.data_dir / 'drugs_views.csv'
+        # V9: Dataset-aware filename
+        path = self.data_dir / f'{self.dataset_name}_views.csv'
         print(f"    Loading views from {path}...")
 
         df = pd.read_csv(path, on_bad_lines='skip', engine='python')
+        df = self._normalize_columns(df)
 
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
@@ -169,10 +190,12 @@ class DataLoader:
 
     def _load_clicks(self) -> pd.DataFrame:
         """Load click data from separate file."""
-        path = self.data_dir / 'drugs_clicks.csv'
+        # V9: Dataset-aware filename
+        path = self.data_dir / f'{self.dataset_name}_clicks.csv'
         print(f"    Loading clicks from {path}...")
 
         df = pd.read_csv(path, on_bad_lines='skip', engine='python')
+        df = self._normalize_columns(df)
 
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)

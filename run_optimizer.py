@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """
-RTB Optimizer Pipeline - V5 Volume-First Bidding
+RTB Optimizer Pipeline - V9 Multi-Dataset Support
 
-V5 Philosophy:
+V9 Changes:
+- Separate config files per dataset (optimizer_config_drugs.yaml, optimizer_config_nativo_consumer.yaml)
+- Auto-derived data_dir and output_dir from config.dataset.name
+- Column name normalization (handles UPPERCASE from different SSPs)
+
+V5-V8 Philosophy (retained):
 - Priority is DATA COLLECTION, not margin optimization
 - Losing segments → Bid HIGHER to learn ceiling
 - Winning segments → Bid LOWER to find floor (don't overpay)
@@ -18,13 +23,15 @@ V5 Formula:
 
     bid = base_bid * adjustment * npi_multiplier
 
-Why V4 Was Wrong:
-- V4 formula `argmax_b [(EV - b) × P(win)]` maximizes margin
-- This outputs $2-3 bids which would CUT volume in half
-- During learning phase, we need volume, not margin
-
 Usage:
-    python run_optimizer.py --config config/optimizer_config.yaml --data-dir data_drugs/ --output-dir output/
+    # Run with drugs.com data (default)
+    python run_optimizer.py --config config/optimizer_config_drugs.yaml
+
+    # Run with nativo_consumer data
+    python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml
+
+    # Override auto-derived paths if needed
+    python run_optimizer.py --config config/optimizer_config_drugs.yaml --data-dir custom_data/ --output-dir custom_output/
 """
 import argparse
 from pathlib import Path
@@ -46,55 +53,62 @@ from src.metrics_reporter import MetricsReporter
 
 
 def main():
-    parser = argparse.ArgumentParser(description='RTB Optimizer Pipeline V5')
-    parser.add_argument('--config', type=str, default='config/optimizer_config.yaml',
-                        help='Path to config file')
-    parser.add_argument('--data-dir', type=str, default='data_drugs/',
-                        help='Directory with CSV data files')
-    parser.add_argument('--output-dir', type=str, default='output/',
-                        help='Output directory')
+    parser = argparse.ArgumentParser(description='RTB Optimizer Pipeline V9')
+    parser.add_argument('--config', type=str, default='config/optimizer_config_drugs.yaml',
+                        help='Path to config file (determines dataset)')
+    parser.add_argument('--data-dir', type=str, default=None,
+                        help='Directory with CSV data files (auto-derived from config if not specified)')
+    parser.add_argument('--output-dir', type=str, default=None,
+                        help='Output directory (auto-derived from config if not specified)')
     args = parser.parse_args()
 
-    # Generate run ID
-    run_id = datetime.now().strftime('%Y%m%d_%H%M%S')
-    print(f"\n{'='*60}")
-    print(f"RTB Optimizer Pipeline V5 - Volume-First Bidding")
-    print(f"Run ID: {run_id}")
-    print(f"{'='*60}")
-    print(f"Version: V5 (asymmetric exploration for data collection)")
-
-    # Create output directory
-    output_dir = Path(args.output_dir) / run_id
-    output_dir.mkdir(parents=True, exist_ok=True)
-    print(f"Output directory: {output_dir}")
-
-    # Load configuration
+    # Load configuration FIRST (needed to derive paths)
     config_path = Path(args.config)
     if config_path.exists():
         config = OptimizerConfig.from_yaml(str(config_path))
-        print(f"Config loaded from: {config_path}")
     else:
         print(f"Config file not found at {config_path}, using defaults")
         config = OptimizerConfig()
 
-    print(f"\nConfiguration (V5):")
+    # V9: Auto-derive paths from config.dataset if not explicitly provided
+    data_dir = args.data_dir if args.data_dir else config.dataset.get_data_dir()
+    output_base_dir = args.output_dir if args.output_dir else config.dataset.get_output_dir()
+
+    # Generate run ID
+    run_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+    print(f"\n{'='*60}")
+    print(f"RTB Optimizer Pipeline V9 - Multi-Dataset Support")
+    print(f"Run ID: {run_id}")
+    print(f"{'='*60}")
+    print(f"Dataset: {config.dataset.name}")
+    print(f"Config: {config_path}")
+
+    # Create output directory
+    output_dir = Path(output_base_dir) / run_id
+    output_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Data directory: {data_dir}")
+    print(f"Output directory: {output_dir}")
+
+    # V9: Get active exploration preset
+    exploration_preset = config.technical.get_active_exploration_settings()
+    exploration_mode_name = "aggressive" if config.technical.aggressive_exploration else "gradual"
+
+    print(f"\nConfiguration (V9):")
+    print(f"  Dataset: {config.dataset.name}")
     print(f"  Business:")
     print(f"    target_margin: {config.business.target_margin:.0%}")
     print(f"    target_win_rate: {config.business.target_win_rate:.0%}")
     print(f"    exploration_mode: {config.business.exploration_mode}")
-    print(f"    exploration_up_multiplier: {config.business.exploration_up_multiplier}")
-    print(f"    exploration_down_multiplier: {config.business.exploration_down_multiplier}")
-    print(f"    accept_negative_margin: {config.business.accept_negative_margin}")
+    print(f"    npi_exists: {config.business.npi_exists}")
     print(f"  Technical:")
     print(f"    min_bid_cpm: ${config.technical.min_bid_cpm}")
-    print(f"    max_bid_cpm: ${config.technical.max_bid_cpm}")
-    print(f"    default_bid_cpm: ${config.technical.default_bid_cpm}")
-    print(f"    min_observations: {config.technical.min_observations}")
-    print(f"    adjustment_range: [{config.technical.min_win_rate_adjustment}, {config.technical.max_win_rate_adjustment}]")
+    print(f"    max_bid_cpm: ${exploration_preset.max_bid_cpm} ({exploration_mode_name} preset)")
+    print(f"    floor_available: {config.technical.floor_available}")
+    print(f"    exploration_mode: {exploration_mode_name}")
 
     # Step 1: Load data
     print(f"\n[1/8] Loading data...")
-    data_loader = DataLoader(args.data_dir, config)
+    data_loader = DataLoader(data_dir, config)
     df_bids, df_views, df_clicks = data_loader.load_all()
     print(f"  Loaded: {len(df_bids):,} bids, {len(df_views):,} views, {len(df_clicks):,} clicks")
 

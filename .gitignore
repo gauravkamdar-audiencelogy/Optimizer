@@ -1,9 +1,12 @@
 # Data files (sensitive/large)
 data_*/
-meta_data/
+meta_data_*/
 
 # Output files (generated)
-output/
+output_*/
+
+# Archive (legacy files)
+archive/
 
 # Python
 __pycache__/

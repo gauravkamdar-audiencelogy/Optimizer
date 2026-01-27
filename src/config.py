@@ -1,10 +1,14 @@
 """
-V8 Configuration: Volume-first optimizer with exploration toggle.
+V9 Configuration: Multi-dataset support with separate config files.
 
-V8 Changes:
-- Added aggressive_exploration toggle (default: false = gradual)
-- Exploration settings moved into aggressive/gradual presets
-- Toggle allows easy experimentation without code changes
+V9 Changes:
+- Added DatasetConfig for dataset-specific settings
+- Separate config files per dataset (optimizer_config_drugs.yaml, optimizer_config_nativo_consumer.yaml)
+- Auto-derived data_dir and output_dir from dataset name
+
+V8 Features Retained:
+- Exploration presets toggle (aggressive/gradual)
+- Data-driven exploration multipliers
 
 V5-V7 Features Retained:
 - Asymmetric bid adjustment
@@ -19,6 +23,29 @@ Control exploration aggressiveness via config toggle.
 from dataclasses import dataclass, field
 from typing import List, Optional
 import yaml
+
+
+@dataclass
+class DatasetConfig:
+    """
+    V9: Dataset-specific configuration.
+
+    Each dataset (drugs, nativo_consumer) has its own config file.
+    Paths are auto-derived from the dataset name.
+    """
+    name: str = "drugs"  # Dataset identifier: "drugs" or "nativo_consumer"
+
+    def get_data_dir(self) -> str:
+        """Return data directory path for this dataset."""
+        return f"data_{self.name}/"
+
+    def get_output_dir(self) -> str:
+        """Return output directory path for this dataset."""
+        return f"output_{self.name}/"
+
+    def get_data_filename(self) -> str:
+        """Return main data filename for this dataset."""
+        return f"data_{self.name}.csv"
 
 
 @dataclass
@@ -234,6 +261,7 @@ class FeatureConfig:
 @dataclass
 class OptimizerConfig:
     """Master configuration."""
+    dataset: DatasetConfig = field(default_factory=DatasetConfig)
     business: BusinessControls = field(default_factory=BusinessControls)
     technical: TechnicalControls = field(default_factory=TechnicalControls)
     features: FeatureConfig = field(default_factory=FeatureConfig)
@@ -246,6 +274,7 @@ class OptimizerConfig:
         with open(path, 'r') as f:
             data = yaml.safe_load(f)
 
+        dataset_data = data.get('dataset', {})
         business_data = data.get('business', {})
         technical_data = data.get('technical', {})
         features_data = data.get('features', {})
@@ -264,6 +293,7 @@ class OptimizerConfig:
                 technical_data['gradual'] = ExplorationPreset(**gradual_data)
 
         return cls(
+            dataset=DatasetConfig(**dataset_data) if dataset_data else DatasetConfig(),
             business=BusinessControls(**business_data) if business_data else BusinessControls(),
             technical=TechnicalControls(**technical_data) if technical_data else TechnicalControls(),
             features=FeatureConfig(**features_data) if features_data else FeatureConfig(),
