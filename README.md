@@ -117,6 +117,7 @@ Each run creates a timestamped folder (e.g., `output_drugs/20260127_143000/`):
 | File | Purpose |
 |------|---------|
 | `suggested_bids_*.csv` | **Production**: segment features + bid (load into bidder) |
+| `selected_features_*.csv` | **Production**: list of features used in this run |
 | `npi_multipliers_*.csv` | **Production**: NPI → multiplier lookup (drugs.com only) |
 | `npi_summary_*.csv` | Analysis: full NPI details (tier, recency, etc.) |
 | `segment_analysis_*.csv` | Analysis: full segment metadata |

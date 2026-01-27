@@ -238,6 +238,28 @@ class MemcacheBuilder:
         """Return filtering statistics for metrics."""
         return self.filter_stats
 
+    def write_selected_features(
+        self,
+        features: List[str],
+        output_dir: Path,
+        timestamp: str = None
+    ) -> Path:
+        """
+        Write selected features to a simple text file.
+
+        This tells the bidder which features to extract from bid requests.
+        """
+        if timestamp is None:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        filename = f'selected_features_{timestamp}.csv'
+        filepath = output_dir / filename
+
+        df = pd.DataFrame({'feature': features})
+        df.to_csv(filepath, index=False)
+
+        return filepath
+
     def build_bid_summary(
         self,
         bid_results: List,

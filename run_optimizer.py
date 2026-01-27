@@ -209,7 +209,10 @@ def main():
     df_bid_summary = memcache_builder.build_bid_summary(bid_results, selected_features)
     bid_summary_path = memcache_builder.write_bid_summary(df_bid_summary, output_dir, run_id)
 
+    features_path = memcache_builder.write_selected_features(selected_features, output_dir, run_id)
+
     print(f"  Suggested bids: {suggested_bids_path.name} ({len(df_bids):,} segments)")
+    print(f"  Selected features: {features_path.name}")
     print(f"  Analysis: {analysis_path.name}")
     if npi_multipliers_path:
         print(f"  NPI multipliers: {npi_multipliers_path.name}")
