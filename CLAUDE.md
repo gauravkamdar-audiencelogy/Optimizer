@@ -18,6 +18,34 @@
 - If you can't measure it, you can't improve it
 - Never ship a metrics file without the metrics needed to evaluate the thing it describes
 
+### Data-Agnostic Model, Data-Driven Config
+**The model should be data-agnostic; the config should be data-driven.**
+
+- **Model** = formulas, logic, code structure → works on ANY data without modification
+- **Config** = parameters fed into the model → DERIVED from the data automatically
+
+This separation means:
+- No hardcoded "magic numbers" in the model
+- Parameters adapt automatically when data changes
+- Model code is stable; only derived parameters change
+- Same model works across different markets/datasets
+
+**Example:**
+```
+BAD:  exploration_multiplier = 1.3  # Why 1.3? Someone made it up.
+GOOD: exploration_multiplier = derive_from_bid_landscape(data)  # Derived from P(win|bid)
+```
+
+**What this looks like in practice:**
+1. Model defines the FORMULA: `adjustment = 1 + wr_gap × multiplier`
+2. Config derives the PARAMETERS: `multiplier = f(bid_landscape_slope, target_wr)`
+3. At runtime, model uses derived parameters without knowing how they were computed
+
+**Anti-pattern to avoid:**
+- Hardcoding parameters based on current data observations
+- "This works for drugs.com data" → breaks when data changes
+- Manual tuning of knobs without principled derivation
+
 ## Technical Guardrails
 
 ### Do
@@ -766,6 +794,193 @@ NPI tiers (by click COUNT):
 Strategy distribution:
   volume_first: 1,426 (98.1%)
   margin_optimize: 28 (1.9%)  ← Mature segments auto-switched
+```
+
+## V8: Exploration Aggressiveness Toggle (January 27, 2026)
+
+### Problem Addressed
+Need to control exploration aggressiveness without code changes:
+- New markets/data may require different exploration rates
+- Aggressive: Faster learning, higher risk of overpaying
+- Gradual: Slower learning, lower risk, more conservative step sizes
+
+### Solution: Config-Driven Exploration Presets
+
+Added a toggle (`aggressive_exploration`) that selects between two presets:
+
+| Setting | Aggressive | Gradual (Default) |
+|---------|------------|-------------------|
+| `exploration_bonus_zero_obs` | 0.50 (+50%) | 0.25 (+25%) |
+| `exploration_bonus_low_obs` | 0.35 (+35%) | 0.15 (+15%) |
+| `exploration_bonus_medium_obs` | 0.15 (+15%) | 0.08 (+8%) |
+| `max_win_rate_adjustment` | 1.8x | 1.4x |
+| `max_bid_cpm` | $30.00 | $20.00 |
+
+### Config Usage
+```yaml
+technical:
+  # V8: Toggle exploration aggressiveness
+  aggressive_exploration: false  # Default: gradual
+
+  # Presets are defined in config, selected by toggle
+  aggressive:
+    exploration_bonus_zero_obs: 0.50
+    # ...
+  gradual:
+    exploration_bonus_zero_obs: 0.25
+    # ...
+```
+
+### When to Use Each Mode
+
+**Gradual (default):**
+- Starting exploration in a new market
+- Want to minimize overpaying risk
+- Win rate is already improving incrementally
+
+**Aggressive:**
+- Win rate not improving after multiple optimization cycles
+- Need faster learning (accepting higher risk)
+- Market conditions require higher bids to compete
+
+### Switching Modes
+1. Edit config: `aggressive_exploration: true` or `false`
+2. Re-run optimizer
+3. No code changes needed
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `config/optimizer_config.yaml` | Added toggle + aggressive/gradual presets |
+| `src/config.py` | Added `ExplorationPreset` class, updated `TechnicalControls` |
+| `src/bid_calculator_v5.py` | Uses active exploration settings from preset |
+| `CLAUDE.md` | This documentation |
+
+## V8 Continued: Data-Driven Exploration Multipliers (January 27, 2026)
+
+### Problem: Arbitrary Config Parameters
+Previous exploration multipliers were arbitrary:
+- `exploration_up_multiplier: 1.3` - "sounds aggressive"
+- `exploration_down_multiplier: 0.7` - "half of up seems cautious"
+- No principled basis for these numbers
+
+### Solution: Derive from Bid Landscape
+
+The bid landscape model tells us how bid affects win rate. We use this to derive the multiplier:
+
+```python
+from scipy.special import logit
+
+# Inputs from data
+current_wr = 0.30        # Global win rate
+target_wr = 0.65         # Target from config
+bid_coefficient = 0.16   # From bid landscape model
+bid_std = 4.47           # Bid standard deviation
+current_median_bid = 12.50
+
+# Calculation
+delta_log_odds = logit(target_wr) - logit(current_wr)  # = 1.47
+delta_bid_scaled = delta_log_odds / bid_coefficient     # = 9.16
+delta_bid = delta_bid_scaled * bid_std                  # = $40.94
+
+# Result
+implied_new_bid = current_median_bid + delta_bid        # = $53.44
+raw_multiplier = implied_new_bid / current_median_bid   # = 4.27x
+capped_multiplier = min(raw_multiplier, 3.0)            # = 3.00x (safety cap)
+```
+
+### Output Example
+```
+Derived exploration multipliers (data-driven):
+    Up multiplier: 3.00x (to go from 30% → 65% WR)
+    Down multiplier: 0.50x
+    Implied bid change: $12.50 → $52.90
+    ⚠ Warning: Large extrapolation beyond observed bid range
+```
+
+### How It Adapts
+- As we collect more bids at higher prices, the bid coefficient becomes more accurate
+- The derived multiplier will automatically adjust
+- No code changes needed - model adapts to data
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `src/models/bid_landscape_model.py` | Added `derive_exploration_multiplier()` method |
+| `run_optimizer.py` | Call derivation after training, store in `global_stats` |
+| `src/bid_calculator_v5.py` | Use `global_stats['derived_up_multiplier']` if available, else config fallback |
+
+### Fallback Behavior
+If bid landscape derivation fails (invalid model, missing data):
+- Falls back to config values: `exploration_up_multiplier: 1.3`
+- Logs: `multiplier_source: 'config (fallback)'`
+
+## V8 Continued: NPI Code Cleanup (January 27, 2026)
+
+### Problem: Confusing NPI Code
+The bid calculator had code that TRIED to apply NPI at segment level:
+```python
+npi = row.get('external_userid', None)  # Always None - NPI not in segment key
+npi_multiplier = self.npi_model.get_value_multiplier(npi)  # Always 1.0
+raw_bid = base_bid * exploration_adjustment * npi_multiplier
+```
+
+This was accidentally correct (multiplier=1.0) but confusing and could break later.
+
+### Solution: Remove NPI from Bid Calculator
+
+**Architecture (correct, now explicit):**
+```
+Memcache:   segment → $19.20  (base bid, NO NPI)
+NPI cache:  1487942645 → 3.0x  (separate file)
+Bidder:     $19.20 × 3.0 = $57.60  (applied at request time)
+```
+
+### Changes Made
+1. Removed `npi_model` parameter from `VolumeFirstBidCalculator.__init__`
+2. Removed `npi` parameter from `_calculate_single_bid()`
+3. Removed NPI multiplier application from bid calculation
+4. Added clear docstrings explaining NPI is applied by bidder at request time
+5. Updated `run_optimizer.py` to not pass `npi_model` to calculator
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `src/bid_calculator_v5.py` | Removed NPI parameters and application code |
+| `run_optimizer.py` | Removed `npi_model=npi_model` from calculator call |
+
+### Verification
+All segments now have `npi_multiplier = 1.0` in segment_analysis.csv (as expected).
+NPI multipliers are correctly output to separate `npi_multipliers_*.csv` file.
+
+## V8 Summary: All Changes (January 27, 2026)
+
+### Files Modified in This Session
+
+| File | Changes |
+|------|---------|
+| `config/optimizer_config.yaml` | V8 header, `aggressive_exploration` toggle, `aggressive:` and `gradual:` presets |
+| `src/config.py` | `ExplorationPreset` dataclass, `TechnicalControls.get_active_exploration_settings()`, YAML parsing for nested presets |
+| `src/bid_calculator_v5.py` | Use exploration presets, data-driven multipliers from global_stats, removed NPI code |
+| `src/models/bid_landscape_model.py` | `derive_exploration_multiplier()` method |
+| `run_optimizer.py` | Call `derive_exploration_multiplier()`, store in global_stats, removed npi_model from calculator |
+| `CLAUDE.md` | Design principle, V8 documentation |
+
+### Key Design Decisions
+
+1. **Data-Agnostic Model, Data-Driven Config**: Model formulas are fixed; parameters are derived from data
+2. **NPI at Request Time**: Segment bids don't include NPI; bidder applies multiplier when NPI detected
+3. **Exploration Presets**: Toggle between aggressive/gradual without code changes
+4. **Data-Driven Multipliers**: Derive exploration multiplier from bid landscape coefficient
+5. **Safety Caps**: Derived multiplier capped at 3.0x to limit extrapolation risk
+
+### Verification Results (Run 20260127)
+```
+Exploration multipliers (data-driven (bid landscape)):
+  Up: 3.00x, Down: 0.50x
+Max bid (from preset): $20.00
+Max WR adjustment: 1.4x
+Final bid median: $20.00
 ```
 
 ## Virtual Environment

@@ -1,20 +1,20 @@
 """
-V5 Configuration: Volume-first optimizer with asymmetric exploration.
+V8 Configuration: Volume-first optimizer with exploration toggle.
 
-V5 Changes:
-- New exploration_mode for asymmetric bid adjustment
+V8 Changes:
+- Added aggressive_exploration toggle (default: false = gradual)
+- Exploration settings moved into aggressive/gradual presets
+- Toggle allows easy experimentation without code changes
+
+V5-V7 Features Retained:
+- Asymmetric bid adjustment
 - Accept negative margins during data collection
-- NPI value integration
-- Include ALL segments (remove min_observations filter effect)
-- Wider adjustment bounds [0.6, 1.8]
-
-V3/V4 Features Retained:
-- Empirical win rate model
-- Bayesian shrinkage
-- Feature auto-exclusion
+- NPI value integration (click-based tiering)
+- Adaptive strategy (auto-switch mature segments to margin_optimize)
+- Calibration gate pattern
 
 Philosophy: During data collection phase, prioritize VOLUME over MARGIN.
-Learn the bid landscape through asymmetric exploration.
+Control exploration aggressiveness via config toggle.
 """
 from dataclasses import dataclass, field
 from typing import List, Optional
@@ -56,6 +56,20 @@ class CalibrationGate:
     max_ece_threshold: float = 0.10  # ECE must be < 10% to use model
     min_observations_for_eval: int = 1000  # Need enough data to evaluate calibration
     log_gate_decisions: bool = True  # Log why model was/wasn't used
+
+
+@dataclass
+class ExplorationPreset:
+    """
+    V8: Exploration settings preset (aggressive or gradual).
+
+    Controls how aggressively the optimizer explores unexplored bid ranges.
+    """
+    exploration_bonus_zero_obs: float = 0.50   # Bonus for unknown segments (0 obs)
+    exploration_bonus_low_obs: float = 0.35    # Bonus for sparse segments (1-9 obs)
+    exploration_bonus_medium_obs: float = 0.15 # Bonus for medium segments (10-49 obs)
+    max_win_rate_adjustment: float = 1.8       # Max multiplier on base bid
+    max_bid_cpm: float = 30.00                 # Hard bid ceiling
 
 
 @dataclass
@@ -124,14 +138,49 @@ class TechnicalControls:
     min_effective_cardinality: int = 2     # Must have >=2 values with significant share
     effective_cardinality_min_share: float = 0.05  # 5% threshold for "significant"
 
-    # V5: WIDER adjustment bounds for exploration
+    # V5: WIDER adjustment bounds for exploration (min bound - max comes from preset)
     min_win_rate_adjustment: float = 0.6   # V5: Lowered (was 0.8)
-    max_win_rate_adjustment: float = 1.8   # V5: Raised (was 1.2)
 
-    # V5: Exploration bonuses for sparse segments
-    exploration_bonus_zero_obs: float = 0.50   # +50% for unknown segments
-    exploration_bonus_low_obs: float = 0.35    # +35% for 1-9 observations
-    exploration_bonus_medium_obs: float = 0.15 # +15% for 10-49 observations
+    # V8: Exploration aggressiveness toggle
+    # true = aggressive (larger bid increases, faster learning, higher risk)
+    # false = gradual (smaller bid increases, slower learning, lower risk)
+    aggressive_exploration: bool = False  # Default to gradual
+
+    # V8: Exploration presets (populated from YAML or defaults)
+    aggressive: Optional[ExplorationPreset] = None
+    gradual: Optional[ExplorationPreset] = None
+
+    # Legacy fields (kept for backward compatibility, overridden by presets)
+    max_win_rate_adjustment: float = 1.8   # Fallback if no preset
+    exploration_bonus_zero_obs: float = 0.50
+    exploration_bonus_low_obs: float = 0.35
+    exploration_bonus_medium_obs: float = 0.15
+
+    def __post_init__(self):
+        """Initialize default presets if not provided."""
+        if self.aggressive is None:
+            self.aggressive = ExplorationPreset(
+                exploration_bonus_zero_obs=0.50,
+                exploration_bonus_low_obs=0.35,
+                exploration_bonus_medium_obs=0.15,
+                max_win_rate_adjustment=1.8,
+                max_bid_cpm=30.00
+            )
+        if self.gradual is None:
+            self.gradual = ExplorationPreset(
+                exploration_bonus_zero_obs=0.25,
+                exploration_bonus_low_obs=0.15,
+                exploration_bonus_medium_obs=0.08,
+                max_win_rate_adjustment=1.4,
+                max_bid_cpm=20.00
+            )
+
+    def get_active_exploration_settings(self) -> ExplorationPreset:
+        """Return exploration settings based on toggle."""
+        if self.aggressive_exploration:
+            return self.aggressive
+        else:
+            return self.gradual
 
 
 @dataclass
@@ -202,6 +251,17 @@ class OptimizerConfig:
         features_data = data.get('features', {})
         calibration_gate_data = data.get('calibration_gate', {})
         bidding_data = data.get('bidding', {})
+
+        # V8: Handle nested exploration presets in technical_data
+        if technical_data:
+            # Extract and convert nested presets to ExplorationPreset objects
+            aggressive_data = technical_data.pop('aggressive', None)
+            gradual_data = technical_data.pop('gradual', None)
+
+            if aggressive_data:
+                technical_data['aggressive'] = ExplorationPreset(**aggressive_data)
+            if gradual_data:
+                technical_data['gradual'] = ExplorationPreset(**gradual_data)
 
         return cls(
             business=BusinessControls(**business_data) if business_data else BusinessControls(),

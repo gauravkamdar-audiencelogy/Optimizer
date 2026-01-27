@@ -272,6 +272,98 @@ class BidLandscapeModel:
         """Check if model is valid (trained with positive bid coefficient)."""
         return self.is_trained and self.bid_coefficient > 0
 
+    def derive_exploration_multiplier(
+        self,
+        current_win_rate: float,
+        target_win_rate: float,
+        current_median_bid: float
+    ) -> Dict:
+        """
+        Derive the exploration multiplier from the bid landscape.
+
+        This makes the exploration parameters DATA-DRIVEN rather than arbitrary.
+        Uses the bid coefficient to calculate how much bid increase is needed
+        to move from current win rate to target win rate.
+
+        Math:
+            P(win) = sigmoid(β₀ + β₁ × bid_scaled + ...)
+            logit(P) = β₀ + β₁ × bid_scaled + ...
+
+            To go from current_wr to target_wr:
+            delta_log_odds = logit(target_wr) - logit(current_wr)
+            delta_bid_scaled = delta_log_odds / β₁
+            delta_bid = delta_bid_scaled × bid_std  (unscale)
+
+            multiplier = (current_bid + delta_bid) / current_bid
+
+        Args:
+            current_win_rate: Current global win rate (e.g., 0.30)
+            target_win_rate: Target win rate (e.g., 0.65)
+            current_median_bid: Current median winning bid (e.g., $12.50)
+
+        Returns:
+            Dict with derived parameters and diagnostics
+        """
+        from scipy.special import logit
+
+        if not self.is_valid():
+            return {
+                'success': False,
+                'reason': 'Model not valid (not trained or negative coefficient)',
+                'fallback_multiplier': 1.3  # Conservative fallback
+            }
+
+        # Ensure win rates are in valid range for logit
+        current_wr = np.clip(current_win_rate, 0.01, 0.99)
+        target_wr = np.clip(target_win_rate, 0.01, 0.99)
+
+        # Calculate delta in log-odds space
+        delta_log_odds = logit(target_wr) - logit(current_wr)
+
+        # Convert to bid space (unscale using bid_std)
+        # bid_coefficient is on scaled data, so: delta_bid_scaled = delta_log_odds / coef
+        # then: delta_bid = delta_bid_scaled × bid_std
+        delta_bid_scaled = delta_log_odds / self.bid_coefficient
+        delta_bid = delta_bid_scaled * self.bid_scaler_std
+
+        # Calculate implied multiplier
+        if current_median_bid > 0:
+            new_bid = current_median_bid + delta_bid
+            implied_multiplier = new_bid / current_median_bid
+        else:
+            implied_multiplier = 1.0 + delta_log_odds  # Fallback
+
+        # Clip to reasonable range to avoid extreme values from extrapolation
+        # Allow higher ceiling since this is data-derived
+        clipped_multiplier = np.clip(implied_multiplier, 0.5, 3.0)
+
+        # For the down multiplier (when over-winning), use the same logic
+        # but it naturally comes out < 1 when target < current
+        # For asymmetry, we can use a fraction of the up multiplier
+        down_multiplier_ratio = 0.5  # Bid down at half the rate we bid up
+        if implied_multiplier > 1.0:
+            down_multiplier = 1.0 - (implied_multiplier - 1.0) * down_multiplier_ratio
+        else:
+            down_multiplier = implied_multiplier  # Already < 1
+
+        down_multiplier = np.clip(down_multiplier, 0.5, 1.0)
+
+        return {
+            'success': True,
+            'derived_up_multiplier': float(round(clipped_multiplier, 3)),
+            'derived_down_multiplier': float(round(down_multiplier, 3)),
+            'raw_multiplier': float(round(implied_multiplier, 3)),
+            'delta_log_odds': float(round(delta_log_odds, 4)),
+            'delta_bid': float(round(delta_bid, 2)),
+            'bid_coefficient': float(round(self.bid_coefficient, 4)),
+            'bid_std': float(round(self.bid_scaler_std, 2)),
+            'current_wr': float(current_wr),
+            'target_wr': float(target_wr),
+            'current_median_bid': float(current_median_bid),
+            'implied_new_bid': float(round(current_median_bid + delta_bid, 2)),
+            'extrapolation_warning': bool(abs(delta_bid) > 2 * self.bid_scaler_std)  # Convert to Python bool
+        }
+
     def find_bid_for_win_rate(
         self,
         target_win_rate: float,

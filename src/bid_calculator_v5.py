@@ -1,19 +1,19 @@
 """
-Bid Calculator V5: Volume-First with Asymmetric Exploration.
+Bid Calculator V8: Volume-First with Exploration Toggle.
 
-V5 Philosophy:
+V8 Changes:
+- Added exploration aggressiveness toggle (aggressive/gradual)
+- Exploration settings now come from active preset
+- Toggle allows easy experimentation without code changes
+
+V5-V7 Philosophy (Retained):
 - Priority is DATA COLLECTION, not margin optimization
 - Losing segments → Bid HIGHER to learn ceiling
 - Winning segments → Bid LOWER to find floor (don't overpay)
 - Target: 65% win rate to learn the full bid landscape
 - Include ALL segments, even with zero observations
 
-Why V4 Was Wrong:
-- V4 formula `argmax_b [(EV - b) × P(win)]` maximizes margin
-- This outputs $2-3 bids which would CUT volume in half
-- During learning phase, we need volume, not margin
-
-V5 Formula:
+V5 Formula (unchanged):
     wr_gap = target_wr - current_wr
     if wr_gap > 0:  # UNDER-WINNING
         adjustment = 1.0 + wr_gap * 1.3  # Bid UP
@@ -63,9 +63,13 @@ class BidResultV5:
 
 class VolumeFirstBidCalculator:
     """
-    V5/V6: Asymmetric exploration to learn bid landscape.
+    V5/V6/V8: Asymmetric exploration to learn bid landscape.
 
-    V6 Enhancements:
+    V8 Enhancements:
+    - Exploration aggressiveness toggle (aggressive/gradual)
+    - Exploration settings come from active preset
+
+    V6 Features (retained):
     - Config-driven strategy selection (volume_first, margin_optimize, adaptive)
     - Optional bid landscape model for volume targeting
     - Per-segment adaptive strategy when configured
@@ -82,16 +86,25 @@ class VolumeFirstBidCalculator:
         config: OptimizerConfig,
         ctr_model: CTRModel,
         empirical_win_rate_model: EmpiricalWinRateModel,
-        npi_model: Optional['NPIValueModel'] = None,
         bid_landscape_model: Optional[BidLandscapeModel] = None,
         global_stats: Optional[Dict] = None
     ):
+        """
+        Initialize bid calculator.
+
+        NOTE: NPI model is NOT passed here. NPI multipliers are computed separately
+        and stored in npi_multipliers_*.csv. The bidder applies them at request time.
+        This keeps segment bid calculation independent of NPI.
+        """
         self.config = config
         self.ctr_model = ctr_model
         self.empirical_model = empirical_win_rate_model
-        self.npi_model = npi_model
         self.bid_landscape_model = bid_landscape_model
         self.avg_cpc: float = 0.0
+
+        # V8: Get active exploration settings based on toggle
+        self.exploration_settings = config.technical.get_active_exploration_settings()
+        self.exploration_mode_name = 'aggressive' if config.technical.aggressive_exploration else 'gradual'
 
         # Check if bid landscape can be used for volume targeting
         self.use_landscape_for_volume = (
@@ -103,6 +116,17 @@ class VolumeFirstBidCalculator:
         # Global stats for exploration baseline
         self.global_stats = global_stats or {}
         self.global_median_bid = self.global_stats.get('median_winning_bid', config.technical.default_bid_cpm)
+
+        # V8: Get exploration multipliers - prefer DATA-DRIVEN from bid landscape
+        # Fall back to config values if derivation failed
+        if 'derived_up_multiplier' in self.global_stats:
+            self.exploration_up_multiplier = self.global_stats['derived_up_multiplier']
+            self.exploration_down_multiplier = self.global_stats['derived_down_multiplier']
+            self.multiplier_source = 'data-driven (bid landscape)'
+        else:
+            self.exploration_up_multiplier = config.business.exploration_up_multiplier
+            self.exploration_down_multiplier = config.business.exploration_down_multiplier
+            self.multiplier_source = 'config (fallback)'
 
         # Track method usage for reporting
         self.method_counts = {
@@ -118,13 +142,17 @@ class VolumeFirstBidCalculator:
 
         # Log configuration
         strategy = config.bidding.strategy
-        print(f"    V6: VolumeFirstBidCalculator initialized")
+        print(f"    V8: VolumeFirstBidCalculator initialized")
         print(f"    Strategy: {strategy}")
+        print(f"    Exploration mode: {self.exploration_mode_name}")
+        print(f"    Exploration multipliers ({self.multiplier_source}):")
+        print(f"      Up: {self.exploration_up_multiplier:.2f}x, Down: {self.exploration_down_multiplier:.2f}x")
+        print(f"    Max bid (from preset): ${self.exploration_settings.max_bid_cpm:.2f}")
+        print(f"    Max WR adjustment: {self.exploration_settings.max_win_rate_adjustment:.1f}x")
         print(f"    Target win rate: {config.business.target_win_rate:.0%}")
-        print(f"    Exploration mode: {config.business.exploration_mode}")
         print(f"    Global median bid baseline: ${self.global_median_bid:.2f}")
         print(f"    Bid landscape for volume: {'enabled' if self.use_landscape_for_volume else 'disabled'}")
-        print(f"    NPI model: {'enabled' if npi_model else 'disabled'}")
+        print(f"    NPI: applied by bidder at request time (not in segment bids)")
 
         if strategy == 'adaptive':
             print(f"    Adaptive thresholds: WR>={config.bidding.min_win_rate_for_margin:.0%}, obs>={config.bidding.min_observations_for_margin}")
@@ -139,20 +167,27 @@ class VolumeFirstBidCalculator:
         df_segments: pd.DataFrame,
         features: List[str]
     ) -> List[BidResultV5]:
-        """Calculate optimal bid for each segment using asymmetric exploration."""
+        """
+        Calculate optimal bid for each segment using asymmetric exploration.
+
+        NOTE: NPI multipliers are NOT applied here. Segments are grouped by
+        features (adspace, region, OS), not by individual NPIs. NPI multipliers
+        are stored in a separate file (npi_multipliers_*.csv) and applied by
+        the bidder at request time:
+
+            final_bid = segment_bid × npi_multiplier
+
+        This keeps segment learning separate from prescriber value.
+        """
         results = []
 
         for _, row in tqdm(df_segments.iterrows(), total=len(df_segments), desc="    Calculating V5 bids"):
             segment_key = {f: row[f] for f in features}
             observation_count = row.get('count', 0)
 
-            # Extract NPI if available (from external_userid in original data)
-            npi = row.get('external_userid', None)
-
             result = self._calculate_single_bid(
                 segment_key=segment_key,
-                observation_count=observation_count,
-                npi=npi
+                observation_count=observation_count
             )
             results.append(result)
 
@@ -161,11 +196,13 @@ class VolumeFirstBidCalculator:
     def _calculate_single_bid(
         self,
         segment_key: Dict[str, any],
-        observation_count: int,
-        npi: Optional[str] = None
+        observation_count: int
     ) -> BidResultV5:
         """
         Calculate bid for a single segment.
+
+        NOTE: This returns the BASE segment bid. NPI multipliers are NOT applied here.
+        The bidder applies NPI multipliers at request time using the separate NPI cache.
 
         V6: Strategy-driven bid calculation:
         - volume_first: Use asymmetric exploration or bid landscape to achieve target WR
@@ -223,13 +260,10 @@ class VolumeFirstBidCalculator:
                 current_wr, observation_count
             )
 
-        # Apply NPI multiplier
-        npi_multiplier = 1.0
-        if self.npi_model and npi:
-            npi_multiplier = self.npi_model.get_value_multiplier(npi)
-
-        # Calculate raw bid
-        raw_bid = base_bid * exploration_adjustment * npi_multiplier
+        # Calculate raw bid (NPI multiplier NOT applied here - see docstring)
+        # NPI multipliers are in separate file, applied by bidder at request time
+        npi_multiplier = 1.0  # Always 1.0 for segment bids
+        raw_bid = base_bid * exploration_adjustment
 
         # Check profitability (allow negative margin during learning in volume mode)
         min_bid = self.config.technical.min_bid_cpm
@@ -361,24 +395,29 @@ class VolumeFirstBidCalculator:
         """
         Determine base bid and method based on observation count.
 
+        V8: Uses exploration bonuses from active preset (aggressive/gradual).
+
         Tiered approach:
-        - 0 obs: Pure exploration (global median * 1.5)
-        - 1-9 obs: Exploration with bonus (global median * 1.35)
-        - 10-49 obs: Empirical + small exploration bonus
-        - 50+ obs: Full empirical
+        - 0 obs: Pure exploration (global median * bonus_zero)
+        - 1-9 obs: Exploration with bonus (global median * bonus_low)
+        - 10-49 obs: Empirical + small exploration bonus (bonus_medium)
+        - 50+ obs: Full empirical (no bonus)
         """
         min_for_empirical = self.config.technical.min_observations_for_empirical
         min_for_landscape = self.config.technical.min_observations_for_landscape
 
+        # V8: Use exploration settings from active preset
+        exploration = self.exploration_settings
+
         if observation_count == 0:
             # Pure exploration for unknown segments
-            bonus = 1.0 + self.config.technical.exploration_bonus_zero_obs
+            bonus = 1.0 + exploration.exploration_bonus_zero_obs
             base_bid = self.global_median_bid * bonus
             method = 'v5_explore_zero'
 
         elif observation_count < min_for_empirical:
             # Low observation: use global with exploration bonus
-            bonus = 1.0 + self.config.technical.exploration_bonus_low_obs
+            bonus = 1.0 + exploration.exploration_bonus_low_obs
             base_bid = self.global_median_bid * bonus
             method = 'v5_explore_low'
 
@@ -388,7 +427,7 @@ class VolumeFirstBidCalculator:
             empirical_wr = segment_stats.get('shrunk_win_rate', self.empirical_model.global_win_rate)
 
             # Use global median scaled by exploration bonus
-            bonus = 1.0 + self.config.technical.exploration_bonus_medium_obs
+            bonus = 1.0 + exploration.exploration_bonus_medium_obs
             base_bid = self.global_median_bid * bonus
             method = 'v5_explore_medium'
 
@@ -411,9 +450,8 @@ class VolumeFirstBidCalculator:
         LOSING (WR < target): Bid UP to learn ceiling
         WINNING (WR > target): Bid DOWN to find floor
 
-        Asymmetry:
-        - Up multiplier: 1.3 (aggressive on losers)
-        - Down multiplier: 0.7 (cautious on winners)
+        V8: Multipliers are DATA-DRIVEN from bid landscape when available,
+        falling back to config values otherwise.
         """
         target_wr = self.config.business.target_win_rate
         wr_gap = target_wr - current_wr
@@ -430,17 +468,15 @@ class VolumeFirstBidCalculator:
             # Exploration disabled: use simple linear adjustment
             adjustment = 1.0 + wr_gap * self.config.business.win_rate_sensitivity
         else:
-            # V5: Asymmetric exploration
+            # V8: Asymmetric exploration with data-driven multipliers
             if wr_gap > 0:
-                # UNDER-WINNING: Bid higher (aggressive)
-                # wr_gap of 0.35 (WR=30% vs target=65%) → +45% increase
-                up_mult = self.config.business.exploration_up_multiplier
-                adjustment = 1.0 + wr_gap * up_mult
+                # UNDER-WINNING: Bid higher
+                # Uses derived multiplier from bid landscape (or config fallback)
+                adjustment = 1.0 + wr_gap * self.exploration_up_multiplier
             else:
                 # OVER-WINNING: Bid lower (cautious)
-                # wr_gap of -0.15 (WR=80% vs target=65%) → -10% decrease
-                down_mult = self.config.business.exploration_down_multiplier
-                adjustment = 1.0 + wr_gap * down_mult
+                # Uses derived multiplier from bid landscape (or config fallback)
+                adjustment = 1.0 + wr_gap * self.exploration_down_multiplier
 
         # Scale by uncertainty (more exploration when less data)
         # uncertainty is higher when obs_count is lower
@@ -449,11 +485,11 @@ class VolumeFirstBidCalculator:
             # Blend: more uncertain segments get more extreme adjustments
             adjustment = 1.0 + (adjustment - 1.0) * (0.5 + 0.5 * uncertainty)
 
-        # Clip to safety bounds
+        # V8: Clip to safety bounds using active preset's max_win_rate_adjustment
         adjustment = np.clip(
             adjustment,
             self.config.technical.min_win_rate_adjustment,
-            self.config.technical.max_win_rate_adjustment
+            self.exploration_settings.max_win_rate_adjustment
         )
 
         return adjustment, direction
@@ -467,7 +503,9 @@ class VolumeFirstBidCalculator:
         """
         Apply bid guardrails.
 
-        V6 FIX: Removed EV cap in volume_first mode.
+        V8: Uses max_bid_cpm from active exploration preset.
+
+        V6 FIX (retained): Removed EV cap in volume_first mode.
         The EV cap (max_negative_margin_pct) caused a cliff effect where
         segments with EV just below threshold got full bids while those
         just above got heavily capped. In learning phase, just use floor/ceiling.
@@ -475,7 +513,8 @@ class VolumeFirstBidCalculator:
         The EV cap should only apply in margin_optimize mode.
         """
         min_bid = self.config.technical.min_bid_cpm
-        max_bid = self.config.technical.max_bid_cpm
+        # V8: Use max_bid from active exploration preset
+        max_bid = self.exploration_settings.max_bid_cpm
 
         # V6: Only apply EV cap in margin_optimize mode
         # In volume_first mode, we want to explore - just use floor/ceiling
@@ -499,6 +538,13 @@ class VolumeFirstBidCalculator:
         stats = {
             'total': total,
             'config_strategy': self.config.bidding.strategy,
+            # V8: Include exploration mode and multiplier info
+            'exploration_mode': self.exploration_mode_name,
+            'exploration_max_bid_cpm': self.exploration_settings.max_bid_cpm,
+            'exploration_max_wr_adjustment': self.exploration_settings.max_win_rate_adjustment,
+            'exploration_up_multiplier': self.exploration_up_multiplier,
+            'exploration_down_multiplier': self.exploration_down_multiplier,
+            'multiplier_source': self.multiplier_source,
         }
 
         # Method breakdown

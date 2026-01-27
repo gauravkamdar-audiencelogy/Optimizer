@@ -1,19 +1,18 @@
-# V5 Configuration: Volume-First Optimizer with Asymmetric Exploration
+# V8 Configuration: Volume-First Optimizer with Exploration Toggle
 # optimizer_config.yaml
 #
-# V5 Philosophy:
+# V8 Philosophy:
 # - Priority is DATA COLLECTION, not margin optimization
 # - Losing segments → Bid HIGHER to learn ceiling
 # - Winning segments → Bid LOWER to find floor
 # - Target: 65% win rate to learn the full bid landscape
 # - Include ALL segments (no min_observations filter)
+# - Config-driven exploration aggressiveness (gradual vs aggressive)
 #
-# V5 Changes from V4:
-# - New exploration_mode for asymmetric bid adjustment
-# - Accept negative margins during data collection
-# - NPI value integration
-# - Include ALL segments (remove min_observations filter effect)
-# - Wider adjustment bounds [0.6, 1.8]
+# V8 Changes from V7:
+# - Added aggressive_exploration toggle (default: false = gradual)
+# - Exploration settings moved into aggressive/gradual presets
+# - Toggle allows easy experimentation without code changes
 
 # ============================================================================
 # BUSINESS CONTROLS (V5)
@@ -55,7 +54,7 @@ business:
 technical:
   # Bid price bounds (CPM)
   min_bid_cpm: 3.00
-  max_bid_cpm: 30.00
+  max_bid_cpm: 30.00      # V8: Fallback; actual max comes from active exploration preset
   default_bid_cpm: 12.50  # V5: Raised for exploration baseline (was 5.00)
 
   # Floor price handling (Phase 1: no floor available)
@@ -82,14 +81,29 @@ technical:
   min_effective_cardinality: 2
   effective_cardinality_min_share: 0.05
 
-  # V5: WIDER adjustment bounds for exploration
+  # V5: WIDER adjustment bounds for exploration (base - overridden by preset)
   min_win_rate_adjustment: 0.6   # V5: Lowered (was 0.8)
-  max_win_rate_adjustment: 1.8   # V5: Raised (was 1.2)
 
-  # V5: Exploration bonuses for sparse segments
-  exploration_bonus_zero_obs: 0.50   # +50% for unknown segments
-  exploration_bonus_low_obs: 0.35    # +35% for 1-9 observations
-  exploration_bonus_medium_obs: 0.15 # +15% for 10-49 observations
+  # V8: Exploration aggressiveness toggle
+  # true = aggressive (larger bid increases, faster learning, higher risk)
+  # false = gradual (smaller bid increases, slower learning, lower risk)
+  aggressive_exploration: false  # Default to gradual
+
+  # V8: Aggressive mode settings (used when aggressive_exploration: false)
+  aggressive:
+    exploration_bonus_zero_obs: 0.50   # +50% for unknown segments
+    exploration_bonus_low_obs: 0.35    # +35% for 1-9 observations
+    exploration_bonus_medium_obs: 0.15 # +15% for 10-49 observations
+    max_win_rate_adjustment: 1.8       # Up to 1.8x base bid
+    max_bid_cpm: 30.00                 # Hard ceiling
+
+  # V8: Gradual mode settings (used when aggressive_exploration: false)
+  gradual:
+    exploration_bonus_zero_obs: 0.25   # +25% (half of aggressive)
+    exploration_bonus_low_obs: 0.15    # +15% (half of aggressive)
+    exploration_bonus_medium_obs: 0.08 # +8% (half of aggressive)
+    max_win_rate_adjustment: 1.4       # Up to 1.4x base bid
+    max_bid_cpm: 20.00                 # Lower ceiling
 
 # ============================================================================
 # FEATURE CONFIGURATION (V5)

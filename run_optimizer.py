@@ -155,6 +155,25 @@ def main():
             bid_landscape_model.train(df_train_wr, selected_features, bid_col='bid_value', target='won')
             if bid_landscape_model.is_valid():
                 print(f"  Bid landscape: VALID (coefficient={bid_landscape_model.bid_coefficient:.4f})")
+
+                # V8: Derive exploration multipliers from bid landscape (DATA-DRIVEN)
+                derived_params = bid_landscape_model.derive_exploration_multiplier(
+                    current_win_rate=global_stats['global_win_rate'],
+                    target_win_rate=config.business.target_win_rate,
+                    current_median_bid=global_stats['median_winning_bid']
+                )
+                if derived_params['success']:
+                    global_stats['derived_up_multiplier'] = derived_params['derived_up_multiplier']
+                    global_stats['derived_down_multiplier'] = derived_params['derived_down_multiplier']
+                    global_stats['exploration_derivation'] = derived_params
+                    print(f"  Derived exploration multipliers (data-driven):")
+                    print(f"    Up multiplier: {derived_params['derived_up_multiplier']:.2f}x (to go from {derived_params['current_wr']:.0%} → {derived_params['target_wr']:.0%} WR)")
+                    print(f"    Down multiplier: {derived_params['derived_down_multiplier']:.2f}x")
+                    print(f"    Implied bid change: ${global_stats['median_winning_bid']:.2f} → ${derived_params['implied_new_bid']:.2f}")
+                    if derived_params['extrapolation_warning']:
+                        print(f"    ⚠ Warning: Large extrapolation beyond observed bid range")
+                else:
+                    print(f"  Could not derive multipliers: {derived_params.get('reason', 'unknown')}")
             else:
                 print(f"  Bid landscape: INVALID (negative coefficient - will use heuristics)")
         except Exception as e:
@@ -186,11 +205,12 @@ def main():
     print(f"\n[5/8] Calculating V5 bids (asymmetric exploration)...")
 
     # V6: VolumeFirstBidCalculator with asymmetric exploration + optional bid landscape
+    # NOTE: NPI model is NOT passed here. NPI multipliers are in separate file,
+    # applied by bidder at request time. Segment bids are NPI-independent.
     bid_calculator = VolumeFirstBidCalculator(
         config=config,
         ctr_model=ctr_model,
         empirical_win_rate_model=empirical_win_rate_model,
-        npi_model=npi_model,
         bid_landscape_model=bid_landscape_model,
         global_stats=global_stats
     )
