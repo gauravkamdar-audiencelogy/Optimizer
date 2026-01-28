@@ -5,6 +5,9 @@ RTB Optimizer Pipeline V9
 Usage:
     python run_optimizer.py --config config/optimizer_config_drugs.yaml
     python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml
+
+    # With automatic data ingestion (checks incoming/ folder first)
+    python run_optimizer.py --config config/optimizer_config_drugs.yaml --ingest
 """
 import argparse
 from pathlib import Path
@@ -33,6 +36,8 @@ def main():
                         help='Override data directory')
     parser.add_argument('--output-dir', type=str, default=None,
                         help='Override output directory')
+    parser.add_argument('--ingest', action='store_true',
+                        help='Ingest new data from incoming/ folder before running optimizer')
     args = parser.parse_args()
 
     # Load configuration
@@ -46,6 +51,19 @@ def main():
     # Derive paths from config if not explicitly provided
     data_dir = args.data_dir if args.data_dir else config.dataset.get_data_dir()
     output_base_dir = args.output_dir if args.output_dir else config.dataset.get_output_dir()
+
+    # Step 0: Ingest new data if requested
+    if args.ingest:
+        from scripts.data_manager import ingest_data
+        print(f"\n{'='*60}")
+        print("PRE-RUN: Checking for new data to ingest")
+        print(f"{'='*60}")
+        data_file = config.dataset.get_data_file()
+        ingested = ingest_data(Path(data_dir), dry_run=False, data_file=data_file)
+        if ingested:
+            print(f"\nNew data ingested. Continuing with optimizer...")
+        else:
+            print(f"\nNo new data to ingest. Continuing with optimizer...")
 
     # Generate run ID
     run_id = datetime.now().strftime('%Y%m%d_%H%M%S')

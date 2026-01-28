@@ -106,11 +106,19 @@ Workflow:
 """)
 
 
-def ingest_data(data_dir: Path, dry_run: bool = False) -> None:
+def ingest_data(data_dir: Path, dry_run: bool = False, data_file: str = None) -> bool:
     """
     Process all files in incoming/, append to main data, move to processed/.
 
     This is the main production workflow command.
+
+    Args:
+        data_dir: Path to data directory
+        dry_run: If True, show what would be done without doing it
+        data_file: Name of main data file (default: derived from dir name, e.g., data_drugs.csv)
+
+    Returns:
+        True if any data was ingested, False otherwise
     """
     print("=" * 60)
     print("INGESTING NEW DATA")
@@ -118,7 +126,12 @@ def ingest_data(data_dir: Path, dry_run: bool = False) -> None:
 
     incoming_dir = data_dir / 'incoming'
     processed_dir = data_dir / 'processed'
-    main_data_path = data_dir / 'drugs_data.csv'
+
+    # Derive data file name from directory if not specified
+    # data_drugs/ -> data_drugs.csv, data_nativo_consumer/ -> data_nativo_consumer.csv
+    if data_file is None:
+        data_file = f"{data_dir.name}.csv"
+    main_data_path = data_dir / data_file
 
     # Ensure directories exist
     if not incoming_dir.exists():
@@ -135,7 +148,7 @@ def ingest_data(data_dir: Path, dry_run: bool = False) -> None:
     if not incoming_files:
         print(f"\nNo CSV files found in {incoming_dir.relative_to(data_dir.parent)}/")
         print("Drop new data files there and run this command again.")
-        return
+        return False
 
     print(f"\nFound {len(incoming_files)} file(s) to process:")
     for f in incoming_files:
@@ -144,7 +157,7 @@ def ingest_data(data_dir: Path, dry_run: bool = False) -> None:
 
     if dry_run:
         print("\n[DRY RUN] Would process these files. Run without --dry-run to execute.")
-        return
+        return False
 
     # Check main data exists
     if not main_data_path.exists():
@@ -201,7 +214,7 @@ def ingest_data(data_dir: Path, dry_run: bool = False) -> None:
 
     if not all_new_data:
         print("\nNo files were successfully processed.")
-        return
+        return False
 
     # Concatenate all new data
     print(f"\n3. Concatenating {len(all_new_data)} file(s)...")
@@ -265,6 +278,8 @@ def ingest_data(data_dir: Path, dry_run: bool = False) -> None:
     for rec_type, count in rec_counts.items():
         pct = count / len(df_combined) * 100
         print(f"   {rec_type}: {count:,} ({pct:.1f}%)")
+
+    return True
 
 
 def combine_data(data_dir: Path, archive: bool = True) -> None:
@@ -377,7 +392,7 @@ Next steps:
 """)
 
 
-def show_info(data_dir: Path) -> None:
+def show_info(data_dir: Path, data_file: str = None) -> None:
     """Show data statistics and directory status."""
     print("=" * 60)
     print("DATA INFO")
@@ -387,7 +402,11 @@ def show_info(data_dir: Path) -> None:
     incoming_dir = data_dir / 'incoming'
     processed_dir = data_dir / 'processed'
     archive_dir = data_dir / 'archive'
-    main_data_path = data_dir / 'drugs_data.csv'
+
+    # Derive data file name from directory if not specified
+    if data_file is None:
+        data_file = f"{data_dir.name}.csv"
+    main_data_path = data_dir / data_file
 
     print("\n[Directory Status]")
     print(f"   incoming/:  ", end="")

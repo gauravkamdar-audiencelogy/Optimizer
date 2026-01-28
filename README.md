@@ -31,6 +31,9 @@ python run_optimizer.py --config config/optimizer_config_drugs.yaml
 
 # 3. Or run for nativo_consumer
 python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml
+
+# 4. Run with automatic data ingestion (checks incoming/ folder first)
+python run_optimizer.py --config config/optimizer_config_drugs.yaml --ingest
 ```
 
 The optimizer auto-derives data and output paths from the config's dataset name:
@@ -259,16 +262,17 @@ Run optimizer **daily** during exploration phase:
 
 ### Typical Workflow
 ```bash
-# 1. Ingest any new data
-python scripts/data_manager.py ingest --data-dir data_drugs/
+# Option A: Single command (recommended) - ingest + optimize
+python run_optimizer.py --config config/optimizer_config_drugs.yaml --ingest
 
-# 2. Run optimizer
+# Option B: Separate commands
+python scripts/data_manager.py ingest --data-dir data_drugs/
 python run_optimizer.py --config config/optimizer_config_drugs.yaml
 
-# 3. Review output
+# Review output
 ls -la output_drugs/$(ls -t output_drugs/ | head -1)/
 
-# 4. Deploy memcache and NPI files to bidder
+# Deploy suggested_bids and npi_multipliers files to bidder
 ```
 
 ## Requirements
