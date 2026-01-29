@@ -71,9 +71,10 @@ class DataLoader:
         df['rec_type'] = df['rec_type'].str.lower().str.strip()
 
         # Split by rec_type
+        # Note: nativo_consumer uses 'link' for clicks, 'lead' for conversions
         df_bids = df[df['rec_type'] == 'bid'].copy()
         df_views = df[df['rec_type'] == 'view'].copy()
-        df_clicks = df[df['rec_type'] == 'click'].copy()
+        df_clicks = df[df['rec_type'].isin(['click', 'link'])].copy()
 
         print(f"    Split: {len(df_bids):,} bids, {len(df_views):,} views, {len(df_clicks):,} clicks")
 
@@ -204,7 +205,13 @@ class DataLoader:
 
     @staticmethod
     def _parse_first_array_value(val) -> float:
-        """Extract first numeric value from postgres array string like {7.50000}."""
+        """Extract first numeric value from postgres array string.
+
+        Handles formats:
+        - {7.50000} - standard postgres array
+        - {"0.45000"} - quoted postgres array (from some SSPs)
+        - 7.50000 - plain numeric
+        """
         if pd.isna(val):
             return np.nan
         val_str = str(val)
@@ -213,6 +220,8 @@ class DataLoader:
             if inner == '':
                 return np.nan
             first_val = inner.split(',')[0]
+            # Strip quotes if present (handles {"0.45000"} format)
+            first_val = first_val.strip('"\'')
             try:
                 return float(first_val)
             except ValueError:

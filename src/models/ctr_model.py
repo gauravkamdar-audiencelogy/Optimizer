@@ -74,6 +74,24 @@ class CTRModel:
         print(f"    Categorical features: {categorical_features}")
         print(f"    Numeric features: {numeric_features}")
 
+        # Handle edge case: no clicks in data
+        if y.sum() == 0:
+            print("    WARNING: No clicks in training data - using global CTR only")
+            self.model = None
+            self.is_trained = True
+            self.training_stats = {
+                'n_samples': len(y),
+                'n_clicks': 0,
+                'global_ctr': 0.0,
+                'mean_pred_ctr': 0.0,
+                'n_segments': len(self.segment_ctrs),
+                'segments_with_clicks': 0,
+                'shrinkage_k': self.shrinkage_k,
+                'features': features,
+                'note': 'No clicks - model returns global CTR (0) for all predictions'
+            }
+            return
+
         # Create preprocessing pipeline
         transformers = []
         if numeric_features:
@@ -123,6 +141,10 @@ class CTRModel:
         if not self.is_trained:
             raise ValueError("Model not trained. Call train() first.")
 
+        # Handle no-clicks case: return global CTR (0) for all
+        if self.model is None:
+            return np.full(len(df), self.global_ctr)
+
         X = df[self.feature_names]
         return self.model.predict_proba(X)[:, 1]
 
@@ -149,7 +171,13 @@ class CTRModel:
             return float(self.segment_ctrs.loc[segment_key, 'shrunk_ctr'])
         else:
             # Fallback to model prediction for unseen segments
+            # Handle no-clicks case
+            if self.model is None:
+                return self.global_ctr
+
             df = pd.DataFrame([segment_values])
             pred = self.predict_ctr(df)[0]
-            # Clip to reasonable range around global CTR
-            return float(np.clip(pred, self.global_ctr * 0.1, self.global_ctr * 10))
+            # Clip to reasonable range around global CTR (avoid div by zero)
+            if self.global_ctr > 0:
+                return float(np.clip(pred, self.global_ctr * 0.1, self.global_ctr * 10))
+            return float(pred)

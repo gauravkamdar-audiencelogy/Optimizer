@@ -81,8 +81,10 @@ class FeatureEngineer:
         if 'ref_bundle' in df.columns:
             # pageurl_truncated: full URL without query params (matches bidder format)
             df['pageurl_truncated'] = df['ref_bundle'].apply(self._truncate_url)
-            # domain: for future multi-domain SSPs
-            df['domain'] = df['ref_bundle'].apply(self._extract_domain)
+            # domain: only extract from ref_bundle if domain column doesn't exist
+            # (nativo_consumer already has proper domain column)
+            if 'domain' not in df.columns:
+                df['domain'] = df['ref_bundle'].apply(self._extract_domain)
 
         # Handle nulls in geo_region_name
         if 'geo_region_name' in df.columns:

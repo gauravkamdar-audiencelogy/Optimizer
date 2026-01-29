@@ -21,9 +21,9 @@ bidding:
   strategy: "adaptive"
 
 data:
-  # Using data from Jan 13, 2026 onwards (fresh file)
-  min_bid_date: "2026-01-13"
-  min_view_date: "2026-01-13"
+  # Using data from Jan 28, 2026 (single day)
+  min_bid_date: "2026-01-28"
+  min_view_date: "2026-01-28"
 
 # -----------------------------------------------------------------------------
 # NPI SETTINGS (nativo_consumer = consumer targeting = NO NPI data)
