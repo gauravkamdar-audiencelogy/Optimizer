@@ -275,6 +275,58 @@ ls -la output_drugs/$(ls -t output_drugs/ | head -1)/
 # Deploy suggested_bids and npi_multipliers files to bidder
 ```
 
+## Integration Setup (QA/Production)
+
+For automated deployments, set up integrations with S3, Snowflake, and MySQL.
+
+### 1. Create Environment File
+```bash
+cp .env.template .env
+# Edit .env with your credentials
+```
+
+### 2. Required Credentials
+
+**S3 (Output Storage)**
+```
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=us-east-1
+OPTIMIZER_S3_BUCKET=tn-optimizer-data
+```
+
+**Snowflake (Data Source)**
+```
+SNOWFLAKE_ACCOUNT=your_account
+SNOWFLAKE_USER=your_user
+SNOWFLAKE_PASSWORD=your_password
+SNOWFLAKE_WAREHOUSE=your_warehouse
+SNOWFLAKE_DATABASE=your_database
+SNOWFLAKE_SCHEMA=your_schema
+```
+
+**MySQL (Audit Logging)**
+```
+MYSQL_HOST=your_host
+MYSQL_USER=your_user
+MYSQL_PASSWORD=your_password
+MYSQL_DATABASE=your_database
+```
+
+### 3. Verify Setup
+```bash
+# Check integration status
+python scripts/check_integrations.py
+
+# Test actual connections
+python scripts/check_integrations.py --test-connections
+```
+
+### 4. Install Integration Dependencies
+```bash
+pip install boto3 snowflake-connector-python mysql-connector-python python-dotenv
+```
+
 ## Requirements
 
 ```
