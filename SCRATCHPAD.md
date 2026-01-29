@@ -1,1 +1,0 @@
-# Scratch pad for Claude to jot down notes 
