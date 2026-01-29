@@ -25,6 +25,7 @@ from src.models.empirical_win_rate_model import EmpiricalWinRateModel
 from src.models.ctr_model import CTRModel
 from src.models.bid_landscape_model import BidLandscapeModel
 from src.models.npi_value_model import NPIValueModel
+from src.models.domain_value_model import DomainValueModel
 from src.bid_calculator_v5 import VolumeFirstBidCalculator
 from src.memcache_builder import MemcacheBuilder
 from src.metrics_reporter import MetricsReporter
@@ -93,6 +94,7 @@ def main():
     print(f"  Exploration mode: {exploration_mode_name}")
     print(f"  Bid range: ${config.technical.min_bid_cpm} - ${exploration_preset.max_bid_cpm}")
     print(f"  NPI enabled: {config.npi.enabled}")
+    print(f"  Domain enabled: {config.domain.enabled}")
     print(f"  Strategy: {config.bidding.strategy}")
 
     # Step 1: Load data
@@ -180,12 +182,25 @@ def main():
             path_1year=config.npi.data_1year,
             path_20day=config.npi.data_20day,
             max_multiplier=config.npi.max_multiplier,
-            recency_boost=config.npi.recency_boost
+            recency_boost=config.npi.recency_boost,
+            config=config.npi  # Pass config for IQR tiering settings
         )
     elif config.npi.enabled:
         print(f"  NPI: enabled but no data path configured")
     else:
         print(f"  NPI: disabled")
+
+    # Domain model (tiered multipliers like NPI)
+    domain_model = None
+    if config.domain.enabled:
+        print(f"\n  Training domain model...")
+        domain_model = DomainValueModel(config)
+        domain_model.train(df_train_wr)
+        if domain_model.is_loaded:
+            stats = domain_model.get_tier_stats()
+            print(f"  Domain model: {stats['total_domains']:,} domains loaded")
+    else:
+        print(f"  Domain: disabled")
 
     # Step 5: Calculate bids
     print(f"\n[5/8] Calculating bids...")
@@ -229,6 +244,10 @@ def main():
     if npi_model and npi_model.is_loaded:
         npi_multipliers_path, npi_summary_path = memcache_builder.write_npi_cache(npi_model, output_dir, run_id)
 
+    domain_multipliers_path, domain_summary_path = None, None
+    if domain_model and domain_model.is_loaded:
+        domain_multipliers_path, domain_summary_path = memcache_builder.write_domain_multipliers(domain_model, output_dir, run_id)
+
     df_bid_summary = memcache_builder.build_bid_summary(bid_results, selected_features)
     bid_summary_path = memcache_builder.write_bid_summary(df_bid_summary, output_dir, run_id)
 
@@ -240,6 +259,9 @@ def main():
     if npi_multipliers_path:
         print(f"  NPI multipliers: {npi_multipliers_path.name}")
         print(f"  NPI summary: {npi_summary_path.name}")
+    if domain_multipliers_path:
+        print(f"  Domain multipliers: {domain_multipliers_path.name}")
+        print(f"  Domain summary: {domain_summary_path.name}")
 
     # Step 7: Metrics
     print(f"\n[7/8] Generating metrics...")
@@ -370,6 +392,15 @@ def main():
         print(f"\nNPI Model:")
         print(f"  Total NPIs: {npi_stats.get('total_profiles', 0):,}")
         print(f"  Avg multiplier: {npi_stats.get('avg_multiplier', 1.0):.2f}x")
+
+    if domain_model and domain_model.is_loaded:
+        domain_stats = domain_model.get_tier_stats()
+        print(f"\nDomain Model:")
+        print(f"  Total domains: {domain_stats.get('total_domains', 0):,}")
+        print(f"  Avg multiplier: {domain_stats.get('avg_multiplier', 1.0):.2f}x")
+        tier_counts = domain_stats.get('tier_counts', {})
+        if tier_counts.get('blocklist', 0) > 0:
+            print(f"  Blocklisted: {tier_counts['blocklist']:,}")
 
     print(f"{'='*60}\n")
 

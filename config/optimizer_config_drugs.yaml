@@ -34,6 +34,30 @@ npi:
   max_multiplier: 3.0          # Top NPIs get up to 3x bid
   recency_boost: 1.2           # Recent clickers get +20%
 
+  # Tiering method: 'iqr' (hierarchical IQR - recommended) or 'percentile' (legacy)
+  tiering_method: iqr
+
+  # --- IQR PARAMETERS (used when tiering_method='iqr') ---
+  iqr_multiplier_stars: 1.5    # Elite threshold = Q3 + 1.5×IQR
+  iqr_multiplier_extreme: 3.0  # Extreme threshold = Q3 + 3.0×IQR
+  poor_rate_factor: 0.3        # Poor threshold = 30th percentile of clicks
+
+  # 5-tier multipliers for IQR method (higher than domain due to direct NPI value)
+  multiplier_extreme_elite: 3.00  # > Q3 + 3.0×IQR (capped at max_multiplier)
+  multiplier_elite: 2.50          # > Q3 + 1.5×IQR
+  multiplier_cream: 1.80          # > Middle_Q3 + 1.5×Middle_IQR
+  multiplier_baseline: 1.00       # > poor_threshold
+  multiplier_poor: 0.70           # ≤ poor_threshold
+
+  # Observation threshold for IQR tiering
+  min_clicks_for_tiering: 5
+
+# -----------------------------------------------------------------------------
+# DOMAIN OPTIMIZATION (disabled for drugs.com - single domain)
+# -----------------------------------------------------------------------------
+domain:
+  enabled: false  # drugs.com is single domain, no domain optimization needed
+
 # -----------------------------------------------------------------------------
 # EXPLORATION PRESETS (selected by aggressive_exploration toggle)
 # -----------------------------------------------------------------------------

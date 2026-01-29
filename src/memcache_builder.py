@@ -490,3 +490,68 @@ class MemcacheBuilder:
             json.dump(report, f, indent=2, default=str)
 
         return filepath
+
+    def write_domain_multipliers(
+        self,
+        domain_model,
+        output_dir: Path,
+        timestamp: str = None
+    ) -> tuple:
+        """
+        Write domain files: multipliers (production) and summary (analysis).
+
+        Creates two files:
+        1. domain_multipliers_*.csv - Production file with only domain, multiplier
+        2. domain_summary_*.csv - Analysis file with all columns (tier, bids, etc.)
+
+        Args:
+            domain_model: DomainValueModel instance
+            output_dir: Output directory
+            timestamp: Optional timestamp string
+
+        Returns:
+            Tuple of (multipliers_path, summary_path)
+        """
+        if timestamp is None:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        # Get all profiles as DataFrame
+        df = domain_model.get_all_profiles_df()
+
+        if df.empty:
+            print("    WARNING: No domain profiles to export")
+            return None, None
+
+        # 1. Write production file (only domain and multiplier)
+        multipliers_filename = f'domain_multipliers_{timestamp}.csv'
+        multipliers_filepath = output_dir / multipliers_filename
+        df[['domain', 'multiplier']].to_csv(multipliers_filepath, index=False)
+
+        # 2. Write analysis file (all columns)
+        summary_filename = f'domain_summary_{timestamp}.csv'
+        summary_filepath = output_dir / summary_filename
+        df.to_csv(summary_filepath, index=False)
+
+        # 3. Write blocklist separately (if any)
+        blocklist_df = domain_model.get_blocklist()
+        blocklist_filepath = None
+        if not blocklist_df.empty:
+            blocklist_filename = f'domain_blocklist_{timestamp}.csv'
+            blocklist_filepath = output_dir / blocklist_filename
+            blocklist_df.to_csv(blocklist_filepath, index=False)
+
+        # Print summary
+        tier_counts = df['tier'].value_counts()
+
+        print(f"\n  Domain Output:")
+        print(f"    Total domains: {len(df):,}")
+        for tier in ['premium', 'standard', 'below_avg', 'poor', 'blocklist']:
+            if tier in tier_counts.index:
+                count = tier_counts[tier]
+                print(f"    {tier.capitalize()}: {count:,} ({count/len(df)*100:.1f}%)")
+        print(f"    Multiplier range: {df['multiplier'].min():.2f}x - {df['multiplier'].max():.2f}x")
+        print(f"    Avg multiplier: {df['multiplier'].mean():.2f}x")
+        if blocklist_filepath:
+            print(f"    Blocklisted: {len(blocklist_df):,} domains")
+
+        return multipliers_filepath, summary_filepath

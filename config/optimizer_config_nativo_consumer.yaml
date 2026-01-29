@@ -21,14 +21,62 @@ bidding:
   strategy: "adaptive"
 
 data:
-  min_bid_date: "2025-11-01"
-  min_view_date: "2025-11-01"
+  # Using data from Jan 13, 2026 onwards (fresh file)
+  min_bid_date: "2026-01-13"
+  min_view_date: "2026-01-13"
 
 # -----------------------------------------------------------------------------
 # NPI SETTINGS (nativo_consumer = consumer targeting = NO NPI data)
 # -----------------------------------------------------------------------------
 npi:
   enabled: false
+
+# -----------------------------------------------------------------------------
+# DOMAIN OPTIMIZATION (tiered multipliers like NPI)
+# -----------------------------------------------------------------------------
+domain:
+  enabled: true
+
+  # Tiering method: 'iqr' (hierarchical IQR - recommended) or 'percentile' (legacy)
+  tiering_method: iqr
+
+  # --- IQR PARAMETERS (used when tiering_method='iqr') ---
+  # IQR multipliers for threshold calculation
+  iqr_multiplier_stars: 1.5    # Stars threshold = Q3 + 1.5×IQR
+  iqr_multiplier_extreme: 3.0  # Extreme threshold = Q3 + 3.0×IQR
+  poor_rate_factor: 0.3        # Poor threshold = global_rate × 0.3
+
+  # 5-tier multipliers for IQR method
+  multiplier_extreme_stars: 1.50  # > Q3 + 3.0×IQR (~3% of domains)
+  multiplier_stars: 1.30          # > Q3 + 1.5×IQR (~4% of domains)
+  multiplier_cream: 1.15          # > Middle_Q3 + 1.5×Middle_IQR (~2%)
+  multiplier_baseline: 1.00       # > poor_threshold (~70%)
+  multiplier_poor_iqr: 0.60       # ≤ poor_threshold (~21%)
+
+  # Observation threshold for IQR tiering
+  min_bids_for_tiering: 30
+
+  # --- LEGACY PERCENTILE PARAMETERS (used when tiering_method='percentile') ---
+  # Tier percentile thresholds (based on shrunk CTR)
+  premium_percentile: 95.0    # Top 5% → premium tier
+  standard_percentile: 50.0   # Top 50% → standard tier
+  below_avg_percentile: 10.0  # Top 90% → below_avg tier
+
+  # Multipliers for legacy percentile system
+  multiplier_premium: 1.3
+  multiplier_standard: 1.0
+  multiplier_below_avg: 0.8
+  multiplier_poor: 0.5
+
+  # --- COMMON SETTINGS ---
+  multiplier_blocklist: 0.0   # Don't bid on blocklisted domains
+
+  # Blocklist criteria (only for domains with enough data)
+  blocklist_rate_factor: 0.1  # Block if rate < global_rate × 0.1
+  min_bids_for_blocklist: 100 # Need enough data to judge
+
+  # Shrinkage (same as segment model)
+  shrinkage_k: 30
 
 # -----------------------------------------------------------------------------
 # EXPLORATION PRESETS
@@ -52,20 +100,21 @@ exploration_presets:
 # FEATURES
 # -----------------------------------------------------------------------------
 features:
-  anchor: [internal_adspace_id]
+  # NOTE: internal_adspace_id is 100% -1 in this dataset (not useful)
+  anchor: [geo_region_name]   # Best available anchor
 
   candidates:
-    - internal_adspace_id
-    - geo_region_name
-    - geo_country_code2
-    - os_code
-    - domain
-    - browser_code
+    - geo_region_name         # 65 values, good variance
+    - os_code                 # 9 values
+    - browser_code            # 15 values
+    - media_type              # 2 values (mobile/desktop)
     - hour_of_day
     - day_of_week
-    - media_type
+    # domain has 14K+ values - too high cardinality, needs bucketing
 
   exclude:
+    - internal_adspace_id     # 100% is -1 (EDA finding)
+    - geo_country_code2       # 100% is US (EDA finding)
     - geo_postal_code
     - geo_city_name
     - log_txnid
@@ -73,6 +122,7 @@ features:
     - log_dt
     - ref_bundle              # URL field - too sparse
     - ua                      # User agent - too sparse
+    - domain                  # 14K+ values - too sparse without bucketing
 
 # -----------------------------------------------------------------------------
 # ADVANCED

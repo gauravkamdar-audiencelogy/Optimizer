@@ -52,6 +52,69 @@ class NPIConfig:
     max_multiplier: float = 3.0
     recency_boost: float = 1.2
 
+    # Tiering method: 'iqr' (hierarchical IQR) or 'percentile' (legacy)
+    tiering_method: str = 'percentile'
+
+    # IQR parameters (only used when tiering_method='iqr')
+    iqr_multiplier_stars: float = 1.5    # IQR multiplier for stars threshold
+    iqr_multiplier_extreme: float = 3.0  # IQR multiplier for extreme stars
+    poor_rate_factor: float = 0.3        # Below this percentile = poor
+
+    # Multipliers for 5-tier IQR system
+    multiplier_extreme_elite: float = 3.00  # > Q3 + 3.0×IQR (capped at max_multiplier)
+    multiplier_elite: float = 2.50          # > Q3 + 1.5×IQR
+    multiplier_cream: float = 1.80          # > Middle_Q3 + 1.5×Middle_IQR
+    multiplier_baseline: float = 1.00       # > poor_threshold
+    multiplier_poor: float = 0.70           # ≤ poor_threshold
+
+    # Observation threshold for IQR tiering
+    min_clicks_for_tiering: int = 5
+
+
+@dataclass
+class DomainConfig:
+    """Domain-level optimization settings (tiered multipliers like NPI)."""
+    enabled: bool = False
+
+    # Tiering method: 'iqr' (hierarchical IQR) or 'percentile' (legacy)
+    tiering_method: str = 'percentile'
+
+    # --- IQR parameters (only used when tiering_method='iqr') ---
+    iqr_multiplier_stars: float = 1.5    # IQR multiplier for stars threshold
+    iqr_multiplier_extreme: float = 3.0  # IQR multiplier for extreme stars
+    poor_rate_factor: float = 0.3        # Below global_rate × factor = poor
+
+    # Multipliers for 5-tier IQR system
+    multiplier_extreme_stars: float = 1.50  # > Q3 + 3.0×IQR
+    multiplier_stars: float = 1.30          # > Q3 + 1.5×IQR
+    multiplier_cream: float = 1.15          # > Middle_Q3 + 1.5×Middle_IQR
+    multiplier_baseline: float = 1.00       # > poor_threshold
+    multiplier_poor_iqr: float = 0.60       # ≤ poor_threshold (IQR method)
+
+    # Observation threshold for IQR tiering
+    min_bids_for_tiering: int = 30
+
+    # --- Legacy percentile thresholds (used when tiering_method='percentile') ---
+    premium_percentile: float = 95.0    # Top 5% → premium tier
+    standard_percentile: float = 50.0   # Top 50% → standard tier
+    below_avg_percentile: float = 10.0  # Top 90% → below_avg tier
+
+    # Multipliers for legacy percentile system
+    multiplier_premium: float = 1.3
+    multiplier_standard: float = 1.0
+    multiplier_below_avg: float = 0.8
+    multiplier_poor: float = 0.5
+    multiplier_blocklist: float = 0.0
+
+    # --- Common settings ---
+    # Blocklist criteria
+    blocklist_rate_factor: float = 0.1   # Block if rate < global_rate × factor
+    blocklist_ctr_factor: float = 0.1    # Alias for backwards compatibility
+    min_bids_for_blocklist: int = 100    # Need enough data to judge
+
+    # Shrinkage
+    shrinkage_k: int = 30                # Same as segment model
+
 
 @dataclass
 class BusinessControls:
@@ -226,6 +289,7 @@ class OptimizerConfig:
     bidding: BiddingStrategy = field(default_factory=BiddingStrategy)
     data: DataConfig = field(default_factory=DataConfig)
     npi: NPIConfig = field(default_factory=NPIConfig)
+    domain: DomainConfig = field(default_factory=DomainConfig)
     features: FeatureConfig = field(default_factory=FeatureConfig)
     advanced: AdvancedConfig = field(default_factory=AdvancedConfig)
     validation: ValidationConfig = field(default_factory=ValidationConfig)
@@ -263,6 +327,10 @@ class OptimizerConfig:
         # NPI config
         npi_data = data.get('npi', {})
         npi = NPIConfig(**npi_data)
+
+        # Domain config
+        domain_data = data.get('domain', {})
+        domain = DomainConfig(**domain_data)
 
         # Advanced config
         advanced_data = data.get('advanced', {})
@@ -313,6 +381,7 @@ class OptimizerConfig:
             bidding=bidding,
             data=data_config,
             npi=npi,
+            domain=domain,
             features=features,
             advanced=advanced,
             validation=validation

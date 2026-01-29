@@ -70,17 +70,21 @@ GOOD: exploration_multiplier = derive_from_bid_landscape(data)  # Derived from P
 - Bid shading is critical — bid landscape model is essential
 - Need to find market clearing price, not bid true value
 
-### Two-Level Bidding Architecture
+### Three-Level Bidding Architecture
 ```
-Memcache:   segment → base_bid     (e.g., $19.20)
-NPI cache:  npi → multiplier       (e.g., 3.0x)
-Bidder:     final_bid = base_bid × npi_multiplier  (applied at request time)
+Memcache:     segment → base_bid       (e.g., $5.00)
+Domain cache: domain → multiplier      (e.g., 1.3x for premium domains)
+NPI cache:    npi → multiplier         (e.g., 2.0x for high-value prescribers)
+Bidder:       final_bid = base_bid × domain_multiplier × npi_multiplier
+              Example: $5.00 × 1.3 × 2.0 = $13.00
 ```
 
-**Why separate?**
+**Why separate multipliers?**
 - Can't cross NPI with segments (explosion: 1,500 × 65K = 97M rows)
+- Can't cross domain with segments (explosion: 14K × 585 = 8M segments)
 - NPI comes in bid request (`external_userid` field)
-- Keeps segment learning separate from prescriber value
+- Domain comes in bid request
+- Keeps segment learning separate from domain/prescriber value
 
 ### Calibration Gate Pattern
 Build models optimally, then gate their usage at runtime:
@@ -224,6 +228,8 @@ python scripts/data_manager.py info --data-dir data_drugs/
 | `suggested_bids_*.csv` | Production: segment → bid (load into bidder) |
 | `selected_features_*.csv` | Production: features used in this run |
 | `npi_multipliers_*.csv` | Production: NPI → multiplier lookup |
+| `domain_multipliers_*.csv` | Production: domain → multiplier lookup |
+| `domain_blocklist_*.csv` | Production: domains to exclude from bidding |
 | `validation_report_*.json` | Deployment gate: pass/fail + details |
 | `segment_analysis_*.csv` | Analysis: full segment metadata |
 | `metrics_*.json` | Diagnostics: model calibration, distributions |
@@ -238,7 +244,7 @@ optimizer_drugs_hcp/
 ├── output_drugs/             # Timestamped run outputs
 ├── scripts/                  # CLI tools (data_manager, check_integrations)
 ├── src/                      # Core optimizer code
-│   ├── models/              # ML models (CTR, win rate, bid landscape, NPI)
+│   ├── models/              # ML models (CTR, win rate, bid landscape, NPI, domain)
 │   ├── integrations/        # S3, Snowflake, MySQL clients
 │   └── validator.py         # Output validation
 ├── run_optimizer.py          # Main entry point
