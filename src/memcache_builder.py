@@ -16,6 +16,7 @@ V5 approach:
 - Let the bid calculator handle exploration strategy
 """
 import pandas as pd
+import json
 from typing import List, Union
 from pathlib import Path
 from datetime import datetime
@@ -455,3 +456,37 @@ class MemcacheBuilder:
         print(f"    Avg multiplier: {df['multiplier'].mean():.2f}x")
 
         return multipliers_filepath, summary_filepath
+
+    def write_validation_report(
+        self,
+        validation_result,
+        output_dir: Path,
+        timestamp: str = None
+    ) -> Path:
+        """
+        Write validation report to JSON file.
+
+        Args:
+            validation_result: ValidationResult instance from Validator
+            output_dir: Output directory
+            timestamp: Optional timestamp string
+
+        Returns:
+            Path to the validation report file
+        """
+        if timestamp is None:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        filename = f'validation_report_{timestamp}.json'
+        filepath = output_dir / filename
+
+        # Convert to dict and add run_id
+        report = {
+            'run_id': timestamp,
+            **validation_result.to_dict()
+        }
+
+        with open(filepath, 'w') as f:
+            json.dump(report, f, indent=2, default=str)
+
+        return filepath

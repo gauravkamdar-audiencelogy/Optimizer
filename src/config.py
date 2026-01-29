@@ -193,6 +193,31 @@ class AdvancedConfig:
 
 
 @dataclass
+class ValidationConfig:
+    """Validation rules for optimizer output."""
+    enabled: bool = False
+
+    # Hard guardrails (block deployment if violated)
+    hard_rules: dict = field(default_factory=lambda: {
+        'coverage_min_pct': 80.0,           # Min % segments vs previous run
+        'calibration_ece_max': 0.15,        # Max ECE for used models
+        'bid_floor_respected': True,        # All bids >= min_bid
+        'bid_ceiling_respected': True,      # All bids <= max_bid
+    })
+
+    # Soft guardrails (warn but allow override)
+    soft_rules: dict = field(default_factory=lambda: {
+        'bid_median_change_max_pct': 50.0,  # Max % change vs previous
+        'pct_at_floor_max': 30.0,           # Max % bids at floor
+        'pct_at_ceiling_max': 30.0,         # Max % bids at ceiling
+        'pct_profitable_min': 40.0,         # Min % profitable segments
+    })
+
+    # Previous run for comparison (optional)
+    previous_run_path: Optional[str] = None
+
+
+@dataclass
 class OptimizerConfig:
     """Master configuration container."""
     dataset: DatasetConfig = field(default_factory=DatasetConfig)
@@ -203,6 +228,7 @@ class OptimizerConfig:
     npi: NPIConfig = field(default_factory=NPIConfig)
     features: FeatureConfig = field(default_factory=FeatureConfig)
     advanced: AdvancedConfig = field(default_factory=AdvancedConfig)
+    validation: ValidationConfig = field(default_factory=ValidationConfig)
 
     def __post_init__(self):
         """Wire up backward compatibility references."""
@@ -242,6 +268,15 @@ class OptimizerConfig:
         advanced_data = data.get('advanced', {})
         advanced = AdvancedConfig(**advanced_data)
 
+        # Validation config
+        validation_data = data.get('validation', {})
+        validation = ValidationConfig(
+            enabled=validation_data.get('enabled', False),
+            hard_rules=validation_data.get('hard_rules', ValidationConfig().hard_rules),
+            soft_rules=validation_data.get('soft_rules', ValidationConfig().soft_rules),
+            previous_run_path=validation_data.get('previous_run_path', None)
+        )
+
         # Features config
         features_data = data.get('features', {})
         features = FeatureConfig(
@@ -279,7 +314,8 @@ class OptimizerConfig:
             data=data_config,
             npi=npi,
             features=features,
-            advanced=advanced
+            advanced=advanced,
+            validation=validation
         )
 
         # Wire backward compatibility after creation

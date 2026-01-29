@@ -13,6 +13,7 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 import sys
+import json
 
 from src.config import OptimizerConfig
 from src.data_loader import DataLoader
@@ -258,6 +259,55 @@ def main():
     metrics_path = metrics_reporter.write_metrics(output_dir, run_id)
     print(f"  Metrics: {metrics_path.name}")
 
+    # Step 8: Validation
+    validation_result = None
+    if config.validation.enabled:
+        print(f"\n[8/9] Validating output...")
+        from src.validator import Validator
+
+        validator = Validator(config)
+
+        # Load previous run metrics if specified
+        previous_metrics = None
+        if config.validation.previous_run_path:
+            try:
+                with open(config.validation.previous_run_path, 'r') as f:
+                    previous_metrics = json.load(f)
+                print(f"  Loaded previous metrics from: {config.validation.previous_run_path}")
+            except Exception as e:
+                print(f"  Warning: Could not load previous metrics: {e}")
+
+        validation_result = validator.validate(
+            metrics=metrics,
+            bid_results=bid_results,
+            previous_metrics=previous_metrics
+        )
+
+        # Write validation report
+        validation_path = memcache_builder.write_validation_report(
+            validation_result, output_dir, run_id
+        )
+        print(f"  Validation report: {validation_path.name}")
+
+        # Print validation summary
+        if validation_result.passed:
+            print(f"  Status: PASSED")
+        else:
+            print(f"  Status: FAILED (deployment blocked)")
+            for check in validation_result.checks:
+                if not check.passed and check.rule_type == 'hard':
+                    print(f"    [BLOCKED] {check.name}: {check.message}")
+
+        if validation_result.has_warnings:
+            print(f"  Warnings:")
+            for check in validation_result.checks:
+                if not check.passed and check.rule_type == 'soft':
+                    print(f"    [WARN] {check.name}: {check.message}")
+
+        print(f"  Recommendation: {validation_result.recommendation.upper()}")
+    else:
+        print(f"\n[8/9] Validation: SKIPPED (disabled in config)")
+
     # Final summary
     print(f"\n{'='*60}")
     print(f"Complete: {run_id}")
@@ -285,6 +335,12 @@ def main():
         print(f"  Avg multiplier: {npi_stats.get('avg_multiplier', 1.0):.2f}x")
 
     print(f"{'='*60}\n")
+
+    # Return exit code based on validation result
+    if validation_result and not validation_result.passed:
+        print("[VALIDATION FAILED] Output not ready for deployment")
+        return 1
+
     return 0
 
 
