@@ -129,12 +129,14 @@ def get_integration_status() -> dict:
             'enabled': all([
                 get_env('SNOWFLAKE_ACCOUNT'),
                 get_env('SNOWFLAKE_USER'),
-                get_env('SNOWFLAKE_PASSWORD'),
+                # Either password OR private key path
+                get_env('SNOWFLAKE_PASSWORD') or get_env('SNOWFLAKE_PRIVATE_KEY_PATH'),
                 get_env('SNOWFLAKE_WAREHOUSE'),
                 get_env('SNOWFLAKE_DATABASE')
             ]),
             'account': get_env('SNOWFLAKE_ACCOUNT'),
-            'database': get_env('SNOWFLAKE_DATABASE')
+            'database': get_env('SNOWFLAKE_DATABASE'),
+            'auth_method': 'key-pair' if get_env('SNOWFLAKE_PRIVATE_KEY_PATH') else 'password'
         },
         'mysql': {
             'enabled': all([
@@ -170,6 +172,7 @@ def print_integration_status():
         print(f"    Status: ENABLED")
         print(f"    Account: {status['snowflake']['account']}")
         print(f"    Database: {status['snowflake']['database']}")
+        print(f"    Auth: {status['snowflake']['auth_method']}")
     else:
         print(f"    Status: DISABLED (missing credentials)")
 

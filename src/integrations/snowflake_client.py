@@ -8,10 +8,15 @@ Handles:
 Environment Variables:
     SNOWFLAKE_ACCOUNT: Snowflake account identifier
     SNOWFLAKE_USER: Snowflake username
-    SNOWFLAKE_PASSWORD: Snowflake password
+    SNOWFLAKE_PASSWORD: Snowflake password (for password auth)
+    SNOWFLAKE_PRIVATE_KEY_PATH: Path to PEM file (for key-pair auth)
     SNOWFLAKE_WAREHOUSE: Snowflake warehouse name
     SNOWFLAKE_DATABASE: Snowflake database name
     SNOWFLAKE_SCHEMA: Snowflake schema name
+    SNOWFLAKE_ROLE: Snowflake role (optional)
+
+Supports both password authentication and key-pair authentication.
+If SNOWFLAKE_PRIVATE_KEY_PATH is set, key-pair auth is used.
 
 Usage:
     client = SnowflakeClient()
@@ -32,6 +37,8 @@ class SnowflakeClient:
     Works in two modes:
     - Local mode: No credentials, all operations are no-ops with logging
     - Enabled mode: Full Snowflake operations with snowflake-connector-python
+
+    Supports both password and key-pair authentication.
     """
 
     def __init__(self):
@@ -39,23 +46,62 @@ class SnowflakeClient:
         self.account = os.environ.get('SNOWFLAKE_ACCOUNT')
         self.user = os.environ.get('SNOWFLAKE_USER')
         self.password = os.environ.get('SNOWFLAKE_PASSWORD')
+        self.private_key_path = os.environ.get('SNOWFLAKE_PRIVATE_KEY_PATH')
         self.warehouse = os.environ.get('SNOWFLAKE_WAREHOUSE')
         self.database = os.environ.get('SNOWFLAKE_DATABASE')
         self.schema = os.environ.get('SNOWFLAKE_SCHEMA')
+        self.role = os.environ.get('SNOWFLAKE_ROLE')
 
         self.enabled = self._check_credentials()
         self._connection = None
+        self._private_key = None
 
     def _check_credentials(self) -> bool:
         """Check if Snowflake credentials are available."""
+        # Must have account, user, warehouse, database
         required = [
             self.account,
             self.user,
-            self.password,
             self.warehouse,
             self.database
         ]
-        return all(v is not None for v in required)
+        if not all(v is not None for v in required):
+            return False
+
+        # Must have either password OR private key path
+        has_auth = (self.password is not None) or (self.private_key_path is not None)
+        return has_auth
+
+    def _load_private_key(self):
+        """Load private key from PEM file."""
+        if self._private_key is not None:
+            return self._private_key
+
+        if not self.private_key_path:
+            return None
+
+        key_path = Path(self.private_key_path)
+        if not key_path.exists():
+            print(f"  [ERROR] Private key file not found: {key_path}")
+            return None
+
+        try:
+            from cryptography.hazmat.backends import default_backend
+            from cryptography.hazmat.primitives import serialization
+
+            with open(key_path, 'rb') as key_file:
+                self._private_key = serialization.load_pem_private_key(
+                    key_file.read(),
+                    password=None,  # Assuming unencrypted key
+                    backend=default_backend()
+                )
+            return self._private_key
+        except ImportError:
+            print("  [WARNING] cryptography package not installed. Key-pair auth requires: pip install cryptography")
+            return None
+        except Exception as e:
+            print(f"  [ERROR] Failed to load private key: {e}")
+            return None
 
     def _get_connection(self):
         """Get or create Snowflake connection."""
@@ -64,17 +110,43 @@ class SnowflakeClient:
 
         try:
             import snowflake.connector
-            self._connection = snowflake.connector.connect(
-                account=self.account,
-                user=self.user,
-                password=self.password,
-                warehouse=self.warehouse,
-                database=self.database,
-                schema=self.schema
-            )
+
+            # Build connection parameters
+            conn_params = {
+                'account': self.account,
+                'user': self.user,
+                'warehouse': self.warehouse,
+                'database': self.database,
+                'schema': self.schema
+            }
+
+            # Add role if specified
+            if self.role:
+                conn_params['role'] = self.role
+
+            # Use key-pair auth if private key path is set, otherwise password
+            if self.private_key_path:
+                private_key = self._load_private_key()
+                if private_key is None:
+                    self.enabled = False
+                    return None
+
+                # Get private key bytes in DER format for Snowflake
+                from cryptography.hazmat.primitives import serialization
+                private_key_bytes = private_key.private_bytes(
+                    encoding=serialization.Encoding.DER,
+                    format=serialization.PrivateFormat.PKCS8,
+                    encryption_algorithm=serialization.NoEncryption()
+                )
+                conn_params['private_key'] = private_key_bytes
+            else:
+                conn_params['password'] = self.password
+
+            self._connection = snowflake.connector.connect(**conn_params)
             return self._connection
+
         except ImportError:
-            print("  [WARNING] snowflake-connector-python not installed. Snowflake operations disabled.")
+            print("  [WARNING] snowflake-connector-python not installed. Run: pip install snowflake-connector-python")
             self.enabled = False
             return None
         except Exception as e:

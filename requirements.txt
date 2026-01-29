@@ -9,4 +9,5 @@ tqdm>=4.65.0
 python-dotenv>=1.0.0      # Load .env files
 boto3>=1.34.0             # AWS S3
 snowflake-connector-python>=3.6.0  # Snowflake
+cryptography>=42.0.0      # Snowflake key-pair auth
 mysql-connector-python>=8.0.0      # MySQL
