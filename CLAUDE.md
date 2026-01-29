@@ -238,8 +238,10 @@ python scripts/data_manager.py info --data-dir data_drugs/
 ```
 optimizer_drugs_hcp/
 ├── config/                    # Dataset-specific configs
-├── data_drugs/               # drugs.com data + incoming/
-├── data_nativo_consumer/     # nativo data
+├── data/                      # All data files
+│   ├── NPI_click_data_*.csv  # Shared NPI files (used by drugs.com)
+│   ├── drugs/                # drugs.com data + incoming/processed
+│   └── nativo_consumer/      # nativo data
 ├── docs/                     # Architecture, schemas, plans
 ├── output_drugs/             # Timestamped run outputs
 ├── scripts/                  # CLI tools (data_manager, check_integrations)

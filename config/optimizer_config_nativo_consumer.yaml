@@ -3,7 +3,7 @@
 # Run: python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml
 
 dataset:
-  name: "nativo_consumer"  # → data_nativo_consumer/, output_nativo_consumer/
+  name: "nativo_consumer"  # → data/nativo_consumer/, output_nativo_consumer/
 
 # -----------------------------------------------------------------------------
 # WHAT TO CHANGE REGULARLY

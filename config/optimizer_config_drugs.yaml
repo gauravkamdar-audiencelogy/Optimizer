@@ -3,7 +3,7 @@
 # Run: python run_optimizer.py --config config/optimizer_config_drugs.yaml
 
 dataset:
-  name: "drugs"  # → data_drugs/, output_drugs/
+  name: "drugs"  # → data/drugs/, output_drugs/
 
 # -----------------------------------------------------------------------------
 # WHAT TO CHANGE REGULARLY
@@ -29,8 +29,8 @@ data:
 # -----------------------------------------------------------------------------
 npi:
   enabled: true
-  data_1year: "data_drugs/NPI_click_data_1year.csv"
-  data_20day: "data_drugs/NPI_click_data_20days.csv"
+  data_1year: "data/NPI_click_data_1year.csv"
+  data_20day: "data/NPI_click_data_20days.csv"
   max_multiplier: 3.0          # Top NPIs get up to 3x bid
   recency_boost: 1.2           # Recent clickers get +20%
 
