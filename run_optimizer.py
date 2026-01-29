@@ -16,6 +16,7 @@ import sys
 import json
 
 from src.config import OptimizerConfig
+from src.integrations import load_env, S3Client, is_local_mode
 from src.data_loader import DataLoader
 from src.feature_engineering import FeatureEngineer
 from src.feature_selector import FeatureSelector
@@ -30,6 +31,9 @@ from src.metrics_reporter import MetricsReporter
 
 
 def main():
+    # Load environment variables from .env file
+    load_env()
+
     parser = argparse.ArgumentParser(description='RTB Optimizer Pipeline V9')
     parser.add_argument('--config', type=str, default='config/optimizer_config_drugs.yaml',
                         help='Path to config file')
@@ -307,6 +311,39 @@ def main():
         print(f"  Recommendation: {validation_result.recommendation.upper()}")
     else:
         print(f"\n[8/9] Validation: SKIPPED (disabled in config)")
+
+    # Step 9: S3 Upload (if enabled and validation passed)
+    s3_path = None
+    if not is_local_mode():
+        # Only upload if validation passed (or validation disabled)
+        should_upload = (validation_result is None) or validation_result.passed
+
+        if should_upload:
+            print(f"\n[9/9] Uploading to S3...")
+            s3_client = S3Client()
+
+            if s3_client.enabled:
+                # Upload output directory
+                s3_prefix = f"{config.dataset.name}/runs/{run_id}"
+                s3_path = s3_client.upload_directory(output_dir, s3_prefix)
+
+                if s3_path:
+                    # Update manifest for bidder
+                    s3_client.update_manifest(
+                        dataset=config.dataset.name,
+                        run_id=run_id,
+                        s3_path=s3_path
+                    )
+                    print(f"  S3 path: {s3_path}")
+                    print(f"  Manifest updated for bidder")
+                else:
+                    print(f"  [WARNING] S3 upload failed")
+            else:
+                print(f"  [WARNING] S3 not configured, skipping upload")
+        else:
+            print(f"\n[9/9] S3 Upload: SKIPPED (validation failed)")
+    else:
+        print(f"\n[9/9] S3 Upload: SKIPPED (local mode)")
 
     # Final summary
     print(f"\n{'='*60}")
