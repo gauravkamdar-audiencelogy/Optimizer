@@ -215,3 +215,139 @@ min_bids_for_tiering: 30  # or min_clicks_for_tiering for NPI
 | shrinkage_k | 30 | Bayesian shrinkage strength |
 | min_bids_for_tiering (domain) | 30 | Below this, domain gets insufficient_data tier |
 | min_clicks_for_tiering (NPI) | 5 | Below this, NPI gets insufficient_data tier |
+
+---
+
+## SSP Data Format Differences
+
+### PostgreSQL Array Formats
+Different SSPs return different formats for array fields:
+
+| SSP | Format | Example |
+|-----|--------|---------|
+| drugs.com | Unquoted | `{7.50000}` |
+| nativo | Quoted | `{"0.45000"}` |
+
+**Parser must handle both:** Strip quotes from inner values after removing braces.
+
+```python
+# In _parse_first_array_value():
+first_val = first_val.strip('"\'')  # Handle {"0.45"} format
+```
+
+### rec_type Mapping
+
+| Event | drugs.com | nativo_consumer |
+|-------|-----------|-----------------|
+| Bid request | `bid` | `bid` |
+| Won impression | `view` | `view` |
+| Click | `click` | `link` |
+| Conversion | N/A | `lead` |
+
+**Implementation:** Use `df['rec_type'].isin(['click', 'link'])` to capture clicks from both SSPs.
+
+### Domain Column Behavior
+
+| SSP | Domain Source | Column Exists |
+|-----|---------------|---------------|
+| drugs.com | Single domain (www.drugs.com) | No - extract from ref_bundle |
+| nativo_consumer | Multiple domains | Yes - `domain` column in data |
+
+**Implementation:** Only extract domain from `ref_bundle` if `domain` column doesn't already exist.
+
+---
+
+## Floor Price Handling
+
+### Current Status (January 2026)
+
+| Capability | Status |
+|------------|--------|
+| Parse floor from bid records | ✅ Working |
+| Store as `floor_price` column | ✅ Working |
+| Use in bid calculations | ❌ Not implemented |
+
+### Where Floors Come From
+
+- **nativo_consumer**: `bid_amount` field in `rec_type=bid` records
+- **drugs.com**: No floor prices available
+
+### Future Enhancement
+
+To actively use floors in bidding:
+1. Ensure bids ≥ floor + margin for each auction
+2. Factor floor distribution into bid landscape modeling
+3. Per-auction floor awareness (not just global min_bid)
+
+---
+
+## Data Folder Structure
+
+### Current Layout (January 2026)
+
+```
+data/
+├── NPI_click_data_1year.csv    # Shared across datasets
+├── NPI_click_data_20days.csv   # Shared across datasets
+├── drugs/
+│   ├── data_drugs.csv          # Main data file
+│   ├── archive/                # Historical files
+│   ├── incoming/               # Drop new files here
+│   └── processed/              # Processed incoming files
+└── nativo_consumer/
+    ├── data_nativo_consumer.csv  # Symlink to active file
+    └── data_nativo_consumer_YYYYMMDD.csv  # Dated exports
+```
+
+### Path Convention
+
+- Config `dataset.name: "drugs"` → `data/drugs/` (not `data_drugs/`)
+- NPI files at `data/` root (shared, not duplicated per dataset)
+
+---
+
+## Edge Cases Handled
+
+### Zero Clicks in Training Data
+
+Single-day data may have 0 clicks. CTR model handles this gracefully:
+
+```python
+if y.sum() == 0:
+    print("WARNING: No clicks in training data - using global CTR only")
+    self.model = None  # predict_ctr() returns 0 for all
+    return
+```
+
+### Insufficient Domains for IQR
+
+When fewer than 2 domains have adequate data, IQR tiering falls back to percentile method:
+
+```
+WARNING: Not enough domains with adequate data for IQR tiering
+Falling back to percentile method
+```
+
+---
+
+## Typical Run Metrics
+
+### drugs.com (HCP targeting)
+
+| Metric | Typical Value |
+|--------|---------------|
+| Win Rate | ~30% |
+| CTR | ~0.04% |
+| Segments | ~1,400 |
+| NPIs | ~65,000 |
+| Domains | 1 (single domain) |
+
+### nativo_consumer (Consumer targeting)
+
+| Metric | Typical Value |
+|--------|---------------|
+| Win Rate | ~8% |
+| CTR | ~0.2% |
+| Segments | ~500 |
+| Domains | ~11,000+ |
+| NPIs | N/A (consumer, not HCP) |
