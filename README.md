@@ -12,7 +12,7 @@ Real-time bidding optimizer for programmatic advertising. Uses machine learning 
 **Supported Datasets:**
 | Dataset | Targeting | NPI Data | Floor Prices |
 |---------|-----------|----------|--------------|
-| drugs.com | HCP (Healthcare Providers) | ✓ | ✗ |
+| drugs_hcp | HCP (Healthcare Providers) | ✓ | ✗ |
 | nativo_consumer | Consumer | ✗ | ✓ |
 
 **Core Formula:**
@@ -26,23 +26,23 @@ final_bid = segment_bid × npi_multiplier  (NPI applied at request time by bidde
 # 1. Activate virtual environment
 source ./venv/bin/activate
 
-# 2. Run optimizer for drugs.com
-python run_optimizer.py --config config/optimizer_config_drugs.yaml
+# 2. Run optimizer for drugs.com HCP
+python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml
 
 # 3. Or run for nativo_consumer
 python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml
 
 # 4. Run with automatic data ingestion (checks incoming/ folder first)
-python run_optimizer.py --config config/optimizer_config_drugs.yaml --ingest
+python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml --ingest
 ```
 
 The optimizer auto-derives data and output paths from the config's dataset name:
-- Config: `optimizer_config_drugs.yaml` → Data: `data_drugs/` → Output: `output_drugs/`
-- Config: `optimizer_config_nativo_consumer.yaml` → Data: `data_nativo_consumer/` → Output: `output_nativo_consumer/`
+- Config: `optimizer_config_drugs_hcp.yaml` → Data: `data/drugs_hcp/` → Output: `output/drugs_hcp/`
+- Config: `optimizer_config_nativo_consumer.yaml` → Data: `data/nativo_consumer/` → Output: `output/nativo_consumer/`
 
 To override auto-derived paths:
 ```bash
-python run_optimizer.py --config config/optimizer_config_drugs.yaml \
+python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml \
     --data-dir custom_data/ --output-dir custom_output/
 ```
 
@@ -52,7 +52,7 @@ python run_optimizer.py --config config/optimizer_config_drugs.yaml \
 optimizer_drugs_hcp/
 ├── run_optimizer.py                          # Main entry point
 ├── config/
-│   ├── optimizer_config_drugs.yaml           # drugs.com settings
+│   ├── optimizer_config_drugs_hcp.yaml       # drugs.com HCP settings
 │   └── optimizer_config_nativo_consumer.yaml # nativo settings
 ├── src/
 │   ├── data_loader.py                        # Load and clean bid/view/click data
@@ -70,52 +70,57 @@ optimizer_drugs_hcp/
 │       └── npi_value_model.py                # NPI value tiering (by click count)
 ├── scripts/
 │   └── data_manager.py                       # Data ingestion CLI
-├── data_drugs/                               # drugs.com data
-│   ├── data_drugs.csv                        # Main data file
-│   ├── incoming/                             # Drop new files here
-│   ├── processed/                            # Processed files (audit trail)
-│   ├── NPI_click_data_1year.csv              # NPI historical clicks
-│   └── NPI_click_data_20days.csv             # NPI recent clicks
-├── data_nativo_consumer/                     # nativo data
-│   └── data_nativo_consumer.csv
-├── output_drugs/                             # drugs.com outputs (timestamped)
-└── output_nativo_consumer/                   # nativo outputs (timestamped)
+├── data/                                     # All data files
+│   ├── NPI_click_data_1year.csv              # Shared: NPI historical clicks
+│   ├── NPI_click_data_20days.csv             # Shared: NPI recent clicks
+│   ├── drugs_hcp/                            # drugs.com HCP data
+│   │   ├── data_drugs_hcp.csv                # Main data file
+│   │   ├── incoming/                         # Drop new files here
+│   │   └── processed/                        # Processed files (audit trail)
+│   └── nativo_consumer/                      # nativo data
+│       └── data_nativo_consumer.csv
+├── output/                                   # Timestamped run outputs
+│   ├── drugs_hcp/                            # drugs.com outputs
+│   └── nativo_consumer/                      # nativo outputs
+└── EDA/                                      # Exploratory data analysis
+    ├── drugs_hcp/                            # EDA notebooks
+    └── nativo_consumer/
 ```
 
 ## Data Management
 
-### Adding New Data (drugs.com example)
+### Adding New Data (drugs_hcp example)
 
 ```bash
 # 1. Drop new CSV file in incoming/
-cp new_export.csv data_drugs/incoming/
+cp new_export.csv data/drugs_hcp/incoming/
 
 # 2. Run ingest (deduplicates, normalizes columns)
-python scripts/data_manager.py ingest --data-dir data_drugs/
+python scripts/data_manager.py ingest --data-dir data/drugs_hcp/
 
 # 3. Verify
-python scripts/data_manager.py info --data-dir data_drugs/
+python scripts/data_manager.py info --data-dir data/drugs_hcp/
 ```
 
 ### Data Manager Commands
 
 ```bash
 # Initialize directory structure
-python scripts/data_manager.py init --data-dir data_drugs/
+python scripts/data_manager.py init --data-dir data/drugs_hcp/
 
 # Process incoming files (main workflow)
-python scripts/data_manager.py ingest --data-dir data_drugs/
+python scripts/data_manager.py ingest --data-dir data/drugs_hcp/
 
 # Show data statistics and freshness
-python scripts/data_manager.py info --data-dir data_drugs/
+python scripts/data_manager.py info --data-dir data/drugs_hcp/
 
 # One-time: combine separate files (bids/views/clicks → single file)
-python scripts/data_manager.py combine --data-dir data_drugs/
+python scripts/data_manager.py combine --data-dir data/drugs_hcp/
 ```
 
 ## Output Files
 
-Each run creates a timestamped folder (e.g., `output_drugs/20260127_143000/`):
+Each run creates a timestamped folder (e.g., `output/drugs_hcp/20260127_143000/`):
 
 | File | Purpose |
 |------|---------|
@@ -148,16 +153,18 @@ external_userid,multiplier
 Each dataset has its own config file with a `dataset` section:
 
 ```yaml
-# config/optimizer_config_drugs.yaml
+# config/optimizer_config_drugs_hcp.yaml
 dataset:
-  name: "drugs"
+  name: "drugs_hcp"
   # Auto-derived:
-  #   data_dir: data_drugs/
-  #   output_dir: output_drugs/
-  #   data_file: data_drugs.csv
+  #   data_dir: data/drugs_hcp/
+  #   output_dir: output/drugs_hcp/
+  #   data_file: data_drugs_hcp.csv
 
-business:
-  npi_exists: true           # Has NPI data
+npi:
+  enabled: true              # Has NPI data
+
+advanced:
   floor_available: false     # No floor prices in bid requests
 ```
 
@@ -166,8 +173,10 @@ business:
 dataset:
   name: "nativo_consumer"
 
-business:
-  npi_exists: false          # No NPI data
+npi:
+  enabled: false             # No NPI data
+
+advanced:
   floor_available: true      # Has floor prices
 ```
 
@@ -263,14 +272,14 @@ Run optimizer **daily** during exploration phase:
 ### Typical Workflow
 ```bash
 # Option A: Single command (recommended) - ingest + optimize
-python run_optimizer.py --config config/optimizer_config_drugs.yaml --ingest
+python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml --ingest
 
 # Option B: Separate commands
-python scripts/data_manager.py ingest --data-dir data_drugs/
-python run_optimizer.py --config config/optimizer_config_drugs.yaml
+python scripts/data_manager.py ingest --data-dir data/drugs_hcp/
+python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml
 
 # Review output
-ls -la output_drugs/$(ls -t output_drugs/ | head -1)/
+ls -la output/drugs_hcp/$(ls -t output/drugs_hcp/ | head -1)/
 
 # Deploy suggested_bids and npi_multipliers files to bidder
 ```

@@ -1,0 +1,1455 @@
+internal_adspace_id,geo_region_name,os_code,suggested_bid_cpm,raw_bid,bid_method,exploration_direction,exploration_adjustment,observation_count,win_rate,ctr,expected_value_cpm,is_profitable,npi_multiplier
+111564,California,-1,20.0,20.0,v6_landscape_volume,up,1.0,5572,0.3652,0.0006205,7.9579,True,1.0
+111564,Unknown,-1,20.0,20.0,v6_landscape_volume,up,1.0,5535,0.2676,0.00062721,8.044,True,1.0
+111565,California,-1,20.0,20.0,v6_landscape_volume,up,1.0,4734,0.2527,0.00049033,6.2885,True,1.0
+111565,Unknown,-1,20.0,20.0,v6_landscape_volume,up,1.0,4617,0.172,0.00039562,5.0738,True,1.0
+111564,California,8,3.04,3.04,v6_landscape_margin,neutral,1.0,4256,0.6395,0.00068054,8.728,True,1.0
+111563,California,-1,20.0,20.0,v6_landscape_volume,up,1.0,4036,0.3441,0.00026476,3.3956,True,1.0
+111563,Unknown,-1,20.0,20.0,v6_landscape_volume,up,1.0,3751,0.2947,0.0001528,1.9597,False,1.0
+111565,California,8,20.0,20.0,v6_landscape_volume,up,1.0,3690,0.4151,6.85e-06,0.0878,False,1.0
+111563,California,8,3.0,3.0,v6_landscape_margin,neutral,1.0,3117,0.626,5.53e-06,0.0709,False,1.0
+111564,Florida,-1,20.0,20.0,v6_landscape_volume,up,1.0,2940,0.2482,0.00080017,10.2621,True,1.0
+111564,Texas,-1,20.0,20.0,v6_landscape_volume,up,1.0,2937,0.2012,0.0003195,4.0976,True,1.0
+111564,New York,-1,20.0,20.0,v6_landscape_volume,up,1.0,2571,0.2569,0.00055723,7.1465,True,1.0
+111565,Florida,-1,20.0,20.0,v6_landscape_volume,up,1.0,2464,0.1849,0.00058208,7.4652,True,1.0
+111565,Texas,-1,20.0,20.0,v6_landscape_volume,up,1.0,2389,0.122,0.0001531,1.9635,False,1.0
+111565,New York,-1,20.0,20.0,v6_landscape_volume,up,1.0,2211,0.1656,0.00070049,8.9837,True,1.0
+111564,Unknown,8,3.05,3.05,v6_landscape_margin,neutral,1.0,2151,0.5645,0.0007941,10.1844,True,1.0
+111563,Texas,-1,20.0,20.0,v6_landscape_volume,up,1.0,2002,0.2387,0.00019874,2.5489,False,1.0
+111564,New Jersey,-1,20.0,20.0,v6_landscape_volume,up,1.0,1941,0.2908,0.00081681,10.4755,True,1.0
+111565,Unknown,8,20.0,20.0,v6_landscape_volume,up,1.0,1866,0.3487,0.00145357,18.6421,True,1.0
+111563,Florida,-1,20.0,20.0,v6_landscape_volume,up,1.0,1823,0.2559,0.00029774,3.8186,True,1.0
+111564,Pennsylvania,-1,20.0,20.0,v6_landscape_volume,up,1.0,1809,0.2458,0.00130146,16.6913,True,1.0
+111563,New York,-1,20.0,20.0,v6_landscape_volume,up,1.0,1743,0.3272,8.145e-05,1.0446,False,1.0
+111564,Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,1642,0.1681,1.91e-06,0.0245,False,1.0
+111565,New Jersey,-1,20.0,20.0,v6_landscape_volume,up,1.0,1541,0.1573,0.00066174,8.4868,True,1.0
+111565,Pennsylvania,-1,20.0,20.0,v6_landscape_volume,up,1.0,1503,0.1397,0.00023737,3.0443,True,1.0
+111564,Texas,8,20.0,20.0,v6_landscape_volume,up,1.0,1430,0.496,1.548e-05,0.1985,False,1.0
+111564,New York,8,20.0,20.0,v6_landscape_volume,up,1.0,1370,0.5386,1.479e-05,0.1897,False,1.0
+111563,New Jersey,-1,20.0,20.0,v6_landscape_volume,up,1.0,1361,0.3674,0.0002717,3.4846,True,1.0
+111566,Unknown,-1,20.0,20.0,v6_landscape_volume,up,1.0,1354,0.2797,0.00017919,2.2981,False,1.0
+111565,Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,1345,0.1462,3.39e-06,0.0435,False,1.0
+111563,Unknown,8,3.0,3.0,v6_landscape_margin,neutral,1.0,1335,0.5524,1.493e-05,0.1914,False,1.0
+111564,Ohio,-1,20.0,20.0,v6_landscape_volume,up,1.0,1326,0.2021,0.00015744,2.0191,False,1.0
+111564,Michigan,-1,20.0,20.0,v6_landscape_volume,up,1.0,1283,0.179,0.00019998,2.5647,False,1.0
+111563,Pennsylvania,-1,20.0,20.0,v6_landscape_volume,up,1.0,1260,0.2683,0.00027535,3.5313,True,1.0
+111564,North Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,1234,0.2105,0.00076705,9.8375,True,1.0
+111564,Tennessee,-1,20.0,20.0,v6_landscape_volume,up,1.0,1209,0.239,0.00044203,5.6691,True,1.0
+111565,Texas,8,20.0,20.0,v6_landscape_volume,up,1.0,1174,0.3082,2.944e-05,0.3775,False,1.0
+111565,New York,8,20.0,20.0,v6_landscape_volume,up,1.0,1154,0.2898,3.167e-05,0.4062,False,1.0
+111564,Maryland,-1,20.0,20.0,v6_landscape_volume,up,1.0,1145,0.1992,2.34e-06,0.03,False,1.0
+111564,Florida,8,3.0,3.0,v6_landscape_margin,neutral,1.0,1139,0.5741,1.641e-05,0.2105,False,1.0
+111565,Ohio,-1,20.0,20.0,v6_landscape_volume,up,1.0,1104,0.15,0.00057857,7.4202,True,1.0
+111565,Michigan,-1,20.0,20.0,v6_landscape_volume,up,1.0,1052,0.1276,0.00036896,4.7319,True,1.0
+111564,Massachusetts,-1,20.0,20.0,v6_landscape_volume,up,1.0,1047,0.2174,0.00040266,5.1641,True,1.0
+111563,Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,1037,0.1997,2.23e-06,0.0286,False,1.0
+111566,California,-1,20.0,20.0,v6_landscape_volume,up,1.0,1014,0.2578,0.00053079,6.8074,True,1.0
+111565,North Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,997,0.1384,4.36e-06,0.0559,False,1.0
+111563,Michigan,-1,20.0,20.0,v6_landscape_volume,up,1.0,978,0.1985,0.00046675,5.9861,True,1.0
+111563,New York,8,3.04,3.04,v6_landscape_margin,neutral,1.0,965,0.5699,0.00170893,21.917,True,1.0
+111564,Illinois,-1,20.0,20.0,v6_landscape_volume,up,1.0,964,0.1631,0.00132416,16.9824,True,1.0
+111565,Florida,8,20.0,20.0,v6_landscape_volume,up,1.0,942,0.4054,2.743e-05,0.3518,False,1.0
+111565,Tennessee,-1,20.0,20.0,v6_landscape_volume,up,1.0,931,0.1541,0.00093393,11.9777,True,1.0
+111565,Maryland,-1,20.0,20.0,v6_landscape_volume,up,1.0,906,0.1604,0.00038836,4.9808,True,1.0
+111564,Georgia,-1,20.0,20.0,v6_landscape_volume,up,1.0,887,0.2367,0.0004228,5.4224,True,1.0
+111564,Oklahoma,-1,20.0,20.0,v6_landscape_volume,up,1.0,878,0.0981,0.00059267,7.601,True,1.0
+111564,Pennsylvania,8,20.0,20.0,v6_landscape_volume,up,1.0,872,0.5056,2.342e-05,0.3004,False,1.0
+111565,Massachusetts,-1,20.0,20.0,v6_landscape_volume,up,1.0,869,0.1336,4.17e-06,0.0535,False,1.0
+111563,North Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,864,0.2316,2.45e-06,0.0314,False,1.0
+111563,Tennessee,-1,20.0,20.0,v6_landscape_volume,up,1.0,854,0.2444,0.00026778,3.4343,True,1.0
+111563,Ohio,-1,20.0,20.0,v6_landscape_volume,up,1.0,854,0.2173,0.00018095,2.3207,False,1.0
+111564,Kentucky,-1,20.0,20.0,v6_landscape_volume,up,1.0,844,0.1523,0.00114122,14.6362,True,1.0
+111563,Texas,8,20.0,20.0,v6_landscape_volume,up,1.0,843,0.5064,2.502e-05,0.3209,False,1.0
+111565,Illinois,-1,20.0,20.0,v6_landscape_volume,up,1.0,809,0.099,0.00160467,20.58,True,1.0
+111563,Massachusetts,-1,20.0,20.0,v6_landscape_volume,up,1.0,795,0.2571,2.54e-06,0.0325,False,1.0
+111565,Oklahoma,-1,20.0,20.0,v6_landscape_volume,up,1.0,788,0.06,1.249e-05,0.1601,False,1.0
+111563,Maryland,-1,20.0,20.0,v6_landscape_volume,up,1.0,773,0.2841,0.00066674,8.551,True,1.0
+111565,Georgia,-1,20.0,20.0,v6_landscape_volume,up,1.0,766,0.1496,0.00043346,5.5591,True,1.0
+111563,Illinois,-1,20.0,20.0,v6_landscape_volume,up,1.0,753,0.1764,0.00026644,3.4171,True,1.0
+111564,Indiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,745,0.2517,0.00102613,13.1601,True,1.0
+111564,Tennessee,8,20.0,20.0,v6_landscape_volume,up,1.0,743,0.4102,3.33e-05,0.427,False,1.0
+111564,Washington,-1,20.0,20.0,v6_landscape_volume,up,1.0,718,0.2114,0.00095186,12.2076,True,1.0
+111565,Pennsylvania,8,20.0,20.0,v6_landscape_volume,up,1.0,716,0.3218,4.444e-05,0.5699,False,1.0
+111564,New Jersey,8,20.0,20.0,v6_landscape_volume,up,1.0,715,0.5156,0.00246753,31.646,True,1.0
+111566,New York,-1,20.0,20.0,v6_landscape_volume,up,1.0,702,0.1955,0.00039427,5.0565,True,1.0
+111566,Florida,-1,20.0,20.0,v6_landscape_volume,up,1.0,701,0.2313,0.00067552,8.6635,True,1.0
+111564,Virginia,8,20.0,20.0,v6_landscape_volume,up,1.0,686,0.3926,3.844e-05,0.493,False,1.0
+111563,Florida,8,3.0,3.0,v6_landscape_margin,neutral,1.0,675,0.5576,2.737e-05,0.351,False,1.0
+111566,Texas,-1,20.0,20.0,v6_landscape_volume,up,1.0,665,0.1656,0.00037045,4.751,True,1.0
+111564,Arizona,-1,20.0,20.0,v6_landscape_volume,up,1.0,647,0.1759,0.00037512,4.8109,True,1.0
+111565,Indiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,642,0.1683,0.00068127,8.7373,True,1.0
+111564,Illinois,8,20.0,20.0,v6_landscape_volume,up,1.0,639,0.5368,3.059e-05,0.3924,False,1.0
+111563,Pennsylvania,8,3.0,3.0,v6_landscape_margin,neutral,1.0,632,0.6089,2.65e-05,0.3399,False,1.0
+111564,Alabama,-1,20.0,20.0,v6_landscape_volume,up,1.0,628,0.2509,0.00032426,4.1586,True,1.0
+111563,Oklahoma,-1,20.0,20.0,v6_landscape_volume,up,1.0,614,0.1104,7.92e-06,0.1016,False,1.0
+111563,Georgia,-1,20.0,20.0,v6_landscape_volume,up,1.0,606,0.2627,0.00025835,3.3133,True,1.0
+111564,South Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,602,0.2565,0.00039304,5.0407,True,1.0
+111565,Tennessee,8,20.0,20.0,v6_landscape_volume,up,1.0,588,0.2315,7.04e-05,0.9029,False,1.0
+111565,Kentucky,-1,20.0,20.0,v6_landscape_volume,up,1.0,585,0.0961,0.00094994,12.183,True,1.0
+111567,Unknown,-1,20.0,20.0,v6_landscape_volume,up,1.0,576,0.2889,4.97e-06,0.0638,False,1.0
+111565,New Jersey,8,20.0,20.0,v6_landscape_volume,up,1.0,567,0.2832,6.055e-05,0.7766,False,1.0
+111565,Illinois,8,20.0,20.0,v6_landscape_volume,up,1.0,566,0.2804,6.119e-05,0.7847,False,1.0
+111565,Washington,-1,20.0,20.0,v6_landscape_volume,up,1.0,561,0.1491,0.00113719,14.5844,True,1.0
+111565,Virginia,8,20.0,20.0,v6_landscape_volume,up,1.0,556,0.2578,6.795e-05,0.8714,False,1.0
+111566,California,8,20.0,20.0,v6_landscape_volume,up,1.0,548,0.4915,3.794e-05,0.4866,False,1.0
+111566,Unknown,8,20.0,20.0,v6_landscape_volume,up,1.0,542,0.4477,4.174e-05,0.5353,False,1.0
+111564,Louisiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,527,0.1707,6.57e-06,0.0842,False,1.0
+111565,Arizona,-1,20.0,20.0,v6_landscape_volume,up,1.0,526,0.1387,7.79e-06,0.0999,False,1.0
+111563,Washington,-1,20.0,20.0,v6_landscape_volume,up,1.0,523,0.2099,4.99e-06,0.064,False,1.0
+111564,Ohio,8,20.0,20.0,v6_landscape_volume,up,1.0,521,0.4956,3.975e-05,0.5098,False,1.0
+111564,Michigan,8,20.0,20.0,v6_landscape_volume,up,1.0,516,0.4965,3.857e-05,0.4947,False,1.0
+111563,Kentucky,-1,20.0,20.0,v6_landscape_volume,up,1.0,515,0.191,0.00041892,5.3726,True,1.0
+111564,Massachusetts,8,20.0,20.0,v6_landscape_volume,up,1.0,511,0.5029,0.00345286,44.2829,True,1.0
+111564,Georgia,8,3.0,3.0,v6_landscape_margin,neutral,1.0,509,0.5605,3.541e-05,0.4542,False,1.0
+111564,Kentucky,8,20.0,20.0,v6_landscape_volume,up,1.0,507,0.2255,8.172e-05,1.0481,False,1.0
+111564,North Carolina,8,3.0,3.0,v6_landscape_margin,neutral,1.0,507,0.5756,3.458e-05,0.4434,False,1.0
+111565,Alabama,-1,20.0,20.0,v6_landscape_volume,up,1.0,505,0.1628,0.00070452,9.0354,True,1.0
+111564,Connecticut,-1,20.0,20.0,v6_landscape_volume,up,1.0,503,0.2272,4.89e-06,0.0627,False,1.0
+111565,South Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,490,0.1656,7.91e-06,0.1014,False,1.0
+111564,Colorado,-1,20.0,20.0,v6_landscape_volume,up,1.0,484,0.3329,0.00138573,17.772,True,1.0
+111563,New Jersey,8,3.0,3.0,v6_landscape_margin,neutral,1.0,483,0.5791,3.664e-05,0.4698,False,1.0
+111564,Minnesota,-1,20.0,20.0,v6_landscape_volume,up,1.0,477,0.2862,0.00051749,6.6368,True,1.0
+111564,Maryland,8,20.0,20.0,v6_landscape_volume,up,1.0,468,0.3938,5.386e-05,0.6907,False,1.0
+111566,Pennsylvania,-1,20.0,20.0,v6_landscape_volume,up,1.0,468,0.1829,5.87e-06,0.0753,False,1.0
+111563,Indiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,463,0.2943,4.86e-06,0.0623,False,1.0
+111565,Ohio,8,20.0,20.0,v6_landscape_volume,up,1.0,459,0.3335,6.351e-05,0.8146,False,1.0
+111565,Michigan,8,20.0,20.0,v6_landscape_volume,up,1.0,456,0.3088,6.678e-05,0.8565,False,1.0
+111565,Massachusetts,8,20.0,20.0,v6_landscape_volume,up,1.0,446,0.33,6.565e-05,0.842,False,1.0
+111564,Indiana,8,20.0,20.0,v6_landscape_volume,up,1.0,442,0.2947,6.755e-05,0.8664,False,1.0
+111565,Louisiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,441,0.1021,1.19e-05,0.1526,False,1.0
+111565,Georgia,8,20.0,20.0,v6_landscape_volume,up,1.0,438,0.3293,6.386e-05,0.819,False,1.0
+111563,South Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,435,0.3077,4.96e-06,0.0637,False,1.0
+111563,Alabama,-1,20.0,20.0,v6_landscape_volume,up,1.0,432,0.2773,4.55e-06,0.0583,False,1.0
+111566,Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,424,0.346,6.35e-06,0.0815,False,1.0
+111563,Arizona,-1,20.0,20.0,v6_landscape_volume,up,1.0,419,0.1762,5.53e-06,0.0709,False,1.0
+111563,Tennessee,8,3.0,3.0,v6_landscape_margin,neutral,1.0,417,0.5819,4.002e-05,0.5133,False,1.0
+111563,Virginia,8,20.0,20.0,v6_landscape_volume,up,1.0,414,0.4462,5.312e-05,0.6813,False,1.0
+111564,Wisconsin,-1,20.0,20.0,v6_landscape_volume,up,1.0,414,0.284,0.00041531,5.3263,True,1.0
+111565,Colorado,-1,20.0,20.0,v6_landscape_volume,up,1.0,413,0.2621,7.31e-06,0.0937,False,1.0
+111567,California,-1,20.0,20.0,v6_landscape_volume,up,1.0,412,0.274,7.85e-06,0.1007,False,1.0
+111566,New Jersey,-1,20.0,20.0,v6_landscape_volume,up,1.0,411,0.2315,0.00073152,9.3817,True,1.0
+111565,Connecticut,-1,20.0,20.0,v6_landscape_volume,up,1.0,406,0.1378,0.0007494,9.611,True,1.0
+111564,Missouri,-1,20.0,20.0,v6_landscape_volume,up,1.0,401,0.2485,5.47e-06,0.0702,False,1.0
+111565,North Carolina,8,20.0,20.0,v6_landscape_volume,up,1.0,397,0.3328,6.874e-05,0.8816,False,1.0
+111563,Michigan,8,20.0,20.0,v6_landscape_volume,up,1.0,378,0.5345,4.712e-05,0.6044,False,1.0
+111563,Louisiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,375,0.2817,7.53e-06,0.0965,False,1.0
+111568,Unknown,-1,20.0,20.0,v6_landscape_volume,up,1.0,374,0.223,8.38e-06,0.1075,False,1.0
+111564,Oregon,-1,20.0,20.0,v6_landscape_volume,up,1.0,369,0.2584,0.00047209,6.0545,True,1.0
+111565,Minnesota,-1,20.0,20.0,v6_landscape_volume,up,1.0,367,0.1891,0.0008744,11.2142,True,1.0
+111565,Wisconsin,-1,20.0,20.0,v6_landscape_volume,up,1.0,362,0.1763,0.00079786,10.2326,True,1.0
+111563,Indiana,8,20.0,20.0,v6_landscape_volume,up,1.0,362,0.3803,6.565e-05,0.842,False,1.0
+111566,Ohio,-1,20.0,20.0,v6_landscape_volume,up,1.0,358,0.1575,0.00065566,8.4089,True,1.0
+111564,Kansas,-1,20.0,20.0,v6_landscape_volume,up,1.0,356,0.179,6.73e-06,0.0863,False,1.0
+111563,North Carolina,8,3.0,3.0,v6_landscape_margin,neutral,1.0,352,0.5919,4.693e-05,0.6019,False,1.0
+111564,Washington,8,20.0,20.0,v6_landscape_volume,up,1.0,349,0.462,5.592e-05,0.7171,False,1.0
+111564,Mississippi,-1,20.0,20.0,v6_landscape_volume,up,1.0,349,0.1427,0.00049423,6.3385,True,1.0
+111563,Connecticut,-1,20.0,20.0,v6_landscape_volume,up,1.0,342,0.2368,5.64e-06,0.0723,False,1.0
+111565,Maryland,8,20.0,20.0,v6_landscape_volume,up,1.0,341,0.3075,8.657e-05,1.1102,False,1.0
+111565,Kentucky,8,20.0,20.0,v6_landscape_volume,up,1.0,341,0.135,0.0001646,2.111,False,1.0
+111563,Illinois,8,3.0,3.0,v6_landscape_margin,neutral,1.0,338,0.5628,5.126e-05,0.6574,False,1.0
+111563,Georgia,8,3.0,3.0,v6_landscape_margin,neutral,1.0,338,0.6334,4.495e-05,0.5765,False,1.0
+111565,Missouri,-1,20.0,20.0,v6_landscape_volume,up,1.0,337,0.1501,9.68e-06,0.1242,False,1.0
+111563,Massachusetts,8,20.0,20.0,v6_landscape_volume,up,1.0,326,0.5396,5.487e-05,0.7037,False,1.0
+111564,Alabama,8,20.0,20.0,v6_landscape_volume,up,1.0,326,0.5143,5.646e-05,0.7241,False,1.0
+111565,Oregon,-1,20.0,20.0,v6_landscape_volume,up,1.0,326,0.1913,0.00080677,10.3468,True,1.0
+111563,Ohio,8,20.0,20.0,v6_landscape_volume,up,1.0,320,0.4945,6.024e-05,0.7726,False,1.0
+111566,Florida,8,20.0,20.0,v6_landscape_volume,up,1.0,320,0.4803,6.119e-05,0.7847,False,1.0
+111563,Colorado,-1,20.0,20.0,v6_landscape_volume,up,1.0,319,0.3069,4.56e-06,0.0585,False,1.0
+111566,Texas,8,20.0,20.0,v6_landscape_volume,up,1.0,306,0.4437,6.834e-05,0.8765,False,1.0
+111565,Indiana,8,20.0,20.0,v6_landscape_volume,up,1.0,302,0.184,0.00013131,1.684,False,1.0
+111565,Kansas,-1,20.0,20.0,v6_landscape_volume,up,1.0,301,0.109,1.364e-05,0.1749,False,1.0
+111563,Minnesota,-1,20.0,20.0,v6_landscape_volume,up,1.0,300,0.2821,7.58e-06,0.0973,False,1.0
+111565,Washington,8,20.0,20.0,v6_landscape_volume,up,1.0,298,0.3082,9.425e-05,1.2087,False,1.0
+111566,Maryland,-1,20.0,20.0,v6_landscape_volume,up,1.0,296,0.2395,9.42e-06,0.1208,False,1.0
+111563,Wisconsin,-1,20.0,20.0,v6_landscape_volume,up,1.0,295,0.3111,5.39e-06,0.0692,False,1.0
+111565,Mississippi,-1,20.0,20.0,v6_landscape_volume,up,1.0,291,0.1592,1.699e-05,0.2178,False,1.0
+111566,New York,8,20.0,20.0,v6_landscape_volume,up,1.0,288,0.4217,7.304e-05,0.9368,False,1.0
+111563,Maryland,8,20.0,20.0,v6_landscape_volume,up,1.0,286,0.475,6.834e-05,0.8765,False,1.0
+111563,Kentucky,8,20.0,20.0,v6_landscape_volume,up,1.0,284,0.3124,9.739e-05,1.249,False,1.0
+111567,Florida,-1,20.0,20.0,v6_landscape_volume,up,1.0,282,0.2086,9.65e-06,0.1238,False,1.0
+111567,Texas,-1,20.0,20.0,v6_landscape_volume,up,1.0,278,0.1886,1.061e-05,0.1361,False,1.0
+111566,Michigan,-1,20.0,20.0,v6_landscape_volume,up,1.0,271,0.2163,9.43e-06,0.121,False,1.0
+111568,California,-1,20.0,20.0,v6_landscape_volume,up,1.0,268,0.2251,1.258e-05,0.1613,False,1.0
+111563,Missouri,-1,20.0,20.0,v6_landscape_volume,up,1.0,268,0.2453,7.01e-06,0.09,False,1.0
+111563,Mississippi,-1,20.0,20.0,v6_landscape_volume,up,1.0,266,0.203,6.46e-06,0.0829,False,1.0
+111564,West Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,264,0.2248,1.283e-05,0.1645,False,1.0
+111566,North Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,262,0.2092,0.00087516,11.2239,True,1.0
+111567,New York,-1,20.0,20.0,v6_landscape_volume,up,1.0,259,0.2183,1.163e-05,0.1491,False,1.0
+111564,South Carolina,8,3.0,3.0,v6_landscape_margin,neutral,1.0,256,0.6192,5.701e-05,0.7311,False,1.0
+111564,Nevada,-1,20.0,20.0,v6_landscape_volume,up,1.0,253,0.3678,0.00080677,10.3468,True,1.0
+111564,Arizona,8,3.0,3.0,v6_landscape_margin,neutral,1.0,245,0.564,6.529e-05,0.8373,False,1.0
+111563,Oregon,-1,20.0,20.0,v6_landscape_volume,up,1.0,242,0.2798,7.15e-06,0.0917,False,1.0
+111565,Alabama,8,20.0,20.0,v6_landscape_volume,up,1.0,242,0.3753,9.349e-05,1.199,False,1.0
+111566,Georgia,-1,20.0,20.0,v6_landscape_volume,up,1.0,242,0.1878,1.147e-05,0.1471,False,1.0
+111569,Unknown,-1,20.0,20.0,v6_landscape_volume,up,1.0,237,0.1726,1.736e-05,0.2227,False,1.0
+111567,Pennsylvania,-1,20.0,20.0,v6_landscape_volume,up,1.0,236,0.2259,1.524e-05,0.1954,False,1.0
+111563,Kansas,-1,20.0,20.0,v6_landscape_volume,up,1.0,236,0.1582,8.21e-06,0.1053,False,1.0
+111564,Louisiana,8,20.0,20.0,v6_landscape_volume,up,1.0,230,0.4004,9.349e-05,1.199,False,1.0
+111564,Oklahoma,8,20.0,20.0,v6_landscape_volume,up,1.0,229,0.4328,8.721e-05,1.1185,False,1.0
+111566,Massachusetts,-1,20.0,20.0,v6_landscape_volume,up,1.0,229,0.2166,0.00090249,11.5744,True,1.0
+111564,Colorado,8,17.55,17.55,v6_landscape_volume,neutral,1.0,224,0.5397,7.259e-05,0.9309,False,1.0
+111565,Nevada,-1,20.0,20.0,v6_landscape_volume,up,1.0,220,0.2404,1.724e-05,0.2211,False,1.0
+111565,Arizona,8,20.0,20.0,v6_landscape_volume,up,1.0,219,0.3859,9.821e-05,1.2595,False,1.0
+111566,Tennessee,-1,20.0,20.0,v6_landscape_volume,up,1.0,218,0.2221,1.325e-05,0.1699,False,1.0
+111564,Nebraska,-1,20.0,20.0,v6_landscape_volume,up,1.0,218,0.2141,0.00243841,31.2726,True,1.0
+111564,Connecticut,8,3.0,3.0,v6_landscape_margin,neutral,1.0,218,0.6415,6.457e-05,0.8281,False,1.0
+111565,South Carolina,8,20.0,20.0,v6_landscape_volume,up,1.0,217,0.2878,0.00012302,1.5777,False,1.0
+111564,Utah,-1,20.0,20.0,v6_landscape_volume,up,1.0,214,0.361,0.00133845,17.1656,True,1.0
+111565,West Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,213,0.202,2.274e-05,0.2916,False,1.0
+111568,Texas,-1,20.0,20.0,v6_landscape_volume,up,1.0,212,0.1657,1.605e-05,0.2059,False,1.0
+111564,New Hampshire,-1,20.0,20.0,v6_landscape_volume,up,1.0,211,0.2784,0.00093157,11.9474,True,1.0
+111566,Illinois,8,20.0,20.0,v6_landscape_volume,up,1.0,209,0.2598,0.00013589,1.7428,False,1.0
+111564,Mississippi,8,20.0,20.0,v6_landscape_volume,up,1.0,209,0.5276,7.843e-05,1.0059,False,1.0
+111565,Oklahoma,8,20.0,20.0,v6_landscape_volume,up,1.0,208,0.2441,0.00014793,1.8972,False,1.0
+111563,Nevada,-1,20.0,20.0,v6_landscape_volume,up,1.0,206,0.4156,8.22e-06,0.1054,False,1.0
+111566,Pennsylvania,8,20.0,20.0,v6_landscape_volume,up,1.0,205,0.4812,8.721e-05,1.1185,False,1.0
+111565,Louisiana,8,20.0,20.0,v6_landscape_volume,up,1.0,203,0.2665,0.0001408,1.8058,False,1.0
+111564,Kansas,8,20.0,20.0,v6_landscape_volume,up,1.0,202,0.4401,8.348e-05,1.0706,False,1.0
+111568,Florida,-1,20.0,20.0,v6_landscape_volume,up,1.0,200,0.183,0.00132767,17.0274,True,1.0
+111564,Rhode Island,-1,20.0,20.0,v6_landscape_volume,up,1.0,200,0.2308,1.714e-05,0.2198,False,1.0
+111564,Arkansas,-1,20.0,20.0,v6_landscape_volume,up,1.0,198,0.2065,7.64e-06,0.098,False,1.0
+111565,Utah,-1,20.0,20.0,v6_landscape_volume,up,1.0,196,0.2747,1.516e-05,0.1944,False,1.0
+111563,Alabama,8,3.0,3.0,v6_landscape_margin,neutral,1.0,195,0.6271,7.214e-05,0.9252,False,1.0
+111564,Missouri,8,20.0,20.0,v6_landscape_volume,up,1.0,194,0.5049,8.593e-05,1.1021,False,1.0
+111565,Connecticut,8,20.0,20.0,v6_landscape_volume,up,1.0,193,0.395,0.00010624,1.3625,False,1.0
+111567,Unknown,8,20.0,20.0,v6_landscape_volume,up,1.0,192,0.4283,0.00857362,109.9566,True,1.0
+111566,Illinois,-1,20.0,20.0,v6_landscape_volume,up,1.0,190,0.1322,1.062e-05,0.1363,False,1.0
+111565,New Hampshire,-1,20.0,20.0,v6_landscape_volume,up,1.0,189,0.215,2.265e-05,0.2905,False,1.0
+111565,Colorado,8,20.0,20.0,v6_landscape_volume,up,1.0,187,0.3046,0.00012842,1.647,False,1.0
+111563,West Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,185,0.2609,0.00126461,16.2186,True,1.0
+111565,Nebraska,-1,20.0,20.0,v6_landscape_volume,up,1.0,184,0.1266,0.00224321,28.7691,True,1.0
+111565,Kansas,8,20.0,20.0,v6_landscape_volume,up,1.0,184,0.1593,0.00019158,2.4571,False,1.0
+111564,Minnesota,8,20.0,20.0,v6_landscape_volume,up,1.0,183,0.4277,0.00010251,1.3147,False,1.0
+111570,Unknown,-1,20.0,20.0,v6_landscape_volume,up,1.0,182,0.1231,3.084e-05,0.3955,False,1.0
+111571,Unknown,-1,20.0,20.0,v6_landscape_volume,up,1.0,180,0.1052,4.016e-05,0.5151,False,1.0
+111568,New York,-1,20.0,20.0,v6_landscape_volume,up,1.0,179,0.187,0.00173829,22.2936,True,1.0
+111563,South Carolina,8,3.0,3.0,v6_landscape_margin,neutral,1.0,178,0.6831,7.17e-05,0.9195,False,1.0
+111569,California,-1,20.0,20.0,v6_landscape_volume,up,1.0,178,0.236,2.53e-05,0.3244,False,1.0
+111568,Pennsylvania,-1,20.0,20.0,v6_landscape_volume,up,1.0,177,0.1695,2.492e-05,0.3196,False,1.0
+111567,New Jersey,-1,20.0,20.0,v6_landscape_volume,up,1.0,177,0.2372,2.269e-05,0.291,False,1.0
+111564,Wisconsin,8,20.0,20.0,v6_landscape_volume,up,1.0,172,0.4262,0.00010162,1.3033,False,1.0
+111563,Connecticut,8,3.0,3.0,v6_landscape_margin,neutral,1.0,172,0.6787,7.397e-05,0.9486,False,1.0
+111565,Rhode Island,-1,20.0,20.0,v6_landscape_volume,up,1.0,172,0.0896,3.541e-05,0.4542,False,1.0
+111563,Washington,8,20.0,20.0,v6_landscape_volume,up,1.0,171,0.3985,9.904e-05,1.2702,False,1.0
+111564,Maine,-1,20.0,20.0,v6_landscape_volume,up,1.0,171,0.1298,1.711e-05,0.2194,False,1.0
+111566,Arizona,-1,20.0,20.0,v6_landscape_volume,up,1.0,167,0.2238,1.826e-05,0.2342,False,1.0
+111565,Mississippi,8,20.0,20.0,v6_landscape_volume,up,1.0,166,0.3168,0.0001408,1.8058,False,1.0
+111563,Arkansas,-1,20.0,20.0,v6_landscape_volume,up,1.0,166,0.2148,8.31e-06,0.1065,False,1.0
+111563,Oklahoma,8,20.0,20.0,v6_landscape_volume,up,1.0,166,0.3525,0.00012985,1.6653,False,1.0
+111566,Washington,-1,20.0,20.0,v6_landscape_volume,up,1.0,164,0.2118,1.534e-05,0.1967,False,1.0
+111567,Florida,8,3.0,3.0,v6_landscape_margin,neutral,1.0,164,0.552,9.13e-05,1.1709,False,1.0
+111564,District of Columbia,-1,20.0,20.0,v6_landscape_volume,up,1.0,161,0.2047,1.479e-05,0.1897,False,1.0
+111565,Arkansas,-1,20.0,20.0,v6_landscape_volume,up,1.0,158,0.1069,0.00277474,35.586,True,1.0
+111563,Rhode Island,-1,20.0,20.0,v6_landscape_volume,up,1.0,156,0.2747,1.747e-05,0.224,False,1.0
+111565,Missouri,8,20.0,20.0,v6_landscape_volume,up,1.0,155,0.3464,0.0001328,1.7032,False,1.0
+111564,Idaho,-1,20.0,20.0,v6_landscape_volume,up,1.0,150,0.3172,1.393e-05,0.1786,False,1.0
+111564,Iowa,-1,20.0,20.0,v6_landscape_volume,up,1.0,149,0.2016,1.106e-05,0.1418,False,1.0
+111567,California,8,20.0,20.0,v6_landscape_volume,up,1.0,148,0.3994,0.00012703,1.6291,False,1.0
+111565,Wisconsin,8,20.0,20.0,v6_landscape_volume,up,1.0,148,0.2983,0.00014428,1.8504,False,1.0
+111563,New Hampshire,-1,20.0,20.0,v6_landscape_volume,up,1.0,145,0.332,1.296e-05,0.1662,False,1.0
+111566,South Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,144,0.2706,0.00167776,21.5172,True,1.0
+111565,Maine,-1,20.0,20.0,v6_landscape_volume,up,1.0,142,0.1575,2.455e-05,0.3149,False,1.0
+111569,Florida,-1,20.0,20.0,v6_landscape_volume,up,1.0,142,0.2331,0.00255476,32.7648,True,1.0
+111566,New Jersey,8,20.0,20.0,v6_landscape_volume,up,1.0,142,0.4017,0.00012985,1.6653,False,1.0
+111564,New Mexico,-1,20.0,20.0,v6_landscape_volume,up,1.0,141,0.2286,1.784e-05,0.2288,False,1.0
+111564,Oregon,8,20.0,20.0,v6_landscape_volume,up,1.0,141,0.4625,0.00011687,1.4988,False,1.0
+111563,Colorado,8,13.02,13.02,v6_landscape_volume,neutral,1.0,140,0.5358,0.00010342,1.3264,False,1.0
+111565,Minnesota,8,20.0,20.0,v6_landscape_volume,up,1.0,140,0.3476,0.00013913,1.7843,False,1.0
+111565,District of Columbia,-1,20.0,20.0,v6_landscape_volume,up,1.0,139,0.1307,2.724e-05,0.3494,False,1.0
+111567,Ohio,-1,20.0,20.0,v6_landscape_volume,up,1.0,138,0.1851,1.795e-05,0.2302,False,1.0
+111569,Texas,-1,20.0,20.0,v6_landscape_volume,up,1.0,137,0.1922,3.193e-05,0.4095,False,1.0
+111566,Indiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,136,0.2415,1.855e-05,0.2379,False,1.0
+111566,Oklahoma,-1,20.0,20.0,v6_landscape_volume,up,1.0,136,0.1873,2.989e-05,0.3833,False,1.0
+111566,Massachusetts,8,20.0,20.0,v6_landscape_volume,up,1.0,135,0.3884,0.00013749,1.7633,False,1.0
+111567,Maryland,-1,20.0,20.0,v6_landscape_volume,up,1.0,135,0.2612,2.188e-05,0.2807,False,1.0
+111566,Louisiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,135,0.2006,2.513e-05,0.3223,False,1.0
+111566,Virginia,8,20.0,20.0,v6_landscape_volume,up,1.0,134,0.4823,0.00011687,1.4988,False,1.0
+111563,Arizona,8,20.0,20.0,v6_landscape_volume,up,1.0,132,0.5067,0.0001113,1.4274,False,1.0
+111565,Iowa,-1,20.0,20.0,v6_landscape_volume,up,1.0,131,0.218,1.994e-05,0.2558,False,1.0
+111563,Louisiana,8,20.0,20.0,v6_landscape_volume,up,1.0,131,0.3981,0.00013749,1.7633,False,1.0
+111566,Alabama,-1,20.0,20.0,v6_landscape_volume,up,1.0,130,0.2506,0.00128387,16.4656,True,1.0
+111566,Ohio,8,20.0,20.0,v6_landscape_volume,up,1.0,129,0.422,0.0001328,1.7032,False,1.0
+111563,Kansas,8,20.0,20.0,v6_landscape_volume,up,1.0,128,0.4879,0.00010342,1.3264,False,1.0
+111566,Michigan,8,20.0,20.0,v6_landscape_volume,up,1.0,128,0.4563,0.00012302,1.5777,False,1.0
+111563,Maine,-1,20.0,20.0,v6_landscape_volume,up,1.0,127,0.1853,2.015e-05,0.2584,False,1.0
+111569,New York,-1,20.0,20.0,v6_landscape_volume,up,1.0,127,0.128,3.734e-05,0.4789,False,1.0
+111565,Oregon,8,20.0,20.0,v6_landscape_volume,up,1.0,126,0.2442,0.00019808,2.5403,False,1.0
+111570,California,-1,20.0,20.0,v6_landscape_volume,up,1.0,126,0.1993,4.91e-05,0.6297,False,1.0
+111566,Georgia,8,20.0,20.0,v6_landscape_volume,up,1.0,125,0.478,0.00011687,1.4988,False,1.0
+111566,Colorado,-1,20.0,20.0,v6_landscape_volume,up,1.0,125,0.3167,0.00143502,18.4041,True,1.0
+111563,Mississippi,8,3.0,3.0,v6_landscape_margin,neutral,1.0,124,0.585,0.00010251,1.3147,False,1.0
+111563,District of Columbia,-1,20.0,20.0,v6_landscape_volume,up,1.0,123,0.2555,1.742e-05,0.2234,False,1.0
+111564,Wyoming,8,3.0,3.0,v6_landscape_margin,neutral,1.0,122,0.5796,0.00010722,1.375,False,1.0
+111568,New Jersey,-1,20.0,20.0,v6_landscape_volume,up,1.0,122,0.2769,3.607e-05,0.4626,False,1.0
+111566,Minnesota,-1,20.0,20.0,v6_landscape_volume,up,1.0,120,0.2273,1.981e-05,0.254,False,1.0
+111566,Oregon,-1,20.0,20.0,v6_landscape_volume,up,1.0,120,0.2539,2.047e-05,0.2625,False,1.0
+111564,Hawaii,-1,20.0,20.0,v6_landscape_volume,up,1.0,119,0.2154,3.108e-05,0.3986,False,1.0
+111565,Idaho,-1,20.0,20.0,v6_landscape_volume,up,1.0,118,0.2101,2.731e-05,0.3502,False,1.0
+111567,Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,118,0.1493,2.291e-05,0.2939,False,1.0
+111568,Unknown,8,20.0,20.0,v6_landscape_volume,up,1.0,117,0.3068,0.00017186,2.2041,False,1.0
+111564,Arkansas,8,3.0,3.0,v6_landscape_margin,neutral,1.0,117,0.5516,0.00011237,1.4412,False,1.0
+111565,New Mexico,-1,20.0,20.0,v6_landscape_volume,up,1.0,116,0.1856,3.349e-05,0.4295,False,1.0
+111563,Minnesota,8,20.0,20.0,v6_landscape_volume,up,1.0,115,0.4282,0.00013913,1.7843,False,1.0
+111563,Wyoming,8,3.0,3.0,v6_landscape_margin,neutral,1.0,115,0.6489,0.00010162,1.3033,False,1.0
+111563,Wisconsin,8,20.0,20.0,v6_landscape_volume,up,1.0,113,0.4832,0.00012566,1.6116,False,1.0
+111568,Florida,8,20.0,20.0,v6_landscape_volume,up,1.0,113,0.5111,0.00012433,1.5945,False,1.0
+111566,Wisconsin,-1,20.0,20.0,v6_landscape_volume,up,1.0,113,0.2594,1.897e-05,0.2433,False,1.0
+111569,Pennsylvania,-1,20.0,20.0,v6_landscape_volume,up,1.0,110,0.1792,4.91e-05,0.6297,False,1.0
+111566,Tennessee,8,20.0,20.0,v6_landscape_volume,up,1.0,110,0.5292,0.00012302,1.5777,False,1.0
+111567,Michigan,-1,20.0,20.0,v6_landscape_volume,up,1.0,110,0.3007,2.083e-05,0.2672,False,1.0
+111563,Nebraska,-1,20.0,20.0,v6_landscape_volume,up,1.0,110,0.2292,2.164e-05,0.2776,False,1.0
+111563,Utah,-1,20.0,20.0,v6_landscape_volume,up,1.0,108,0.3775,8.62e-06,0.1105,False,1.0
+111564,West Virginia,8,20.0,20.0,v6_landscape_volume,up,1.0,108,0.4137,0.00014793,1.8972,False,1.0
+111571,Florida,-1,20.0,20.0,v6_landscape_volume,up,1.0,107,0.1394,6.055e-05,0.7766,False,1.0
+111566,Missouri,-1,20.0,20.0,v6_landscape_volume,up,1.0,106,0.2433,2.156e-05,0.2765,False,1.0
+111564,Iowa,8,20.0,20.0,v6_landscape_volume,up,1.0,106,0.5374,0.00012433,1.5945,False,1.0
+111570,Texas,-1,20.0,20.0,v6_landscape_volume,up,1.0,106,0.1257,5.171e-05,0.6632,False,1.0
+111565,Arkansas,8,20.0,20.0,v6_landscape_volume,up,1.0,105,0.3266,0.00017707,2.2709,False,1.0
+111563,Missouri,8,3.0,3.0,v6_landscape_margin,neutral,1.0,104,0.6126,0.00011346,1.4551,False,1.0
+111563,Oregon,8,3.0,3.0,v6_landscape_margin,neutral,1.0,103,0.6623,0.00010722,1.375,False,1.0
+111571,California,-1,20.0,20.0,v6_landscape_volume,up,1.0,103,0.2413,0.0040959,52.5299,True,1.0
+111568,Ohio,-1,20.0,20.0,v6_landscape_volume,up,1.0,103,0.1811,2.85e-05,0.3656,False,1.0
+111565,Hawaii,-1,20.0,20.0,v6_landscape_volume,up,1.0,100,0.1392,5.126e-05,0.6574,False,1.0
+111570,Florida,-1,20.0,20.0,v6_landscape_volume,up,1.0,100,0.1699,4.849e-05,0.6219,False,1.0
+111563,Idaho,-1,20.0,20.0,v6_landscape_volume,up,1.0,100,0.3853,1.79e-05,0.2295,False,1.0
+111566,Maryland,8,20.0,20.0,v6_landscape_volume,up,1.0,99,0.3961,0.00016231,2.0817,False,1.0
+111564,Rhode Island,8,20.0,20.0,v6_landscape_volume,up,1.0,96,0.5325,0.0001328,1.7032,False,1.0
+111568,California,8,20.0,20.0,v6_landscape_volume,up,1.0,96,0.3658,0.00017443,2.237,False,1.0
+111567,North Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,95,0.2167,2.535e-05,0.3251,False,1.0
+111564,South Dakota,-1,20.0,20.0,v6_landscape_volume,up,1.0,94,0.3717,2.568e-05,0.3294,False,1.0
+111571,Texas,-1,20.0,20.0,v6_landscape_volume,up,1.0,94,0.1943,5.264e-05,0.6751,False,1.0
+111566,Connecticut,-1,20.0,20.0,v6_landscape_volume,up,1.0,94,0.2024,1.838e-05,0.2357,False,1.0
+111564,Nevada,8,17.22,17.22,v6_landscape_volume,neutral,1.0,93,0.578,0.00011925,1.5294,False,1.0
+111567,Georgia,-1,20.0,20.0,v6_landscape_volume,up,1.0,93,0.2365,2.492e-05,0.3196,False,1.0
+111567,Texas,8,20.0,20.0,v6_landscape_volume,up,1.0,93,0.4235,0.00016009,2.0532,False,1.0
+111563,New Mexico,-1,20.0,20.0,v6_landscape_volume,up,1.0,92,0.1975,2.072e-05,0.2657,False,1.0
+111568,Maryland,-1,20.0,20.0,v6_landscape_volume,up,1.0,91,0.2322,3.698e-05,0.4743,False,1.0
+111566,North Carolina,8,20.0,20.0,v6_landscape_volume,up,1.0,90,0.5258,0.01162858,149.1366,True,1.0
+111567,New York,8,20.0,20.0,v6_landscape_volume,up,1.0,90,0.4008,0.00016009,2.0532,False,1.0
+111565,Iowa,8,20.0,20.0,v6_landscape_volume,up,1.0,90,0.3424,0.0001855,2.3791,False,1.0
+111566,Kentucky,-1,20.0,20.0,v6_landscape_volume,up,1.0,89,0.2445,2.586e-05,0.3316,False,1.0
+111564,Nebraska,8,20.0,20.0,v6_landscape_volume,up,1.0,89,0.6142,0.00012433,1.5945,False,1.0
+111567,Massachusetts,-1,20.0,20.0,v6_landscape_volume,up,1.0,89,0.2193,2.305e-05,0.2956,False,1.0
+111566,Mississippi,-1,20.0,20.0,v6_landscape_volume,up,1.0,87,0.2059,3.883e-05,0.4979,False,1.0
+111568,Michigan,-1,20.0,20.0,v6_landscape_volume,up,1.0,86,0.2077,3.274e-05,0.4198,False,1.0
+111570,New York,-1,20.0,20.0,v6_landscape_volume,up,1.0,85,0.1312,6.25e-05,0.8015,False,1.0
+111569,New Jersey,-1,20.0,20.0,v6_landscape_volume,up,1.0,85,0.2269,6.421e-05,0.8235,False,1.0
+111571,New York,-1,20.0,20.0,v6_landscape_volume,up,1.0,84,0.1499,6.216e-05,0.7972,False,1.0
+111563,Unknown,2,20.0,20.0,v6_landscape_volume,up,1.0,84,0.2815,0.00021642,2.7756,False,1.0
+111563,Arkansas,8,20.0,20.0,v6_landscape_volume,up,1.0,84,0.6148,0.00012566,1.6116,False,1.0
+111566,Washington,8,20.0,20.0,v6_landscape_volume,up,1.0,83,0.4433,0.00016231,2.0817,False,1.0
+111565,Rhode Island,8,20.0,20.0,v6_landscape_volume,up,1.0,82,0.1705,0.00029216,3.747,True,1.0
+111566,Kansas,-1,20.0,20.0,v6_landscape_volume,up,1.0,82,0.1794,2.966e-05,0.3804,False,1.0
+111565,South Dakota,-1,20.0,20.0,v6_landscape_volume,up,1.0,81,0.199,3.948e-05,0.5064,False,1.0
+111569,Unknown,8,20.0,20.0,v6_landscape_volume,up,1.0,80,0.2645,0.00022915,2.9388,False,1.0
+111565,Nebraska,8,20.0,20.0,v6_landscape_volume,up,1.0,80,0.319,0.00020869,2.6764,False,1.0
+111569,Florida,8,20.0,20.0,v6_landscape_volume,up,1.0,80,0.5008,0.00015377,1.9721,False,1.0
+111567,Arizona,-1,20.0,20.0,v6_landscape_volume,up,1.0,79,0.2394,3.585e-05,0.4598,False,1.0
+111565,Nevada,8,20.0,20.0,v6_landscape_volume,up,1.0,78,0.4638,0.00014793,1.8972,False,1.0
+111565,West Virginia,8,20.0,20.0,v6_landscape_volume,up,1.0,78,0.2509,0.00024347,3.1225,True,1.0
+111564,Utah,8,20.0,20.0,v6_landscape_volume,up,1.0,78,0.4453,0.00016937,2.1722,False,1.0
+111567,Pennsylvania,8,20.0,20.0,v6_landscape_volume,up,1.0,77,0.4401,0.00017186,2.2041,False,1.0
+111563,Hawaii,-1,20.0,20.0,v6_landscape_volume,up,1.0,77,0.2532,4.002e-05,0.5133,False,1.0
+111564,North Dakota,-1,20.0,20.0,v6_landscape_volume,up,1.0,77,0.2439,0.00249799,32.0367,True,1.0
+111568,Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,76,0.1612,3.468e-05,0.4447,False,1.0
+111564,New Mexico,8,20.0,20.0,v6_landscape_volume,up,1.0,76,0.4726,0.0001646,2.111,False,1.0
+111563,Iowa,-1,20.0,20.0,v6_landscape_volume,up,1.0,75,0.239,1.383e-05,0.1774,False,1.0
+111569,Ohio,-1,20.0,20.0,v6_landscape_volume,up,1.0,75,0.1628,5.217e-05,0.6691,False,1.0
+111566,South Carolina,8,20.0,20.0,v6_landscape_volume,up,1.0,74,0.549,0.00014608,1.8735,False,1.0
+111563,Iowa,8,20.0,20.0,v6_landscape_volume,up,1.0,74,0.5201,0.00015582,1.9984,False,1.0
+111566,Utah,-1,20.0,20.0,v6_landscape_volume,up,1.0,74,0.299,3.274e-05,0.4198,False,1.0
+111564,California,18,3.06,3.06,v6_landscape_volume,neutral,1.0,73,0.3019,0.00022474,2.8823,False,1.0
+111564,Vermont,-1,20.0,20.0,v6_landscape_volume,up,1.0,73,0.2533,3.246e-05,0.4163,False,1.0
+111567,Tennessee,-1,20.0,20.0,v6_landscape_volume,up,1.0,73,0.2339,0.00296682,38.0495,True,1.0
+111568,North Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,72,0.2068,4.072e-05,0.5222,False,1.0
+111566,New Hampshire,-1,20.0,20.0,v6_landscape_volume,up,1.0,72,0.246,5.194e-05,0.6661,False,1.0
+111569,California,8,20.0,20.0,v6_landscape_volume,up,1.0,71,0.4366,0.00017979,2.3059,False,1.0
+111565,Utah,8,20.0,20.0,v6_landscape_volume,up,1.0,70,0.3209,0.0002205,2.8279,False,1.0
+111571,Maryland,-1,20.0,20.0,v6_landscape_volume,up,1.0,70,0.1609,0.00012174,1.5613,False,1.0
+111566,Arizona,8,20.0,20.0,v6_landscape_volume,up,1.0,70,0.4909,0.0001646,2.111,False,1.0
+111563,Rhode Island,8,20.0,20.0,v6_landscape_volume,up,1.0,69,0.6171,0.00014252,1.8278,False,1.0
+111564,Hawaii,8,20.0,20.0,v6_landscape_volume,up,1.0,68,0.4091,0.00018849,2.4174,False,1.0
+111566,West Virginia,-1,20.0,20.0,v6_landscape_volume,up,1.0,68,0.205,4.583e-05,0.5878,False,1.0
+111563,California,18,3.06,3.06,v6_landscape_volume,neutral,1.0,67,0.1659,0.00031585,4.0508,True,1.0
+111564,Delaware,-1,20.0,20.0,v6_landscape_volume,up,1.0,67,0.2381,2.674e-05,0.343,False,1.0
+111570,Pennsylvania,-1,20.0,20.0,v6_landscape_volume,up,1.0,67,0.1762,7.589e-05,0.9732,False,1.0
+111567,Georgia,8,20.0,20.0,v6_landscape_volume,up,1.0,66,0.5218,0.00016231,2.0817,False,1.0
+111563,South Dakota,-1,20.0,20.0,v6_landscape_volume,up,1.0,66,0.3343,3.125e-05,0.4007,False,1.0
+111567,South Carolina,-1,20.0,20.0,v6_landscape_volume,up,1.0,65,0.201,4.478e-05,0.5743,False,1.0
+111568,Texas,8,20.0,20.0,v6_landscape_volume,up,1.0,65,0.4431,0.0001855,2.3791,False,1.0
+111565,Wyoming,8,20.0,20.0,v6_landscape_volume,up,1.0,64,0.1818,0.00030754,3.9442,True,1.0
+111567,Illinois,-1,20.0,20.0,v6_landscape_volume,up,1.0,64,0.2137,2.415e-05,0.3097,False,1.0
+111568,New York,8,20.0,20.0,v6_landscape_volume,up,1.0,64,0.2882,0.00023373,2.9976,False,1.0
+111569,Maryland,-1,20.0,20.0,v6_landscape_volume,up,1.0,64,0.1925,7.259e-05,0.9309,False,1.0
+111571,Ohio,-1,20.0,20.0,v6_landscape_volume,up,1.0,63,0.1623,8.23e-05,1.0555,False,1.0
+111568,Massachusetts,-1,20.0,20.0,v6_landscape_volume,up,1.0,63,0.3236,3.675e-05,0.4713,False,1.0
+111563,Nebraska,8,20.0,20.0,v6_landscape_volume,up,1.0,63,0.5601,0.00016009,2.0532,False,1.0
+111567,Tennessee,8,20.0,20.0,v6_landscape_volume,up,1.0,63,0.4741,0.00017979,2.3059,False,1.0
+111567,New Jersey,8,20.0,20.0,v6_landscape_volume,up,1.0,63,0.3881,0.01774889,227.6295,True,1.0
+111564,Unknown,18,3.06,3.06,v6_landscape_volume,neutral,1.0,63,0.216,0.00028504,3.6556,True,1.0
+111571,Pennsylvania,-1,20.0,20.0,v6_landscape_volume,up,1.0,63,0.1945,7.397e-05,0.9486,False,1.0
+111565,Hawaii,8,20.0,20.0,v6_landscape_volume,up,1.0,62,0.3597,0.00021642,2.7756,False,1.0
+111566,Colorado,8,20.0,20.0,v6_landscape_volume,up,1.0,61,0.4735,0.00017707,2.2709,False,1.0
+111571,Florida,8,20.0,20.0,v6_landscape_volume,up,1.0,61,0.5285,0.00016937,2.1722,False,1.0
+111563,New Mexico,8,20.0,20.0,v6_landscape_volume,up,1.0,61,0.5395,0.00016695,2.1411,False,1.0
+111569,Michigan,-1,20.0,20.0,v6_landscape_volume,up,1.0,61,0.1658,6.151e-05,0.7888,False,1.0
+111564,Idaho,8,16.27,16.27,v6_landscape_volume,neutral,1.0,61,0.6384,0.00014608,1.8735,False,1.0
+111566,Nebraska,-1,20.0,20.0,v6_landscape_volume,up,1.0,60,0.1677,5.336e-05,0.6844,False,1.0
+111564,New Hampshire,8,20.0,20.0,v6_landscape_volume,up,1.0,60,0.501,0.00017707,2.2709,False,1.0
+111565,New Mexico,8,20.0,20.0,v6_landscape_volume,up,1.0,60,0.3677,0.00021642,2.7756,False,1.0
+111570,Maryland,-1,20.0,20.0,v6_landscape_volume,up,1.0,58,0.1488,0.00010821,1.3878,False,1.0
+111567,North Carolina,8,20.0,20.0,v6_landscape_volume,up,1.0,58,0.5806,0.00016009,2.0532,False,1.0
+111566,Minnesota,8,20.0,20.0,v6_landscape_volume,up,1.0,56,0.3267,0.00022915,2.9388,False,1.0
+111564,Unknown,2,20.0,20.0,v6_landscape_volume,up,1.0,56,0.2569,0.0002597,3.3307,True,1.0
+111563,Nevada,8,12.75,12.75,v6_landscape_volume,neutral,1.0,56,0.5708,0.00015793,2.0254,False,1.0
+111566,Alabama,8,20.0,20.0,v6_landscape_volume,up,1.0,56,0.5243,0.00017443,2.237,False,1.0
+111567,Louisiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,56,0.1871,5.673e-05,0.7276,False,1.0
+111570,Unknown,8,20.0,20.0,v6_landscape_volume,up,1.0,56,0.2453,0.00027825,3.5686,True,1.0
+111564,Wyoming,-1,20.0,20.0,v6_landscape_volume,up,1.0,56,0.1871,5.171e-05,0.6632,False,1.0
+111564,Maine,8,20.0,20.0,v6_landscape_volume,up,1.0,55,0.4717,0.00019158,2.4571,False,1.0
+111567,Indiana,-1,20.0,20.0,v6_landscape_volume,up,1.0,55,0.2481,4.058e-05,0.5204,False,1.0
+111565,North Dakota,-1,20.0,20.0,v6_landscape_volume,up,1.0,55,0.2834,4.638e-05,0.5948,False,1.0
+111568,Pennsylvania,8,20.0,20.0,v6_landscape_volume,up,1.0,55,0.4481,0.00019808,2.5403,False,1.0
+111565,Vermont,-1,20.0,20.0,v6_landscape_volume,up,1.0,55,0.2246,4.731e-05,0.6068,False,1.0
+111570,New Jersey,-1,20.0,20.0,v6_landscape_volume,up,1.0,55,0.1658,9.821e-05,1.2595,False,1.0
+111570,Florida,8,20.0,20.0,v6_landscape_volume,up,1.0,55,0.4717,0.00019158,2.4571,False,1.0
+111567,Massachusetts,8,20.0,20.0,v6_landscape_volume,up,1.0,54,0.3106,0.00024865,3.1889,True,1.0
+111567,Washington,-1,20.0,20.0,v6_landscape_volume,up,1.0,54,0.2392,3.478e-05,0.4461,False,1.0
+111565,Delaware,-1,20.0,20.0,v6_landscape_volume,up,1.0,54,0.2035,4.931e-05,0.6324,False,1.0
+111565,New Hampshire,8,20.0,20.0,v6_landscape_volume,up,1.0,54,0.3344,0.0002385,3.0588,True,1.0
+111566,Connecticut,8,20.0,20.0,v6_landscape_volume,up,1.0,53,0.483,0.00019158,2.4571,False,1.0
+111568,Arizona,-1,20.0,20.0,v6_landscape_volume,up,1.0,53,0.3023,5.288e-05,0.6782,False,1.0
+111564,District of Columbia,8,20.0,20.0,v6_landscape_volume,up,1.0,53,0.483,0.00019158,2.4571,False,1.0
+111567,Ohio,8,20.0,20.0,v6_landscape_volume,up,1.0,53,0.3505,0.00023373,2.9976,False,1.0
+111567,Oregon,-1,20.0,20.0,v6_landscape_volume,up,1.0,53,0.2421,4.377e-05,0.5613,False,1.0
+111570,Ohio,-1,20.0,20.0,v6_landscape_volume,up,1.0,52,0.1719,7.491e-05,0.9608,False,1.0
+111571,Michigan,-1,20.0,20.0,v6_landscape_volume,up,1.0,52,0.1597,0.00012703,1.6291,False,1.0
+111563,Utah,8,20.0,20.0,v6_landscape_volume,up,1.0,52,0.5377,0.00017979,2.3059,False,1.0
+111568,Georgia,-1,20.0,20.0,v6_landscape_volume,up,1.0,52,0.1962,4.478e-05,0.5743,False,1.0
+111563,West Virginia,8,20.0,20.0,v6_landscape_volume,up,1.0,52,0.4523,0.00019808,2.5403,False,1.0
+111567,Colorado,-1,20.0,20.0,v6_landscape_volume,up,1.0,51,0.2604,3.77e-05,0.4835,False,1.0
+111570,California,8,20.0,20.0,v6_landscape_volume,up,1.0,51,0.3592,0.00023373,2.9976,False,1.0
+111566,Iowa,-1,20.0,20.0,v6_landscape_volume,up,1.0,50,0.2137,4.159e-05,0.5334,False,1.0
+111565,Maine,8,20.0,20.0,v6_landscape_volume,up,1.0,50,0.4262,0.00021248,2.7251,False,1.0
+111571,California,8,18.9,18.9,v5_explore_medium,up,1.4,49,0.3936,0.00022474,2.8823,False,1.0
+111567,Minnesota,-1,18.9,18.9,v5_explore_medium,up,1.4,49,0.3303,4.377e-05,0.5613,False,1.0
+111567,Wisconsin,-1,18.9,18.9,v5_explore_medium,up,1.4,49,0.2796,4.204e-05,0.5391,False,1.0
+111566,Indiana,8,18.9,18.9,v5_explore_medium,up,1.4,49,0.4062,0.00021642,2.7756,False,1.0
+111569,Virginia,-1,18.9,18.9,v5_explore_medium,up,1.4,49,0.1278,7.304e-05,0.9368,False,1.0
+111565,District of Columbia,8,18.9,18.9,v5_explore_medium,up,1.4,49,0.2796,0.00027178,3.4856,True,1.0
+111569,New York,8,18.9,18.9,v5_explore_medium,up,1.4,48,0.2191,0.00030754,3.9442,True,1.0
+111568,Tennessee,-1,18.9,18.9,v5_explore_medium,up,1.4,48,0.155,5.565e-05,0.7137,False,1.0
+111565,Unknown,18,18.9,18.9,v5_explore_medium,up,1.4,48,0.232,0.00029966,3.8431,True,1.0
+111563,Vermont,-1,18.38,18.3803,v5_explore_medium,up,1.3615,48,0.4499,4.03e-05,0.5168,False,1.0
+111566,Nevada,-1,18.9,18.9,v5_explore_medium,up,1.4,48,0.3345,4.204e-05,0.5391,False,1.0
+111565,California,18,18.9,18.9,v5_explore_medium,up,1.4,48,0.2448,0.00029216,3.747,True,1.0
+111564,Montana,-1,18.9,18.9,v5_explore_medium,up,1.4,48,0.2191,3.896e-05,0.4996,False,1.0
+111563,Unknown,18,18.9,18.9,v5_explore_medium,up,1.4,47,0.3908,0.00022915,2.9388,False,1.0
+111568,Illinois,-1,18.9,18.9,v5_explore_medium,up,1.4,47,0.196,3.746e-05,0.4804,False,1.0
+111571,New Jersey,-1,18.9,18.9,v5_explore_medium,up,1.4,47,0.183,0.00012174,1.5613,False,1.0
+111566,Missouri,8,18.9,18.9,v5_explore_medium,up,1.4,47,0.2869,0.0002597,3.3307,True,1.0
+111569,Massachusetts,-1,18.9,18.9,v5_explore_medium,up,1.4,46,0.2512,6.151e-05,0.7888,False,1.0
+111566,Oklahoma,8,18.74,18.741,v5_explore_medium,up,1.3882,46,0.4354,0.00021642,2.7756,False,1.0
+111570,Michigan,-1,18.9,18.9,v5_explore_medium,up,1.4,46,0.1723,9.425e-05,1.2087,False,1.0
+111568,Georgia,8,16.49,16.4913,v5_explore_medium,up,1.2216,46,0.5275,0.00019158,2.4571,False,1.0
+111568,New Jersey,8,18.9,18.9,v5_explore_medium,up,1.4,45,0.2946,0.00027178,3.4856,True,1.0
+111565,Wyoming,-1,18.9,18.9,v5_explore_medium,up,1.4,45,0.1479,7.54e-05,0.967,False,1.0
+111566,Arkansas,-1,18.9,18.9,v5_explore_medium,up,1.4,45,0.1479,3.896e-05,0.4996,False,1.0
+111564,South Dakota,8,17.63,17.6254,v5_explore_medium,up,1.3056,45,0.4812,0.00020503,2.6295,False,1.0
+111567,Alabama,-1,18.9,18.9,v5_explore_medium,up,1.4,45,0.3212,4.638e-05,0.5948,False,1.0
+111566,Wisconsin,8,18.9,18.9,v5_explore_medium,up,1.4,45,0.4279,0.00020149,2.5841,False,1.0
+111564,Ohio,18,18.9,18.9,v5_explore_medium,up,1.4,44,0.3931,0.00023373,2.9976,False,1.0
+111571,Unknown,8,18.9,18.9,v5_explore_medium,up,1.4,44,0.231,0.00030754,3.9442,True,1.0
+111571,Arizona,-1,18.9,18.9,v5_explore_medium,up,1.4,44,0.2175,0.00013749,1.7633,False,1.0
+111569,North Carolina,-1,18.9,18.9,v5_explore_medium,up,1.4,43,0.2067,6.603e-05,0.8468,False,1.0
+111567,Missouri,-1,18.9,18.9,v5_explore_medium,up,1.4,43,0.2478,5.461e-05,0.7004,False,1.0
+111566,Mississippi,8,18.9,18.9,v5_explore_medium,up,1.4,43,0.3574,0.00024865,3.1889,True,1.0
+111568,South Carolina,-1,18.9,18.9,v5_explore_medium,up,1.4,42,0.2096,6.834e-05,0.8765,False,1.0
+111569,Pennsylvania,8,18.9,18.9,v5_explore_medium,up,1.4,42,0.4179,0.00022915,2.9388,False,1.0
+111565,Montana,-1,18.9,18.9,v5_explore_medium,up,1.4,42,0.1818,6.317e-05,0.8102,False,1.0
+111563,District of Columbia,8,16.12,16.1231,v5_explore_medium,up,1.1943,42,0.5429,0.00019478,2.498,False,1.0
+111567,Michigan,8,18.51,18.5053,v5_explore_medium,up,1.3708,42,0.4457,0.00021642,2.7756,False,1.0
+111568,Indiana,-1,18.9,18.9,v5_explore_medium,up,1.4,42,0.2096,6.678e-05,0.8565,False,1.0
+111564,Florida,2,18.85,18.8457,v5_explore_medium,up,1.396,42,0.4318,0.00022474,2.8823,False,1.0
+111568,Oregon,-1,18.9,18.9,v5_explore_medium,up,1.4,41,0.2548,6.457e-05,0.8281,False,1.0
+111567,Illinois,8,18.9,18.9,v5_explore_medium,up,1.4,41,0.3816,0.00022474,2.8823,False,1.0
+111571,Virginia,-1,18.9,18.9,v5_explore_medium,up,1.4,41,0.1421,0.00012703,1.6291,False,1.0
+111568,North Carolina,8,18.9,18.9,v5_explore_medium,up,1.4,41,0.3816,0.00024347,3.1225,True,1.0
+111564,Colorado,1,15.94,15.9378,v5_explore_medium,up,1.1806,41,0.5506,0.01686144,216.248,True,1.0
+111569,Texas,8,18.9,18.9,v5_explore_medium,up,1.4,40,0.4156,0.00023373,2.9976,False,1.0
+111564,Delaware,8,18.9,18.9,v5_explore_medium,up,1.4,40,0.4156,0.00023373,2.9976,False,1.0
+111563,Maine,8,16.8,16.7989,v5_explore_medium,up,1.2444,40,0.5156,0.00020503,2.6295,False,1.0
+111563,New Hampshire,8,16.8,16.7989,v5_explore_medium,up,1.2444,40,0.5156,0.00020503,2.6295,False,1.0
+111565,Idaho,8,18.9,18.9,v5_explore_medium,up,1.4,40,0.3585,0.00025406,3.2583,True,1.0
+111566,New Mexico,-1,18.9,18.9,v5_explore_medium,up,1.4,40,0.2156,7.638e-05,0.9796,False,1.0
+111567,Kansas,-1,18.9,18.9,v5_explore_medium,up,1.4,40,0.2013,6.678e-05,0.8565,False,1.0
+111563,Delaware,-1,18.9,18.9,v5_explore_medium,up,1.4,39,0.2767,2.944e-05,0.3775,False,1.0
+111569,Georgia,-1,18.9,18.9,v5_explore_medium,up,1.4,39,0.2622,7.689e-05,0.9861,False,1.0
+111563,Pennsylvania,2,18.4,18.3987,v5_explore_medium,up,1.3629,39,0.4506,0.0002205,2.8279,False,1.0
+111567,Mississippi,-1,18.9,18.9,v5_explore_medium,up,1.4,39,0.2332,7.843e-05,1.0059,False,1.0
+111563,Montana,-1,18.9,18.9,v5_explore_medium,up,1.4,39,0.2187,4.656e-05,0.5971,False,1.0
+111565,South Dakota,8,18.9,18.9,v5_explore_medium,up,1.4,39,0.2912,0.00028504,3.6556,True,1.0
+111563,Idaho,8,16.26,16.2623,v5_explore_medium,up,1.2046,39,0.5376,0.00020149,2.5841,False,1.0
+111568,Tennessee,8,18.9,18.9,v5_explore_medium,up,1.4,39,0.4216,0.00023373,2.9976,False,1.0
+111569,Arizona,-1,18.9,18.9,v5_explore_medium,up,1.4,39,0.2187,0.00010342,1.3264,False,1.0
+111567,Utah,-1,18.9,18.9,v5_explore_medium,up,1.4,38,0.2514,6.755e-05,0.8664,False,1.0
+111566,Idaho,-1,18.9,18.9,v5_explore_medium,up,1.4,38,0.3396,5.217e-05,0.6691,False,1.0
+111563,Colorado,1,14.26,14.2623,v5_explore_medium,neutral,1.0565,38,0.619,0.0001855,2.3791,False,1.0
+111563,Wyoming,-1,18.9,18.9,v5_explore_medium,up,1.4,38,0.1484,8.116e-05,1.0408,False,1.0
+111568,Utah,-1,18.9,18.9,v5_explore_medium,up,1.4,37,0.285,9.13e-05,1.1709,False,1.0
+111567,Oklahoma,-1,18.9,18.9,v5_explore_medium,up,1.4,37,0.27,6.421e-05,0.8235,False,1.0
+111566,District of Columbia,-1,18.9,18.9,v5_explore_medium,up,1.4,37,0.2253,5.171e-05,0.6632,False,1.0
+111564,Alaska,-1,18.9,18.9,v5_explore_medium,up,1.4,37,0.2103,4.495e-05,0.5765,False,1.0
+111563,South Dakota,8,18.44,18.4445,v5_explore_medium,up,1.3663,37,0.4491,0.00022915,2.9388,False,1.0
+111566,Kansas,8,18.9,18.9,v5_explore_medium,up,1.4,37,0.285,0.00025406,3.2583,True,1.0
+111568,Wisconsin,-1,18.9,18.9,v5_explore_medium,up,1.4,37,0.285,6.493e-05,0.8327,False,1.0
+111567,Connecticut,-1,18.9,18.9,v5_explore_medium,up,1.4,37,0.2253,0.00373316,47.8778,True,1.0
+111570,Massachusetts,-1,18.9,18.9,v5_explore_medium,up,1.4,36,0.3347,8.99e-05,1.1529,False,1.0
+111568,Minnesota,-1,18.9,18.9,v5_explore_medium,up,1.4,36,0.2438,7.259e-05,0.9309,False,1.0
+111566,Louisiana,8,18.9,18.9,v5_explore_medium,up,1.4,36,0.4105,0.00024347,3.1225,True,1.0
+111565,Unknown,2,18.9,18.9,v5_explore_medium,up,1.4,36,0.259,0.02408778,308.9257,True,1.0
+111569,Indiana,-1,18.9,18.9,v5_explore_medium,up,1.4,36,0.2438,9.658e-05,1.2387,False,1.0
+111565,Ohio,18,18.9,18.9,v5_explore_medium,up,1.4,36,0.3499,0.0002656,3.4064,True,1.0
+111571,Georgia,-1,18.9,18.9,v5_explore_medium,up,1.4,36,0.1832,0.00010821,1.3878,False,1.0
+111570,Virginia,-1,18.9,18.9,v5_explore_medium,up,1.4,36,0.1529,0.00011805,1.5139,False,1.0
+111564,Pennsylvania,18,18.9,18.9,v5_explore_medium,up,1.4,36,0.3196,0.00027825,3.5686,True,1.0
+111567,Maryland,8,18.9,18.9,v5_explore_medium,up,1.4,36,0.365,0.0002597,3.3307,True,1.0
+111563,Ohio,18,17.54,17.5352,v5_explore_medium,up,1.2989,36,0.4862,0.0002205,2.8279,False,1.0
+111566,Maine,-1,18.9,18.9,v5_explore_medium,up,1.4,35,0.186,6.716e-05,0.8614,False,1.0
+111568,Michigan,8,17.73,17.7344,v5_explore_medium,up,1.3137,35,0.4783,0.00021642,2.7756,False,1.0
+111569,Georgia,8,16.98,16.9754,v5_explore_medium,up,1.2574,35,0.5091,0.00021642,2.7756,False,1.0
+111571,Massachusetts,-1,18.9,18.9,v5_explore_medium,up,1.4,35,0.2476,9.821e-05,1.2595,False,1.0
+111565,Delaware,8,18.9,18.9,v5_explore_medium,up,1.4,35,0.3245,0.00027825,3.5686,True,1.0
+111563,Alaska,8,16.4,16.397,v5_explore_medium,up,1.2146,34,0.5327,0.00021248,2.7251,False,1.0
+111567,Washington,8,18.9,18.9,v5_explore_medium,up,1.4,34,0.3764,0.0002597,3.3307,True,1.0
+111566,Kentucky,8,18.9,18.9,v5_explore_medium,up,1.4,34,0.3296,0.00027825,3.5686,True,1.0
+111567,Kentucky,-1,18.9,18.9,v5_explore_medium,up,1.4,34,0.2514,5.843e-05,0.7494,False,1.0
+111570,North Carolina,-1,18.9,18.9,v5_explore_medium,up,1.4,34,0.1733,0.0001113,1.4274,False,1.0
+111565,Florida,2,18.33,18.3263,v5_explore_medium,up,1.3575,34,0.4546,0.00023373,2.9976,False,1.0
+111569,North Carolina,8,18.9,18.9,v5_explore_medium,up,1.4,33,0.1602,0.00037699,4.8348,True,1.0
+111567,Colorado,8,16.98,16.9761,v5_explore_medium,up,1.2575,33,0.5094,0.00021642,2.7756,False,1.0
+111569,New Jersey,8,18.9,18.9,v5_explore_medium,up,1.4,33,0.2237,0.0003339,4.2823,True,1.0
+111568,Ohio,8,18.9,18.9,v5_explore_medium,up,1.4,32,0.3563,0.00027178,3.4856,True,1.0
+111571,Michigan,8,18.9,18.9,v5_explore_medium,up,1.4,32,0.2434,0.00032463,4.1633,True,1.0
+111564,Virginia,2,18.9,18.9,v5_explore_medium,up,1.4,32,0.4047,0.04373232,560.867,True,1.0
+111568,Louisiana,-1,18.9,18.9,v5_explore_medium,up,1.4,32,0.195,9.275e-05,1.1895,False,1.0
+111563,California,2,18.9,18.9,v5_explore_medium,up,1.4,32,0.2596,0.00031585,4.0508,True,1.0
+111567,Virginia,8,18.9,18.9,v5_explore_medium,up,1.4,32,0.3886,0.0002597,3.3307,True,1.0
+111568,Washington,-1,18.9,18.9,v5_explore_medium,up,1.4,32,0.2273,5.843e-05,0.7494,False,1.0
+111568,Alabama,-1,18.9,18.9,v5_explore_medium,up,1.4,32,0.2596,7.259e-05,0.9309,False,1.0
+111571,Georgia,8,17.79,17.7896,v5_explore_medium,up,1.3178,31,0.4769,0.00023373,2.9976,False,1.0
+111570,New York,8,18.9,18.9,v5_explore_medium,up,1.4,31,0.1818,0.00036521,4.6838,True,1.0
+111564,New Hampshire,2,18.2,18.1959,v5_explore_medium,up,1.3478,31,0.4605,0.0002385,3.0588,True,1.0
+111568,Colorado,-1,18.9,18.9,v5_explore_medium,up,1.4,31,0.2802,6.119e-05,0.7847,False,1.0
+111571,Pennsylvania,8,18.9,18.9,v5_explore_medium,up,1.4,31,0.395,0.0002597,3.3307,True,1.0
+111563,Delaware,8,18.9,18.9,v5_explore_medium,up,1.4,31,0.3786,0.0002656,3.4064,True,1.0
+111566,Iowa,8,18.9,18.9,v5_explore_medium,up,1.4,31,0.3294,0.00028504,3.6556,True,1.0
+111568,Massachusetts,8,18.9,18.9,v5_explore_medium,up,1.4,31,0.3458,0.00027825,3.5686,True,1.0
+111569,Utah,-1,18.9,18.9,v5_explore_medium,up,1.4,30,0.2182,0.00017443,2.237,False,1.0
+111568,Missouri,-1,18.9,18.9,v5_explore_medium,up,1.4,30,0.2515,7.638e-05,0.9796,False,1.0
+111569,Tennessee,-1,18.9,18.9,v5_explore_medium,up,1.4,30,0.2015,0.00822509,105.4868,True,1.0
+111563,Virginia,2,17.82,17.8206,v5_explore_medium,up,1.32,29,0.4761,0.0002385,3.0588,True,1.0
+111567,New Hampshire,-1,18.9,18.9,v5_explore_medium,up,1.4,29,0.3066,8.787e-05,1.1269,False,1.0
+111570,Georgia,-1,18.9,18.9,v5_explore_medium,up,1.4,29,0.2389,0.00010342,1.3264,False,1.0
+111569,Massachusetts,8,18.9,18.9,v5_explore_medium,up,1.4,29,0.2389,0.0003339,4.2823,True,1.0
+111568,Illinois,8,18.9,18.9,v5_explore_medium,up,1.4,29,0.3744,0.0002597,3.3307,True,1.0
+111566,Oregon,8,18.9,18.9,v5_explore_medium,up,1.4,29,0.3236,0.00029216,3.747,True,1.0
+111563,Florida,2,17.62,17.6225,v5_explore_medium,up,1.3054,28,0.4843,0.00022915,2.9388,False,1.0
+111563,New York,2,18.9,18.9,v5_explore_medium,up,1.4,28,0.2947,0.00030754,3.9442,True,1.0
+111569,South Carolina,-1,18.9,18.9,v5_explore_medium,up,1.4,28,0.243,0.0001113,1.4274,False,1.0
+111563,Alaska,-1,18.9,18.9,v5_explore_medium,up,1.4,28,0.2257,6.716e-05,0.8614,False,1.0
+111565,Pennsylvania,18,18.9,18.9,v5_explore_medium,up,1.4,28,0.3464,0.00028504,3.6556,True,1.0
+111565,Colorado,1,18.9,18.9,v5_explore_medium,up,1.4,28,0.3637,0.00027825,3.5686,True,1.0
+111571,North Carolina,-1,18.9,18.9,v5_explore_medium,up,1.4,28,0.2085,0.0001328,1.7032,False,1.0
+111567,South Carolina,8,17.19,17.1934,v5_explore_medium,up,1.2736,28,0.5016,0.00022915,2.9388,False,1.0
+111569,Ohio,8,18.9,18.9,v5_explore_medium,up,1.4,28,0.3464,0.00028504,3.6556,True,1.0
+111570,Texas,8,18.9,18.9,v5_explore_medium,up,1.4,27,0.3876,0.00027178,3.4856,True,1.0
+111571,Ohio,8,18.9,18.9,v5_explore_medium,up,1.4,27,0.4227,0.0002597,3.3307,True,1.0
+111570,Pennsylvania,8,18.9,18.9,v5_explore_medium,up,1.4,27,0.37,0.00027825,3.5686,True,1.0
+111565,Alaska,-1,18.9,18.9,v5_explore_medium,up,1.4,27,0.2121,6.529e-05,0.8373,False,1.0
+111564,Alaska,8,18.29,18.2915,v5_explore_medium,up,1.3549,27,0.4578,0.00023373,2.9976,False,1.0
+111568,Maryland,8,18.9,18.9,v5_explore_medium,up,1.4,27,0.335,0.00029216,3.747,True,1.0
+111569,Minnesota,-1,18.9,18.9,v5_explore_medium,up,1.4,27,0.2121,0.00012842,1.647,False,1.0
+111569,Oregon,-1,18.9,18.9,v5_explore_medium,up,1.4,27,0.2648,0.00010624,1.3625,False,1.0
+111563,Hawaii,8,18.9,18.9,v5_explore_medium,up,1.4,27,0.37,0.00027178,3.4856,True,1.0
+111569,Michigan,8,18.9,18.9,v5_explore_medium,up,1.4,27,0.2121,0.00035414,4.5418,True,1.0
+111568,Kansas,-1,18.9,18.9,v5_explore_medium,up,1.4,27,0.2121,9.904e-05,1.2702,False,1.0
+111571,Texas,8,18.9,18.9,v5_explore_medium,up,1.4,27,0.4051,0.0002656,3.4064,True,1.0
+111570,Washington,-1,18.9,18.9,v5_explore_medium,up,1.4,27,0.2297,0.00015177,1.9465,False,1.0
+111563,Alabama,2,18.9,18.9,v5_explore_medium,up,1.4,27,0.2999,0.00030754,3.9442,True,1.0
+111567,Louisiana,8,18.1,18.095,v5_explore_medium,up,1.3404,26,0.4659,0.00024865,3.1889,True,1.0
+111567,Indiana,8,18.9,18.9,v5_explore_medium,up,1.4,26,0.4124,0.0002656,3.4064,True,1.0
+111570,Arizona,-1,18.9,18.9,v5_explore_medium,up,1.4,26,0.2159,0.00014983,1.9215,False,1.0
+111568,Colorado,8,17.65,17.6492,v5_explore_medium,up,1.3073,26,0.4838,0.00024347,3.1225,True,1.0
+111566,Nebraska,8,18.1,18.095,v5_explore_medium,up,1.3404,26,0.4659,0.00024865,3.1889,True,1.0
+111568,Virginia,8,18.9,18.9,v5_explore_medium,up,1.4,26,0.3231,0.00029966,3.8431,True,1.0
+111569,Illinois,-1,18.9,18.9,v5_explore_medium,up,1.4,26,0.2159,7.589e-05,0.9732,False,1.0
+111568,Connecticut,-1,18.9,18.9,v5_explore_medium,up,1.4,25,0.2199,0.006058,77.6939,True,1.0
+111567,Arizona,8,18.9,18.9,v5_explore_medium,up,1.4,25,0.3653,0.00028504,3.6556,True,1.0
+111566,Hawaii,8,18.9,18.9,v5_explore_medium,up,1.4,25,0.3471,0.00029216,3.747,True,1.0
+111566,West Virginia,8,18.8,18.8002,v5_explore_medium,up,1.3926,25,0.438,0.00025406,3.2583,True,1.0
+111569,Wisconsin,-1,18.9,18.9,v5_explore_medium,up,1.4,25,0.2926,0.00011025,1.414,False,1.0
+111570,Oregon,-1,18.9,18.9,v5_explore_medium,up,1.4,25,0.238,0.0001646,2.111,False,1.0
+111568,Washington,8,18.9,18.9,v5_explore_medium,up,1.4,24,0.3165,0.00030754,3.9442,True,1.0
+111568,Oklahoma,-1,18.9,18.9,v5_explore_medium,up,1.4,24,0.2239,0.0001113,1.4274,False,1.0
+111567,Connecticut,8,16.29,16.2869,v5_explore_medium,up,1.2064,24,0.5387,0.00023373,2.9976,False,1.0
+111570,Georgia,8,18.14,18.1424,v5_explore_medium,up,1.3439,24,0.4647,0.00025406,3.2583,True,1.0
+111568,South Carolina,8,18.9,18.9,v5_explore_medium,up,1.4,24,0.3906,0.00027825,3.5686,True,1.0
+111570,Indiana,-1,18.9,18.9,v5_explore_medium,up,1.4,24,0.261,0.00016695,2.1411,False,1.0
+111565,New Hampshire,2,18.61,18.6063,v5_explore_medium,up,1.3782,24,0.4462,0.0002597,3.3307,True,1.0
+111563,North Dakota,8,15.36,15.3591,v5_explore_medium,up,1.1377,24,0.5758,0.00022474,2.8823,False,1.0
+111565,Virginia,2,18.14,18.1424,v5_explore_medium,up,1.3439,24,0.4647,0.00025406,3.2583,True,1.0
+111570,Utah,-1,18.9,18.9,v5_explore_medium,up,1.4,24,0.1869,0.00022915,2.9388,False,1.0
+111563,Pennsylvania,18,18.9,18.9,v5_explore_medium,up,1.4,24,0.3536,0.00029216,3.747,True,1.0
+111564,New York,2,18.9,18.9,v5_explore_medium,up,1.4,24,0.3165,0.02662333,341.4442,True,1.0
+111564,Florida,18,15.36,15.3591,v5_explore_medium,up,1.1377,24,0.5758,0.00022474,2.8823,False,1.0
+111564,Vermont,8,18.14,18.1424,v5_explore_medium,up,1.3439,24,0.4647,0.00024865,3.1889,True,1.0
+111566,Unknown,18,18.9,18.9,v5_explore_medium,up,1.4,23,0.247,0.00034372,4.4082,True,1.0
+111566,Unknown,2,18.9,18.9,v5_explore_medium,up,1.4,23,0.3036,0.00030754,3.9442,True,1.0
+111563,Colorado,2,18.9,18.9,v5_explore_medium,up,1.4,23,0.2093,0.00036521,4.6838,True,1.0
+111566,Hawaii,-1,18.9,18.9,v5_explore_medium,up,1.4,23,0.1904,0.0001113,1.4274,False,1.0
+111564,Washington,2,18.9,18.9,v5_explore_medium,up,1.4,23,0.3602,0.00028504,3.6556,True,1.0
+111569,Washington,-1,18.9,18.9,v5_explore_medium,up,1.4,23,0.2282,0.00011457,1.4694,False,1.0
+111566,Florida,2,18.9,18.9,v5_explore_medium,up,1.4,23,0.3791,0.00028504,3.6556,True,1.0
+111569,Tennessee,8,18.9,18.9,v5_explore_medium,up,1.4,23,0.3414,0.00029966,3.8431,True,1.0
+111564,Massachusetts,18,18.9,18.9,v5_explore_medium,up,1.4,23,0.2848,0.00032463,4.1633,True,1.0
+111570,Michigan,8,18.9,18.9,v5_explore_medium,up,1.4,23,0.2282,0.00035414,4.5418,True,1.0
+111567,Nebraska,-1,18.9,18.9,v5_explore_medium,up,1.4,23,0.247,0.00011571,1.484,False,1.0
+111566,Nevada,8,17.93,17.9311,v5_explore_medium,up,1.3282,23,0.4734,0.00023373,2.9976,False,1.0
+111565,Washington,2,18.9,18.9,v5_explore_medium,up,1.4,23,0.3414,0.00028504,3.6556,True,1.0
+111571,Tennessee,-1,18.9,18.9,v5_explore_medium,up,1.4,22,0.1941,0.00017707,2.2709,False,1.0
+111571,New York,8,18.9,18.9,v5_explore_medium,up,1.4,22,0.2133,0.00036521,4.6838,True,1.0
+111569,Colorado,8,18.19,18.1945,v5_explore_medium,up,1.3477,22,0.4633,0.0002597,3.3307,True,1.0
+111566,Utah,8,18.9,18.9,v5_explore_medium,up,1.4,22,0.2325,0.00035414,4.5418,True,1.0
+111564,North Dakota,8,16.26,16.2602,v5_explore_medium,up,1.2045,22,0.5402,0.0002385,3.0588,True,1.0
+111569,Louisiana,-1,18.9,18.9,v5_explore_medium,up,1.4,22,0.1941,0.00016937,2.1722,False,1.0
+111571,Maryland,8,18.9,18.9,v5_explore_medium,up,1.4,22,0.2325,0.00035414,4.5418,True,1.0
+111569,Virginia,8,18.9,18.9,v5_explore_medium,up,1.4,22,0.2902,0.00032463,4.1633,True,1.0
+111568,Mississippi,-1,18.9,18.9,v5_explore_medium,up,1.4,22,0.1941,0.00012433,1.5945,False,1.0
+111570,Ohio,8,18.9,18.9,v5_explore_medium,up,1.4,22,0.3864,0.00028504,3.6556,True,1.0
+111571,Washington,-1,18.9,18.9,v5_explore_medium,up,1.4,22,0.3287,0.00013913,1.7843,False,1.0
+111570,New Jersey,8,18.9,18.9,v5_explore_medium,up,1.4,22,0.2325,0.00035414,4.5418,True,1.0
+111563,Michigan,2,18.9,18.9,v5_explore_medium,up,1.4,22,0.271,0.0003339,4.2823,True,1.0
+111566,Rhode Island,-1,18.9,18.9,v5_explore_medium,up,1.4,21,0.3155,7.126e-05,0.9139,False,1.0
+111570,Tennessee,-1,18.9,18.9,v5_explore_medium,up,1.4,21,0.2175,0.00013749,1.7633,False,1.0
+111565,Alaska,8,18.9,18.9,v5_explore_medium,up,1.4,21,0.3155,0.00030754,3.9442,True,1.0
+111570,Minnesota,-1,18.9,18.9,v5_explore_medium,up,1.4,21,0.1979,0.0001646,2.111,False,1.0
+111569,Missouri,-1,18.9,18.9,v5_explore_medium,up,1.4,21,0.2175,0.00012703,1.6291,False,1.0
+111568,Kentucky,-1,18.9,18.9,v5_explore_medium,up,1.4,21,0.2567,9.275e-05,1.1895,False,1.0
+111563,Tennessee,2,18.9,18.9,v5_explore_medium,up,1.4,21,0.3744,0.00029216,3.747,True,1.0
+111565,Massachusetts,18,18.9,18.9,v5_explore_medium,up,1.4,21,0.3155,0.00031585,4.0508,True,1.0
+111571,Indiana,-1,18.9,18.9,v5_explore_medium,up,1.4,21,0.2371,0.00019158,2.4571,False,1.0
+111571,Illinois,8,18.9,18.9,v5_explore_medium,up,1.4,21,0.4332,0.00025406,3.2583,True,1.0
+111569,Kansas,-1,18.9,18.9,v5_explore_medium,up,1.4,21,0.2175,0.00015582,1.9984,False,1.0
+111564,Pennsylvania,2,18.9,18.9,v5_explore_medium,up,1.4,21,0.3155,0.00031585,4.0508,True,1.0
+111571,Illinois,-1,18.9,18.9,v5_explore_medium,up,1.4,21,0.1783,0.00013433,1.7228,False,1.0
+111567,New Mexico,-1,18.9,18.9,v5_explore_medium,up,1.4,21,0.2567,0.00015377,1.9721,False,1.0
+111571,Virginia,8,18.9,18.9,v5_explore_medium,up,1.4,21,0.2959,0.00032463,4.1633,True,1.0
+111565,Florida,18,16.74,16.7368,v5_explore_medium,up,1.2398,20,0.5218,0.00024865,3.1889,True,1.0
+111567,Minnesota,8,18.9,18.9,v5_explore_medium,up,1.4,20,0.3818,0.00027825,3.5686,True,1.0
+111571,Oregon,-1,18.9,18.9,v5_explore_medium,up,1.4,20,0.2418,0.0001826,2.3419,False,1.0
+111566,New Hampshire,8,18.9,18.9,v5_explore_medium,up,1.4,20,0.4018,0.00028504,3.6556,True,1.0
+111566,New Mexico,8,18.9,18.9,v5_explore_medium,up,1.4,20,0.3018,0.00032463,4.1633,True,1.0
+111566,North Dakota,-1,18.9,18.9,v5_explore_medium,up,1.4,20,0.2418,8.721e-05,1.1185,False,1.0
+111571,Colorado,8,15.73,15.7265,v5_explore_medium,up,1.1649,20,0.5618,0.0002385,3.0588,True,1.0
+111564,Washington,18,18.9,18.9,v5_explore_medium,up,1.4,20,0.3618,0.00029966,3.8431,True,1.0
+111571,South Carolina,8,18.9,18.9,v5_explore_medium,up,1.4,20,0.1818,0.00074653,9.5742,True,1.0
+111570,Maryland,8,18.9,18.9,v5_explore_medium,up,1.4,20,0.2618,0.00034372,4.4082,True,1.0
+111567,Wisconsin,8,18.9,18.9,v5_explore_medium,up,1.4,20,0.3218,0.00028504,3.6556,True,1.0
+111569,Colorado,-1,18.9,18.9,v5_explore_medium,up,1.4,20,0.3018,0.00011025,1.414,False,1.0
+111565,Washington,18,18.9,18.9,v5_explore_medium,up,1.4,20,0.2818,0.0003339,4.2823,True,1.0
+111563,Washington,18,18.9,18.9,v5_explore_medium,up,1.4,20,0.4018,0.00028504,3.6556,True,1.0
+111571,Utah,-1,18.9,18.9,v5_explore_medium,up,1.4,20,0.2418,0.00020149,2.5841,False,1.0
+111563,Missouri,2,18.9,18.9,v5_explore_medium,up,1.4,19,0.2468,0.00035414,4.5418,True,1.0
+111569,Illinois,8,18.9,18.9,v5_explore_medium,up,1.4,19,0.4305,0.0002656,3.4064,True,1.0
+111567,Alabama,8,18.9,18.9,v5_explore_medium,up,1.4,19,0.4305,0.00027825,3.5686,True,1.0
+111567,Mississippi,8,18.9,18.9,v5_explore_medium,up,1.4,19,0.3284,0.00031585,4.0508,True,1.0
+111563,North Dakota,-1,18.9,18.9,v5_explore_medium,up,1.4,19,0.2672,3.675e-05,0.4713,False,1.0
+111564,California,2,18.9,18.9,v5_explore_medium,up,1.4,19,0.308,0.00032463,4.1633,True,1.0
+111563,New Hampshire,2,18.54,18.5417,v5_explore_medium,up,1.3735,19,0.4509,0.00027178,3.4856,True,1.0
+111569,Maryland,8,18.9,18.9,v5_explore_medium,up,1.4,19,0.2672,0.00034372,4.4082,True,1.0
+111564,Ontario,-1,18.9,18.9,v5_explore_medium,up,1.4,19,0.2672,4.973e-05,0.6378,False,1.0
+111568,Arizona,8,18.9,18.9,v5_explore_medium,up,1.4,19,0.3692,0.00029966,3.8431,True,1.0
+111570,Illinois,8,18.54,18.5417,v5_explore_medium,up,1.3735,19,0.4509,0.0002656,3.4064,True,1.0
+111565,Vermont,8,18.9,18.9,v5_explore_medium,up,1.4,19,0.308,0.00030754,3.9442,True,1.0
+111566,Delaware,-1,18.9,18.9,v5_explore_medium,up,1.4,19,0.2876,8.921e-05,1.1441,False,1.0
+111571,New Jersey,8,18.9,18.9,v5_explore_medium,up,1.4,18,0.3144,0.00032463,4.1633,True,1.0
+111570,Massachusetts,8,18.9,18.9,v5_explore_medium,up,1.4,18,0.2728,0.00034372,4.4082,True,1.0
+111570,Illinois,-1,18.9,18.9,v5_explore_medium,up,1.4,18,0.2311,0.00010434,1.3382,False,1.0
+111566,Vermont,-1,18.9,18.9,v5_explore_medium,up,1.4,18,0.2728,9.425e-05,1.2087,False,1.0
+111570,Missouri,-1,18.9,18.9,v5_explore_medium,up,1.4,18,0.1894,0.00017186,2.2041,False,1.0
+111567,Nevada,-1,18.9,18.9,v5_explore_medium,up,1.4,18,0.2936,0.01490138,191.1102,True,1.0
+111566,Wyoming,-1,18.9,18.9,v5_explore_medium,up,1.4,18,0.2103,0.0001328,1.7032,False,1.0
+111567,West Virginia,-1,18.9,18.9,v5_explore_medium,up,1.4,18,0.2728,8.657e-05,1.1102,False,1.0
+111567,Missouri,8,18.9,18.9,v5_explore_medium,up,1.4,18,0.3561,0.00029966,3.8431,True,1.0
+111567,Arkansas,-1,18.9,18.9,v5_explore_medium,up,1.4,17,0.2147,9.501e-05,1.2185,False,1.0
+111564,Michigan,2,18.9,18.9,v5_explore_medium,up,1.4,17,0.3211,0.00032463,4.1633,True,1.0
+111571,Iowa,-1,18.9,18.9,v5_explore_medium,up,1.4,17,0.1935,0.00028504,3.6556,True,1.0
+111568,Connecticut,8,18.9,18.9,v5_explore_medium,up,1.4,17,0.3849,0.00029966,3.8431,True,1.0
+111566,Ohio,18,18.9,18.9,v5_explore_medium,up,1.4,17,0.3849,0.00029966,3.8431,True,1.0
+111570,Kansas,-1,18.9,18.9,v5_explore_medium,up,1.4,17,0.1935,0.00020869,2.6764,False,1.0
+111564,Alabama,2,18.9,18.9,v5_explore_medium,up,1.4,17,0.1935,0.00054228,6.9548,True,1.0
+111570,North Carolina,8,18.9,18.9,v5_explore_medium,up,1.4,17,0.1935,0.00066103,8.4777,True,1.0
+111571,Oklahoma,-1,18.9,18.9,v5_explore_medium,up,1.4,17,0.2786,0.0002205,2.8279,False,1.0
+111569,Oklahoma,-1,18.9,18.9,v5_explore_medium,up,1.4,17,0.236,0.00019478,2.498,False,1.0
+111571,Kansas,-1,18.9,18.9,v5_explore_medium,up,1.4,16,0.2194,0.00017979,2.3059,False,1.0
+111567,Iowa,-1,18.9,18.9,v5_explore_medium,up,1.4,16,0.2846,8.787e-05,1.1269,False,1.0
+111566,Washington,2,18.39,18.3888,v5_explore_medium,up,1.3621,16,0.4585,0.0002656,3.4064,True,1.0
+111571,Missouri,-1,18.9,18.9,v5_explore_medium,up,1.4,16,0.1977,0.00019478,2.498,False,1.0
+111563,North Carolina,18,18.39,18.3888,v5_explore_medium,up,1.3621,16,0.4585,0.00027825,3.5686,True,1.0
+111568,Missouri,8,18.9,18.9,v5_explore_medium,up,1.4,16,0.3064,0.00032463,4.1633,True,1.0
+111570,Wisconsin,-1,18.9,18.9,v5_explore_medium,up,1.4,16,0.2411,0.00014983,1.9215,False,1.0
+111565,Ontario,-1,18.9,18.9,v5_explore_medium,up,1.4,16,0.2194,8.469e-05,1.0861,False,1.0
+111564,Wisconsin,18,18.9,18.9,v5_explore_medium,up,1.4,16,0.415,0.00029216,3.747,True,1.0
+111563,North Carolina,2,18.9,18.9,v5_explore_medium,up,1.4,16,0.2411,0.00035414,4.5418,True,1.0
+111567,Ohio,18,17.28,17.2787,v5_explore_medium,up,1.2799,16,0.502,0.0002656,3.4064,True,1.0
+111567,Unknown,18,18.9,18.9,v5_explore_medium,up,1.4,16,0.2411,0.00036521,4.6838,True,1.0
+111565,Pennsylvania,2,18.9,18.9,v5_explore_medium,up,1.4,16,0.3281,0.00032463,4.1633,True,1.0
+111570,Virginia,8,18.9,18.9,v5_explore_medium,up,1.4,16,0.2629,0.00035414,4.5418,True,1.0
+111567,Unknown,2,18.9,18.9,v5_explore_medium,up,1.4,15,0.2909,0.00034372,4.4082,True,1.0
+111568,New Mexico,-1,18.9,18.9,v5_explore_medium,up,1.4,15,0.2243,0.00017979,2.3059,False,1.0
+111565,Michigan,2,18.9,18.9,v5_explore_medium,up,1.4,15,0.3576,0.00031585,4.0508,True,1.0
+111571,Tennessee,8,18.9,18.9,v5_explore_medium,up,1.4,15,0.3798,0.00030754,3.9442,True,1.0
+111565,New York,2,18.9,18.9,v5_explore_medium,up,1.4,15,0.3132,0.0003339,4.2823,True,1.0
+111570,Colorado,8,17.01,17.0055,v5_explore_medium,up,1.2597,15,0.5132,0.0002656,3.4064,True,1.0
+111571,Connecticut,-1,18.9,18.9,v5_explore_medium,up,1.4,15,0.2243,0.00016231,2.0817,False,1.0
+111566,District of Columbia,8,18.9,18.9,v5_explore_medium,up,1.4,15,0.3132,0.0003339,4.2823,True,1.0
+111569,Alabama,-1,18.9,18.9,v5_explore_medium,up,1.4,15,0.2909,0.0001408,1.8058,False,1.0
+111571,North Carolina,8,18.9,18.9,v5_explore_medium,up,1.4,15,0.2243,0.00037699,4.8348,True,1.0
+111563,Florida,1,17.57,17.5748,v5_explore_medium,up,1.3018,15,0.4909,0.00027178,3.4856,True,1.0
+111571,Wisconsin,-1,18.9,18.9,v5_explore_medium,up,1.4,15,0.2909,0.00016009,2.0532,False,1.0
+111563,Vermont,8,18.71,18.7133,v5_explore_medium,up,1.3862,15,0.4465,0.00028504,3.6556,True,1.0
+111568,Alabama,8,18.9,18.9,v5_explore_medium,up,1.4,14,0.3203,0.0003339,4.2823,True,1.0
+111564,Florida,1,17.89,17.8871,v5_explore_medium,up,1.325,14,0.4794,0.00027825,3.5686,True,1.0
+111570,Louisiana,-1,18.9,18.9,v5_explore_medium,up,1.4,14,0.2066,0.00024347,3.1225,True,1.0
+111571,Minnesota,-1,18.9,18.9,v5_explore_medium,up,1.4,14,0.2066,0.00020149,2.5841,False,1.0
+111571,Colorado,-1,18.9,18.9,v5_explore_medium,up,1.4,14,0.2748,0.01658503,212.703,True,1.0
+111571,Massachusetts,8,18.9,18.9,v5_explore_medium,up,1.4,14,0.2066,0.00068008,8.7221,True,1.0
+111567,Hawaii,8,18.9,18.9,v5_explore_medium,up,1.4,14,0.3657,0.00031585,4.0508,True,1.0
+111566,Idaho,8,18.9,18.9,v5_explore_medium,up,1.4,14,0.3885,0.00029966,3.8431,True,1.0
+111563,Texas,2,18.9,18.9,v5_explore_medium,up,1.4,14,0.3203,0.0003339,4.2823,True,1.0
+111569,Connecticut,8,18.9,18.9,v5_explore_medium,up,1.4,14,0.4112,0.00029966,3.8431,True,1.0
+111563,Ohio,2,18.9,18.9,v5_explore_medium,up,1.4,14,0.2748,0.00035414,4.5418,True,1.0
+111568,Indiana,8,18.9,18.9,v5_explore_medium,up,1.4,14,0.343,0.00032463,4.1633,True,1.0
+111566,South Dakota,-1,18.9,18.9,v5_explore_medium,up,1.4,14,0.3203,8.288e-05,1.063,False,1.0
+111567,Nebraska,8,18.9,18.9,v5_explore_medium,up,1.4,14,0.4112,0.00029966,3.8431,True,1.0
+111570,Tennessee,8,18.9,18.9,v5_explore_medium,up,1.4,14,0.3657,0.00031585,4.0508,True,1.0
+111568,Nebraska,8,18.9,18.9,v5_explore_medium,up,1.4,14,0.3203,0.0003339,4.2823,True,1.0
+111564,New York,18,18.9,18.9,v5_explore_medium,up,1.4,13,0.3277,0.02890533,370.7109,True,1.0
+111566,California,18,18.82,18.8176,v5_explore_medium,up,1.3939,13,0.444,0.00029216,3.747,True,1.0
+111568,Oklahoma,8,18.9,18.9,v5_explore_medium,up,1.4,13,0.3742,0.00031585,4.0508,True,1.0
+111563,Louisiana,2,18.82,18.8176,v5_explore_medium,up,1.3939,13,0.444,0.00027178,3.4856,True,1.0
+111571,Indiana,8,18.9,18.9,v5_explore_medium,up,1.4,13,0.4208,0.00029966,3.8431,True,1.0
+111565,Alabama,2,18.9,18.9,v5_explore_medium,up,1.4,13,0.2114,0.00056475,7.243,True,1.0
+111566,Delaware,8,18.9,18.9,v5_explore_medium,up,1.4,13,0.3742,0.00031585,4.0508,True,1.0
+111564,Kentucky,18,18.9,18.9,v5_explore_medium,up,1.4,13,0.3277,0.0003339,4.2823,True,1.0
+111569,Arizona,8,18.9,18.9,v5_explore_medium,up,1.4,13,0.258,0.00036521,4.6838,True,1.0
+111570,South Carolina,-1,18.9,18.9,v5_explore_medium,up,1.4,13,0.2347,0.00014608,1.8735,False,1.0
+111563,Nevada,2,18.9,18.9,v5_explore_medium,up,1.4,13,0.258,0.00036521,4.6838,True,1.0
+111570,Colorado,-1,18.9,18.9,v5_explore_medium,up,1.4,13,0.2812,0.00016937,2.1722,False,1.0
+111566,Arkansas,8,18.9,18.9,v5_explore_medium,up,1.4,13,0.3742,0.00031585,4.0508,True,1.0
+111571,Utah,8,18.9,18.9,v5_explore_medium,up,1.4,13,0.2812,0.00035414,4.5418,True,1.0
+111569,Kentucky,-1,18.9,18.9,v5_explore_medium,up,1.4,13,0.3277,0.00014252,1.8278,False,1.0
+111564,North Carolina,18,17.62,17.617,v5_explore_medium,up,1.305,13,0.4905,0.00027825,3.5686,True,1.0
+111564,Illinois,18,18.9,18.9,v5_explore_medium,up,1.4,13,0.3742,0.00031585,4.0508,True,1.0
+111569,Mississippi,-1,18.9,18.9,v5_explore_medium,up,1.4,12,0.2165,0.00017707,2.2709,False,1.0
+111568,Louisiana,8,18.9,18.9,v5_explore_medium,up,1.4,12,0.3355,0.0003339,4.2823,True,1.0
+111568,Wisconsin,8,18.9,18.9,v5_explore_medium,up,1.4,12,0.3355,0.00030754,3.9442,True,1.0
+111563,Washington,2,18.9,18.9,v5_explore_medium,up,1.4,12,0.2641,0.00036521,4.6838,True,1.0
+111569,Washington,8,18.9,18.9,v5_explore_medium,up,1.4,12,0.3117,0.00034372,4.4082,True,1.0
+111566,New Hampshire,2,18.9,18.9,v5_explore_medium,up,1.4,12,0.3831,0.00031585,4.0508,True,1.0
+111568,Ohio,18,18.9,18.9,v5_explore_medium,up,1.4,12,0.407,0.00030754,3.9442,True,1.0
+111568,West Virginia,-1,18.9,18.9,v5_explore_medium,up,1.4,12,0.2165,0.00012842,1.647,False,1.0
+111564,Oregon,2,18.9,18.9,v5_explore_medium,up,1.4,12,0.407,0.00030754,3.9442,True,1.0
+111567,California,18,18.9,18.9,v5_explore_medium,up,1.4,12,0.407,0.00030754,3.9442,True,1.0
+111567,Kansas,8,18.9,18.9,v5_explore_medium,up,1.4,12,0.3355,0.0003339,4.2823,True,1.0
+111567,Oklahoma,8,18.9,18.9,v5_explore_medium,up,1.4,12,0.3831,0.00031585,4.0508,True,1.0
+111564,South Carolina,18,18.9,18.9,v5_explore_medium,up,1.4,12,0.3831,0.00031585,4.0508,True,1.0
+111565,North Carolina,18,18.9,18.9,v5_explore_medium,up,1.4,12,0.4308,0.00029966,3.8431,True,1.0
+111571,Washington,2,18.9,18.9,v5_explore_medium,up,1.4,12,0.3355,0.0003339,4.2823,True,1.0
+111568,Arkansas,-1,18.9,18.9,v5_explore_medium,up,1.4,12,0.2165,0.00013589,1.7428,False,1.0
+111565,California,2,18.9,18.9,v5_explore_medium,up,1.4,12,0.2879,0.00035414,4.5418,True,1.0
+111566,Virginia,2,18.9,18.9,v5_explore_medium,up,1.4,12,0.3117,0.00034372,4.4082,True,1.0
+111566,Maine,8,18.9,18.9,v5_explore_medium,up,1.4,12,0.3117,0.00034372,4.4082,True,1.0
+111568,Nebraska,-1,18.9,18.9,v5_explore_medium,up,1.4,12,0.2165,0.00013913,1.7843,False,1.0
+111566,Massachusetts,18,18.9,18.9,v5_explore_medium,up,1.4,12,0.2879,0.00035414,4.5418,True,1.0
+111569,Unknown,18,18.9,18.9,v5_explore_medium,up,1.4,12,0.2879,0.00035414,4.5418,True,1.0
+111569,New Mexico,-1,18.9,18.9,v5_explore_medium,up,1.4,12,0.2403,0.0002385,3.0588,True,1.0
+111566,Montana,-1,18.9,18.9,v5_explore_medium,up,1.4,12,0.2641,0.00011571,1.484,False,1.0
+111571,South Carolina,-1,18.9,18.9,v5_explore_medium,up,1.4,12,0.3117,0.00016009,2.0532,False,1.0
+111569,South Carolina,8,18.9,18.9,v5_explore_medium,up,1.4,12,0.2641,0.00036521,4.6838,True,1.0
+111564,Texas,2,18.9,18.9,v5_explore_medium,up,1.4,12,0.3117,0.00034372,4.4082,True,1.0
+111565,Wisconsin,18,18.9,18.9,v5_explore_medium,up,1.4,12,0.407,0.00030754,3.9442,True,1.0
+111570,Kentucky,-1,18.9,18.9,v5_explore_medium,up,1.4,12,0.3117,0.00019158,2.4571,False,1.0
+111563,Arizona,2,18.9,18.9,v5_explore_medium,up,1.4,11,0.3193,0.00034372,4.4082,True,1.0
+111567,Nevada,8,18.9,18.9,v5_explore_medium,up,1.4,11,0.4413,0.00029216,3.747,True,1.0
+111567,Oregon,8,18.9,18.9,v5_explore_medium,up,1.4,11,0.3925,0.00031585,4.0508,True,1.0
+111567,Iowa,8,18.9,18.9,v5_explore_medium,up,1.4,11,0.3925,0.00031585,4.0508,True,1.0
+111569,Connecticut,-1,18.9,18.9,v5_explore_medium,up,1.4,11,0.2705,0.00011346,1.4551,False,1.0
+111567,Rhode Island,-1,18.9,18.9,v5_explore_medium,up,1.4,11,0.3193,0.00013131,1.684,False,1.0
+111568,Unknown,2,18.9,18.9,v5_explore_medium,up,1.4,11,0.2462,0.00037699,4.8348,True,1.0
+111563,Massachusetts,2,18.9,18.9,v5_explore_medium,up,1.4,11,0.3193,0.00034372,4.4082,True,1.0
+111568,Mississippi,8,18.9,18.9,v5_explore_medium,up,1.4,11,0.3437,0.0003339,4.2823,True,1.0
+111565,Kentucky,18,18.9,18.9,v5_explore_medium,up,1.4,11,0.3193,0.00034372,4.4082,True,1.0
+111565,Illinois,18,18.9,18.9,v5_explore_medium,up,1.4,11,0.4169,0.00030754,3.9442,True,1.0
+111565,Florida,1,18.9,18.9,v5_explore_medium,up,1.4,11,0.3437,0.0003339,4.2823,True,1.0
+111563,South Carolina,2,18.9,18.9,v5_explore_medium,up,1.4,11,0.2705,0.00036521,4.6838,True,1.0
+111565,South Carolina,18,18.9,18.9,v5_explore_medium,up,1.4,11,0.2705,0.00036521,4.6838,True,1.0
+111568,New Hampshire,-1,18.9,18.9,v5_explore_medium,up,1.4,11,0.2949,0.00012985,1.6653,False,1.0
+111569,Indiana,8,18.9,18.9,v5_explore_medium,up,1.4,11,0.3681,0.00032463,4.1633,True,1.0
+111570,Mississippi,-1,18.9,18.9,v5_explore_medium,up,1.4,11,0.2218,0.00024347,3.1225,True,1.0
+111563,Wisconsin,2,18.9,18.9,v5_explore_medium,up,1.4,11,0.3681,0.00032463,4.1633,True,1.0
+111567,Washington,2,18.9,18.9,v5_explore_medium,up,1.4,11,0.4169,0.00030754,3.9442,True,1.0
+111566,Florida,18,18.9,18.9,v5_explore_medium,up,1.4,11,0.4413,0.00029966,3.8431,True,1.0
+111571,Missouri,8,18.9,18.9,v5_explore_medium,up,1.4,10,0.2773,0.00036521,4.6838,True,1.0
+111567,Kentucky,8,18.9,18.9,v5_explore_medium,up,1.4,10,0.3023,0.00034372,4.4082,True,1.0
+111568,Iowa,-1,18.9,18.9,v5_explore_medium,up,1.4,10,0.3023,0.0001328,1.7032,False,1.0
+111568,Minnesota,8,18.9,18.9,v5_explore_medium,up,1.4,10,0.3523,0.00031585,4.0508,True,1.0
+111571,Arkansas,-1,18.9,18.9,v5_explore_medium,up,1.4,10,0.2273,0.00025406,3.2583,True,1.0
+111570,South Carolina,8,18.9,18.9,v5_explore_medium,up,1.4,10,0.2773,0.00036521,4.6838,True,1.0
+111571,Arizona,8,18.9,18.9,v5_explore_medium,up,1.4,10,0.2523,0.00037699,4.8348,True,1.0
+111565,Connecticut,2,18.9,18.9,v5_explore_medium,up,1.4,10,0.3273,0.00034372,4.4082,True,1.0
+111568,Nevada,-1,18.9,18.9,v5_explore_medium,up,1.4,10,0.2773,0.00012842,1.647,False,1.0
+111569,New Hampshire,-1,18.9,18.9,v5_explore_medium,up,1.4,10,0.2273,0.00020503,2.6295,False,1.0
+111571,Alabama,-1,18.9,18.9,v5_explore_medium,up,1.4,10,0.2273,0.00019808,2.5403,False,1.0
+111571,New Mexico,-1,18.9,18.9,v5_explore_medium,up,1.4,10,0.2523,0.00030754,3.9442,True,1.0
+111565,Montana,8,18.9,18.9,v5_explore_medium,up,1.4,10,0.2523,0.00036521,4.6838,True,1.0
+111570,Washington,2,18.9,18.9,v5_explore_medium,up,1.4,10,0.2523,0.00037699,4.8348,True,1.0
+111565,Oregon,2,18.9,18.9,v5_explore_medium,up,1.4,10,0.3773,0.00032463,4.1633,True,1.0
+111566,Wisconsin,18,18.9,18.9,v5_explore_medium,up,1.4,10,0.3523,0.0003339,4.2823,True,1.0
+111566,Alaska,-1,18.9,18.9,v5_explore_medium,up,1.4,10,0.2523,0.0001408,1.8058,False,1.0
+111571,Kentucky,-1,18.9,18.9,v5_explore_medium,up,1.4,10,0.2523,0.00024347,3.1225,True,1.0
+111571,Nebraska,8,18.9,18.9,v5_explore_medium,up,1.4,10,0.4273,0.00030754,3.9442,True,1.0
+111563,Delaware,2,20.0,20.125,v5_explore_low,up,1.4,9,0.2588,0.00037699,4.8348,True,1.0
+111568,Kentucky,8,20.0,20.125,v5_explore_low,up,1.4,9,0.2844,0.00035414,4.5418,True,1.0
+111567,North Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,9,0.2331,0.0001826,2.3419,False,1.0
+111571,Wisconsin,8,20.0,20.125,v5_explore_low,up,1.4,9,0.387,0.00032463,4.1633,True,1.0
+111563,Ontario,-1,20.0,20.125,v5_explore_low,up,1.4,9,0.2588,5.993e-05,0.7686,False,1.0
+111568,Hawaii,8,20.0,20.125,v5_explore_low,up,1.4,9,0.3357,0.00034372,4.4082,True,1.0
+111563,Indiana,2,20.0,20.125,v5_explore_low,up,1.4,9,0.4383,0.00030754,3.9442,True,1.0
+111569,Louisiana,8,20.0,20.125,v5_explore_low,up,1.4,9,0.3101,0.00035414,4.5418,True,1.0
+111567,Utah,8,20.0,20.125,v5_explore_low,up,1.4,9,0.2588,0.00037699,4.8348,True,1.0
+111569,Kentucky,8,20.0,20.125,v5_explore_low,up,1.4,9,0.3101,0.00035414,4.5418,True,1.0
+111568,Utah,8,20.0,20.125,v5_explore_low,up,1.4,9,0.2588,0.00037699,4.8348,True,1.0
+111567,Vermont,-1,20.0,20.125,v5_explore_low,up,1.4,9,0.2331,0.00019478,2.498,False,1.0
+111565,North Dakota,8,20.0,20.125,v5_explore_low,up,1.4,9,0.3101,0.00035414,4.5418,True,1.0
+111570,New Mexico,-1,20.0,20.125,v5_explore_low,up,1.4,9,0.2844,0.00028504,3.6556,True,1.0
+111570,Oklahoma,-1,20.0,20.125,v5_explore_low,up,1.4,9,0.3101,0.00022474,2.8823,False,1.0
+111567,Florida,2,20.0,20.125,v5_explore_low,up,1.4,9,0.387,0.00032463,4.1633,True,1.0
+111570,Kentucky,8,20.0,20.125,v5_explore_low,up,1.4,9,0.3101,0.00035414,4.5418,True,1.0
+111564,Montana,8,20.0,20.125,v5_explore_low,up,1.4,9,0.3357,0.0003339,4.2823,True,1.0
+111569,Ohio,18,20.0,20.125,v5_explore_low,up,1.4,9,0.3613,0.0003339,4.2823,True,1.0
+111567,District of Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,9,0.2588,0.00010251,1.3147,False,1.0
+111569,Nebraska,-1,20.0,20.125,v5_explore_low,up,1.4,9,0.2331,0.0002656,3.4064,True,1.0
+111570,Alabama,-1,20.0,20.125,v5_explore_low,up,1.4,9,0.2844,0.0001826,2.3419,False,1.0
+111564,Wisconsin,2,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.00035414,4.5418,True,1.0
+111570,Washington,8,20.0,20.125,v5_explore_low,up,1.4,8,0.2919,0.00036521,4.6838,True,1.0
+111568,Unknown,18,20.0,20.125,v5_explore_low,up,1.4,8,0.2919,0.00036521,4.6838,True,1.0
+111567,Hawaii,-1,20.0,20.125,v5_explore_low,up,1.4,8,0.2393,0.00018849,2.4174,False,1.0
+111564,Bourgogne-Franche-Comte,-1,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.0003339,4.2823,True,1.0
+111570,Arizona,8,20.0,20.125,v5_explore_low,up,1.4,8,0.2656,0.00037699,4.8348,True,1.0
+111563,South Carolina,18,20.0,20.125,v5_explore_low,up,1.4,8,0.2919,0.00036521,4.6838,True,1.0
+111568,Iowa,8,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.00035414,4.5418,True,1.0
+111567,Delaware,-1,20.0,20.125,v5_explore_low,up,1.4,8,0.2919,0.00017707,2.2709,False,1.0
+111567,South Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,8,0.3708,0.00015177,1.9465,False,1.0
+111570,Missouri,8,20.0,20.125,v5_explore_low,up,1.4,8,0.2919,0.00036521,4.6838,True,1.0
+111564,Colorado,2,20.0,20.125,v5_explore_low,up,1.4,8,0.2393,0.00056009,7.1832,True,1.0
+111568,Kansas,8,20.0,20.125,v5_explore_low,up,1.4,8,0.3445,0.00034372,4.4082,True,1.0
+111570,Wisconsin,8,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.00035414,4.5418,True,1.0
+111569,West Virginia,-1,20.0,20.125,v5_explore_low,up,1.4,8,0.2393,0.00020869,2.6764,False,1.0
+111567,Wyoming,-1,20.0,20.125,v5_explore_low,up,1.4,8,0.2393,0.00024865,3.1889,True,1.0
+111563,Iowa,2,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.00035414,4.5418,True,1.0
+111570,Nebraska,8,20.0,20.125,v5_explore_low,up,1.4,8,0.3708,0.0003339,4.2823,True,1.0
+111569,Oklahoma,8,20.0,20.125,v5_explore_low,up,1.4,8,0.2393,0.00071734,9.1999,True,1.0
+111565,New York,18,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.00035414,4.5418,True,1.0
+111569,Wisconsin,8,20.0,20.125,v5_explore_low,up,1.4,8,0.3445,0.0003339,4.2823,True,1.0
+111567,Alaska,-1,20.0,20.125,v5_explore_low,up,1.4,8,0.2393,0.00020503,2.6295,False,1.0
+111563,Michigan,1,20.0,20.125,v5_explore_low,up,1.4,8,0.2919,0.00036521,4.6838,True,1.0
+111571,Connecticut,8,20.0,20.125,v5_explore_low,up,1.4,8,0.3972,0.00032463,4.1633,True,1.0
+111566,Illinois,18,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.00035414,4.5418,True,1.0
+111568,North Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,8,0.2393,0.0002656,3.4064,True,1.0
+111569,Missouri,8,20.0,20.125,v5_explore_low,up,1.4,8,0.2656,0.00037699,4.8348,True,1.0
+111567,New Hampshire,8,20.0,20.125,v5_explore_low,up,1.4,8,0.3972,0.00032463,4.1633,True,1.0
+111564,Connecticut,2,20.0,20.125,v5_explore_low,up,1.4,8,0.2656,0.00037699,4.8348,True,1.0
+111570,Utah,8,20.0,20.125,v5_explore_low,up,1.4,8,0.2656,0.00037699,4.8348,True,1.0
+111566,Alabama,2,20.0,20.125,v5_explore_low,up,1.4,8,0.2393,0.00058815,7.5431,True,1.0
+111564,Missouri,2,20.0,20.125,v5_explore_low,up,1.4,8,0.2656,0.00037699,4.8348,True,1.0
+111568,California,18,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.00035414,4.5418,True,1.0
+111571,Washington,8,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.00035414,4.5418,True,1.0
+111567,Massachusetts,18,20.0,20.125,v5_explore_low,up,1.4,8,0.3182,0.00035414,4.5418,True,1.0
+111566,Oregon,2,20.0,20.125,v5_explore_low,up,1.4,8,0.3972,0.00032463,4.1633,True,1.0
+111570,Connecticut,8,20.0,20.125,v5_explore_low,up,1.4,8,0.4235,0.00031585,4.0508,True,1.0
+111569,Nebraska,8,20.0,20.125,v5_explore_low,up,1.4,8,0.3708,0.0003339,4.2823,True,1.0
+111569,Mississippi,8,20.0,20.125,v5_explore_low,up,1.4,8,0.2656,0.00037699,4.8348,True,1.0
+111570,Connecticut,-1,20.0,20.125,v5_explore_low,up,1.4,8,0.2919,0.00015793,2.0254,False,1.0
+111568,Oregon,8,20.0,20.125,v5_explore_low,up,1.4,8,0.2656,0.00037699,4.8348,True,1.0
+111569,Utah,8,20.0,20.125,v5_explore_low,up,1.4,7,0.2728,0.00037699,4.8348,True,1.0
+111566,Rhode Island,8,20.0,20.125,v5_explore_low,up,1.4,7,0.4349,0.00031585,4.0508,True,1.0
+111568,District of Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2728,0.00014252,1.8278,False,1.0
+111565,Missouri,2,20.0,20.125,v5_explore_low,up,1.4,7,0.2728,0.00037699,4.8348,True,1.0
+111569,Iowa,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2728,0.00022474,2.8823,False,1.0
+111568,Alaska,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2457,0.00027178,3.4856,True,1.0
+111565,Colorado,2,20.0,20.125,v5_explore_low,up,1.4,7,0.2457,0.0005833,7.4808,True,1.0
+111566,South Dakota,8,20.0,20.125,v5_explore_low,up,1.4,7,0.3809,0.0003339,4.2823,True,1.0
+111569,Washington,2,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00032463,4.1633,True,1.0
+111566,North Carolina,18,20.0,20.125,v5_explore_low,up,1.4,7,0.2457,0.00059099,7.5794,True,1.0
+111570,Ohio,18,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00034372,4.4082,True,1.0
+111569,Arkansas,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2457,0.00022915,2.9388,False,1.0
+111566,New York,2,20.0,20.125,v5_explore_low,up,1.4,7,0.2728,0.00037699,4.8348,True,1.0
+111569,Alabama,8,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00034372,4.4082,True,1.0
+111571,North Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2457,0.00035414,4.5418,True,1.0
+111571,Nevada,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.3268,0.0002656,3.4064,True,1.0
+111569,Wyoming,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2457,0.00032463,4.1633,True,1.0
+111566,Pennsylvania,18,20.0,20.125,v5_explore_low,up,1.4,7,0.2998,0.00036521,4.6838,True,1.0
+111565,Tennessee,2,20.0,20.125,v5_explore_low,up,1.4,7,0.3268,0.00035414,4.5418,True,1.0
+111566,Connecticut,2,20.0,20.125,v5_explore_low,up,1.4,7,0.3268,0.00035414,4.5418,True,1.0
+111567,New Mexico,8,20.0,20.125,v5_explore_low,up,1.4,7,0.3268,0.00035414,4.5418,True,1.0
+111563,Connecticut,18,20.0,20.125,v5_explore_low,up,1.4,7,0.4349,0.00031585,4.0508,True,1.0
+111564,Nevada,18,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00034372,4.4082,True,1.0
+111567,New Hampshire,2,20.0,20.125,v5_explore_low,up,1.4,7,0.3268,0.00035414,4.5418,True,1.0
+111566,Colorado,1,20.0,20.125,v5_explore_low,up,1.4,7,0.3268,0.00035414,4.5418,True,1.0
+111569,Nevada,8,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00034372,4.4082,True,1.0
+111568,Nevada,8,20.0,20.125,v5_explore_low,up,1.4,7,0.4349,0.00031585,4.0508,True,1.0
+111567,Florida,18,20.0,20.125,v5_explore_low,up,1.4,7,0.3809,0.0003339,4.2823,True,1.0
+111569,North Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2457,0.00031585,4.0508,True,1.0
+111567,Rhode Island,8,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00034372,4.4082,True,1.0
+111565,Ohio,2,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00034372,4.4082,True,1.0
+111570,Indiana,8,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00034372,4.4082,True,1.0
+111570,Nebraska,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2457,0.0003339,4.2823,True,1.0
+111567,Delaware,8,20.0,20.125,v5_explore_low,up,1.4,7,0.3268,0.00035414,4.5418,True,1.0
+111563,Wisconsin,18,20.0,20.125,v5_explore_low,up,1.4,7,0.2998,0.00036521,4.6838,True,1.0
+111568,Florida,2,20.0,20.125,v5_explore_low,up,1.4,7,0.2728,0.00037699,4.8348,True,1.0
+111571,Minnesota,8,20.0,20.125,v5_explore_low,up,1.4,7,0.4349,0.00029966,3.8431,True,1.0
+111566,California,2,20.0,20.125,v5_explore_low,up,1.4,7,0.2998,0.00036521,4.6838,True,1.0
+111570,Alabama,8,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00034372,4.4082,True,1.0
+111568,South Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.0002205,2.8279,False,1.0
+111568,Washington,2,20.0,20.125,v5_explore_low,up,1.4,7,0.2998,0.00035414,4.5418,True,1.0
+111571,Mississippi,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2457,0.00028504,3.6556,True,1.0
+111568,Rhode Island,-1,20.0,20.125,v5_explore_low,up,1.4,7,0.2998,0.0001855,2.3791,False,1.0
+111565,Wisconsin,2,20.0,20.125,v5_explore_low,up,1.4,7,0.3538,0.00034372,4.4082,True,1.0
+111566,Ontario,-1,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00020869,2.6764,False,1.0
+111563,New York,18,20.0,20.125,v5_explore_low,up,1.4,6,0.3081,0.00036521,4.6838,True,1.0
+111568,Hawaii,-1,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00019478,2.498,False,1.0
+111563,Massachusetts,18,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00051689,6.6291,True,1.0
+111568,New Mexico,8,20.0,20.125,v5_explore_low,up,1.4,6,0.2803,0.00037699,4.8348,True,1.0
+111565,Texas,2,20.0,20.125,v5_explore_low,up,1.4,6,0.3081,0.00036521,4.6838,True,1.0
+111563,Illinois,18,20.0,20.125,v5_explore_low,up,1.4,6,0.3359,0.00035414,4.5418,True,1.0
+111568,New Hampshire,8,20.0,20.125,v5_explore_low,up,1.4,6,0.3359,0.00035414,4.5418,True,1.0
+111568,Massachusetts,18,20.0,20.125,v5_explore_low,up,1.4,6,0.2803,0.00037699,4.8348,True,1.0
+111568,Vermont,-1,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00023373,2.9976,False,1.0
+111566,Missouri,2,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00059882,7.6799,True,1.0
+111563,Kentucky,18,20.0,20.125,v5_explore_low,up,1.4,6,0.3637,0.00034372,4.4082,True,1.0
+111571,Oregon,8,20.0,20.125,v5_explore_low,up,1.4,6,0.3359,0.00035414,4.5418,True,1.0
+111570,New Hampshire,-1,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00024347,3.1225,True,1.0
+111564,Indiana,18,20.0,20.125,v5_explore_low,up,1.4,6,0.3637,0.00034372,4.4082,True,1.0
+111570,Unknown,18,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00050324,6.454,True,1.0
+111564,Michigan,1,20.0,20.125,v5_explore_low,up,1.4,6,0.2803,0.00037699,4.8348,True,1.0
+111571,Delaware,8,20.0,20.125,v5_explore_low,up,1.4,6,0.3359,0.00035414,4.5418,True,1.0
+111564,Ohio,2,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00047512,6.0934,True,1.0
+111567,Idaho,-1,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00010821,1.3878,False,1.0
+111567,West Virginia,8,20.0,20.125,v5_explore_low,up,1.4,6,0.3081,0.00035414,4.5418,True,1.0
+111567,Idaho,8,20.0,20.125,v5_explore_low,up,1.4,6,0.3359,0.00034372,4.4082,True,1.0
+111564,New Mexico,1,20.0,20.125,v5_explore_low,up,1.4,6,0.3915,0.0003339,4.2823,True,1.0
+111564,Unknown,1,20.0,20.125,v5_explore_low,up,1.4,6,0.3081,0.00036521,4.6838,True,1.0
+111571,Louisiana,8,20.0,20.125,v5_explore_low,up,1.4,6,0.2803,0.00037699,4.8348,True,1.0
+111571,Louisiana,-1,20.0,20.125,v5_explore_low,up,1.4,6,0.2526,0.00027178,3.4856,True,1.0
+111567,Illinois,18,20.0,20.125,v5_explore_low,up,1.4,6,0.3081,0.00036521,4.6838,True,1.0
+111564,Virginia,18,20.0,20.125,v5_explore_low,up,1.4,6,0.3359,0.00035414,4.5418,True,1.0
+111564,Manitoba,-1,20.0,20.125,v5_explore_low,up,1.4,6,0.4192,0.00032463,4.1633,True,1.0
+111566,Pennsylvania,2,20.0,20.125,v5_explore_low,up,1.4,6,0.3081,0.00036521,4.6838,True,1.0
+111568,Delaware,-1,20.0,20.125,v5_explore_low,up,1.4,6,0.3081,0.00022915,2.9388,False,1.0
+111569,Nevada,-1,20.0,20.125,v5_explore_low,up,1.4,6,0.2803,0.00021642,2.7756,False,1.0
+111564,New Jersey,2,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00049379,6.3329,True,1.0
+111569,Kansas,8,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111564,Akershus,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00024347,3.1225,True,1.0
+111566,Manitoba,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.4026,0.0003339,4.2823,True,1.0
+111567,South Dakota,8,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111564,Alberta,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00027178,3.4856,True,1.0
+111570,Mississippi,8,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111570,Arkansas,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00024865,3.1889,True,1.0
+111564,Indiana,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3455,0.00035414,4.5418,True,1.0
+111568,New Hampshire,2,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00069163,8.8702,True,1.0
+111569,Minnesota,8,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00034372,4.4082,True,1.0
+111564,California,1,20.0,20.125,v5_explore_low,up,1.4,5,0.3455,0.00035414,4.5418,True,1.0
+111566,Colorado,2,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00060747,7.7907,True,1.0
+111569,Massachusetts,18,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111564,Massachusetts,1,20.0,20.125,v5_explore_low,up,1.4,5,0.3741,0.00034372,4.4082,True,1.0
+111570,Louisiana,8,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111567,Maine,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00012985,1.6653,False,1.0
+111563,Georgia,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00035414,4.5418,True,1.0
+111570,Iowa,8,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111564,Rhode Island,18,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111571,Kentucky,8,20.0,20.125,v5_explore_low,up,1.4,5,0.3741,0.0003339,4.2823,True,1.0
+111564,England,8,20.0,20.125,v5_explore_low,up,1.4,5,0.4026,0.0003339,4.2823,True,1.0
+111567,New York,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111571,Iowa,8,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00079822,10.2372,True,1.0
+111563,Connecticut,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111565,Virginia,18,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111566,Florida,1,20.0,20.125,v5_explore_low,up,1.4,5,0.3741,0.00034372,4.4082,True,1.0
+111570,Florida,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111567,Connecticut,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111565,Connecticut,18,20.0,20.125,v5_explore_low,up,1.4,5,0.3455,0.00035414,4.5418,True,1.0
+111570,Unknown,2,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00046425,5.954,True,1.0
+111571,Nevada,8,20.0,20.125,v5_explore_low,up,1.4,5,0.4026,0.0003339,4.2823,True,1.0
+111571,Nebraska,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00036521,4.6838,True,1.0
+111566,Michigan,2,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111570,North Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00076535,9.8156,True,1.0
+111566,Vermont,8,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111565,Manitoba,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.3741,0.00034372,4.4082,True,1.0
+111571,Ohio,18,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111569,Alaska,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00029966,3.8431,True,1.0
+111566,Texas,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3741,0.00034372,4.4082,True,1.0
+111568,Wyoming,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00027178,3.4856,True,1.0
+111570,Oklahoma,8,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00074706,9.581,True,1.0
+111569,Florida,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111565,Indiana,18,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111565,Ar Riyāḑ,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00063276,8.1152,True,1.0
+111569,Unknown,2,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111569,California,18,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111568,Delaware,8,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111567,Wisconsin,18,20.0,20.125,v5_explore_low,up,1.4,5,0.3741,0.00034372,4.4082,True,1.0
+111566,Washington,18,20.0,20.125,v5_explore_low,up,1.4,5,0.3455,0.00035414,4.5418,True,1.0
+111569,South Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.3455,0.00027178,3.4856,True,1.0
+111564,Tennessee,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3741,0.00034372,4.4082,True,1.0
+111564,South Carolina,2,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00054513,6.9913,True,1.0
+111563,Maine,2,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111567,Arkansas,8,20.0,20.125,v5_explore_low,up,1.4,5,0.2884,0.00037699,4.8348,True,1.0
+111569,Iowa,8,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111568,Wisconsin,18,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111569,Oregon,8,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.0007072,9.0698,True,1.0
+111569,Rhode Island,-1,20.0,20.125,v5_explore_low,up,1.4,5,0.2598,0.00024865,3.1889,True,1.0
+111565,Nevada,18,20.0,20.125,v5_explore_low,up,1.4,5,0.3169,0.00036521,4.6838,True,1.0
+111571,Alabama,8,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111570,West Virginia,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00024347,3.1225,True,1.0
+111570,Nevada,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.0002597,3.3307,True,1.0
+111570,Wyoming,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00034372,4.4082,True,1.0
+111569,Connecticut,2,20.0,20.125,v5_explore_low,up,1.4,4,0.3262,0.00036521,4.6838,True,1.0
+111571,Rhode Island,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00035414,4.5418,True,1.0
+111569,Delaware,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00025406,3.2583,True,1.0
+111569,Rhode Island,8,20.0,20.125,v5_explore_low,up,1.4,4,0.3557,0.00035414,4.5418,True,1.0
+111569,Manitoba,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.3557,0.00035414,4.5418,True,1.0
+111571,Colorado,1,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111571,Florida,2,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111571,Kansas,8,20.0,20.125,v5_explore_low,up,1.4,4,0.3557,0.00035414,4.5418,True,1.0
+111569,Idaho,8,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111569,Hawaii,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00024865,3.1889,True,1.0
+111571,Connecticut,2,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00073668,9.4479,True,1.0
+111571,Wyoming,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00037699,4.8348,True,1.0
+111565,Rhode Island,18,20.0,20.125,v5_explore_low,up,1.4,4,0.3262,0.00036521,4.6838,True,1.0
+111567,Texas,2,20.0,20.125,v5_explore_low,up,1.4,4,0.3557,0.00035414,4.5418,True,1.0
+111564,Tennessee,18,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111567,Oregon,2,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111564,Rio de Janeiro,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00032463,4.1633,True,1.0
+111568,Illinois,18,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111565,Unknown,1,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111564,British Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.3262,0.00032463,4.1633,True,1.0
+111563,Florida,18,20.0,20.125,v5_explore_low,up,1.4,4,0.3557,0.00035414,4.5418,True,1.0
+111567,Alabama,2,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00061252,7.8556,True,1.0
+111566,Wyoming,8,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111565,New Mexico,1,20.0,20.125,v5_explore_low,up,1.4,4,0.3557,0.00035414,4.5418,True,1.0
+111568,Rhode Island,8,20.0,20.125,v5_explore_low,up,1.4,4,0.3557,0.00035414,4.5418,True,1.0
+111567,Virginia,2,20.0,20.125,v5_explore_low,up,1.4,4,0.3262,0.00036521,4.6838,True,1.0
+111564,New Jersey,18,20.0,20.125,v5_explore_low,up,1.4,4,0.3262,0.00036521,4.6838,True,1.0
+111564,Connecticut,18,20.0,20.125,v5_explore_low,up,1.4,4,0.3851,0.00034372,4.4082,True,1.0
+111564,District of Columbia,2,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111563,Montana,8,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111566,Ohio,2,20.0,20.125,v5_explore_low,up,1.4,4,0.3262,0.00036521,4.6838,True,1.0
+111563,Rhode Island,18,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00061828,7.9295,True,1.0
+111564,Texas,1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00040169,5.1516,True,1.0
+111563,Maryland,2,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111563,Bourgogne-Franche-Comte,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00036521,4.6838,True,1.0
+111563,Unknown,1,20.0,20.125,v5_explore_low,up,1.4,4,0.3262,0.00036521,4.6838,True,1.0
+111565,California,1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00039854,5.1113,True,1.0
+111565,England,8,20.0,20.125,v5_explore_low,up,1.4,4,0.3557,0.00035414,4.5418,True,1.0
+111565,British Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.0003339,4.2823,True,1.0
+111567,Montana,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00020149,2.5841,False,1.0
+111565,Bourgogne-Franche-Comte,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00063268,8.1141,True,1.0
+111565,Iowa,2,20.0,20.125,v5_explore_low,up,1.4,4,0.3262,0.00036521,4.6838,True,1.0
+111565,Michigan,1,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111567,Montana,8,20.0,20.125,v5_explore_low,up,1.4,4,0.3557,0.00035414,4.5418,True,1.0
+111567,District of Columbia,8,20.0,20.125,v5_explore_low,up,1.4,4,0.2968,0.00037699,4.8348,True,1.0
+111565,Akershus,-1,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00032463,4.1633,True,1.0
+111567,Ohio,2,20.0,20.125,v5_explore_low,up,1.4,4,0.2674,0.00053666,6.8826,True,1.0
+111564,Arizona,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00054084,6.9363,True,1.0
+111569,Montana,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111571,Indiana,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3664,0.00035414,4.5418,True,1.0
+111566,Montana,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111564,Illinois,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111564,Idaho,18,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00063994,8.2072,True,1.0
+111566,New Mexico,1,20.0,20.125,v5_explore_low,up,1.4,3,0.3664,0.00035414,4.5418,True,1.0
+111566,New York,18,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00050348,6.4572,True,1.0
+111564,Georgia,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3664,0.00035414,4.5418,True,1.0
+111569,Vermont,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00029216,3.747,True,1.0
+111566,North Dakota,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00068082,8.7316,True,1.0
+111563,West Virginia,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00056757,7.2791,True,1.0
+111564,Georgia,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00050695,6.5017,True,1.0
+111567,California,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00043444,5.5717,True,1.0
+111566,Wisconsin,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00059766,7.665,True,1.0
+111567,Colorado,1,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111567,Colorado,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00063263,8.1135,True,1.0
+111564,Ar Riyāḑ,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00060759,7.7923,True,1.0
+111563,Tennessee,18,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00054785,7.0262,True,1.0
+111567,Michigan,1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.0005584,7.1615,True,1.0
+111567,Manitoba,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111569,New Hampshire,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00072028,9.2376,True,1.0
+111569,New Hampshire,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00074239,9.5211,True,1.0
+111564,Iowa,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00058289,7.4756,True,1.0
+111563,Akershus,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00024347,3.1225,True,1.0
+111570,Delaware,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00031585,4.0508,True,1.0
+111570,Alaska,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00036521,4.6838,True,1.0
+111566,Kentucky,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111570,Massachusetts,18,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00068678,8.8079,True,1.0
+111571,California,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111570,Minnesota,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00035414,4.5418,True,1.0
+111571,Alaska,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00032463,4.1633,True,1.0
+111570,Nevada,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3664,0.00035414,4.5418,True,1.0
+111565,New Jersey,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111565,New Jersey,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00051425,6.5953,True,1.0
+111565,Mississippi,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111565,Michigan,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111565,Alberta,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00032463,4.1633,True,1.0
+111565,Arizona,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00056325,7.2237,True,1.0
+111565,Arizona,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111565,Maine,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111570,Oregon,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111565,Indiana,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111570,South Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00034372,4.4082,True,1.0
+111565,Georgia,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00052796,6.7711,True,1.0
+111565,Rio de Janeiro,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00031585,4.0508,True,1.0
+111565,West Virginia,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111570,Kansas,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111571,District of Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.0002597,3.3307,True,1.0
+111571,Idaho,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00080847,10.3686,True,1.0
+111571,Hawaii,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.0003339,4.2823,True,1.0
+111570,California,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111566,Indiana,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111570,Colorado,1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00071098,9.1183,True,1.0
+111564,Massachusetts,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111564,Michigan,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111566,District of Columbia,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111566,Alaska,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.0003339,4.2823,True,1.0
+111570,Hawaii,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00029966,3.8431,True,1.0
+111570,Hawaii,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00079466,10.1916,True,1.0
+111570,Idaho,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00077631,9.9561,True,1.0
+111571,Connecticut,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111566,British Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00036521,4.6838,True,1.0
+111570,Illinois,18,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00074147,9.5094,True,1.0
+111570,Iowa,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00029966,3.8431,True,1.0
+111569,Montana,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00029966,3.8431,True,1.0
+111565,District of Columbia,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111571,New Hampshire,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.0002385,3.0588,True,1.0
+111569,Hawaii,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111567,Pennsylvania,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111568,West Virginia,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00037699,4.8348,True,1.0
+111563,California,1,20.0,20.125,v5_explore_low,up,1.4,3,0.3664,0.00035414,4.5418,True,1.0
+111568,Maine,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.0001646,2.111,False,1.0
+111571,Unknown,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111571,Unknown,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00048349,6.2008,True,1.0
+111569,Illinois,18,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00071198,9.1311,True,1.0
+111568,Idaho,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111563,Idaho,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00056688,7.2703,True,1.0
+111569,California,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00047119,6.043,True,1.0
+111568,Arkansas,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111568,Montana,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00022915,2.9388,False,1.0
+111568,Florida,18,20.0,20.125,v5_explore_low,up,1.4,3,0.3664,0.00035414,4.5418,True,1.0
+111563,Minnesota,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111569,Colorado,1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00068269,8.7555,True,1.0
+111568,District of Columbia,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00071643,9.1882,True,1.0
+111568,California,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00045244,5.8026,True,1.0
+111568,Colorado,1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00065553,8.4072,True,1.0
+111569,District of Columbia,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00074611,9.5688,True,1.0
+111568,Connecticut,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111571,Rhode Island,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111569,District of Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00021248,2.7251,False,1.0
+111568,Virginia,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111569,Delaware,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00076065,9.7554,True,1.0
+111568,Ohio,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00055889,7.1678,True,1.0
+111568,New York,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111571,West Virginia,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00027825,3.5686,True,1.0
+111563,Nova Scotia,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.3664,0.00032463,4.1633,True,1.0
+111571,New Mexico,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00081549,10.4587,True,1.0
+111563,Alberta,-1,20.0,20.125,v5_explore_low,up,1.4,3,0.3664,0.00028504,3.6556,True,1.0
+111568,Texas,2,20.0,20.125,v5_explore_low,up,1.4,3,0.3361,0.00036521,4.6838,True,1.0
+111563,Oregon,2,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00053781,6.8974,True,1.0
+111568,Montana,8,20.0,20.125,v5_explore_low,up,1.4,3,0.3058,0.00037699,4.8348,True,1.0
+111568,South Dakota,8,20.0,20.125,v5_explore_low,up,1.4,3,0.2755,0.00072945,9.3552,True,1.0
+111571,Delaware,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00029966,3.8431,True,1.0
+111570,Rhode Island,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00034372,4.4082,True,1.0
+111570,Rhode Island,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111571,South Dakota,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00034372,4.4082,True,1.0
+111563,Illinois,2,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111563,Indiana,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111566,California,1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00041505,5.3231,True,1.0
+111570,New York,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00054639,7.0074,True,1.0
+111566,Connecticut,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111565,Idaho,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00066645,8.5472,True,1.0
+111568,Idaho,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00014252,1.8278,False,1.0
+111568,Oregon,2,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111564,Mississippi,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111570,District of Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00025406,3.2583,True,1.0
+111565,Georgia,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111570,Delaware,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111570,Connecticut,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00070737,9.0721,True,1.0
+111565,England,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00035414,4.5418,True,1.0
+111564,Nevada,2,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111564,North Carolina,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00050269,6.447,True,1.0
+111570,Vermont,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111564,Maryland,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00054158,6.9457,True,1.0
+111564,West Virginia,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111568,Vermont,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111568,Missouri,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00064947,8.3295,True,1.0
+111571,Vermont,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111564,Texas,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00043762,5.6125,True,1.0
+111568,Michigan,1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00058154,7.4582,True,1.0
+111570,Montana,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111563,Belgrade,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00058341,7.4822,True,1.0
+111568,Manitoba,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111565,Ohio,1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00049232,6.3139,True,1.0
+111565,Massachusetts,2,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111570,New Mexico,8,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00078305,10.0427,True,1.0
+111563,California,10,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111565,Massachusetts,1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00051458,6.5995,True,1.0
+111563,Catalonia,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00058341,7.4822,True,1.0
+111565,Sofia-Capital,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00063271,8.1146,True,1.0
+111564,Ohio,1,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111565,Texas,1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00041833,5.3651,True,1.0
+111564,Nova Scotia,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.0003339,4.2823,True,1.0
+111568,Nevada,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111564,North Dakota,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00060904,7.8109,True,1.0
+111568,New Mexico,1,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111564,Ontario,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111568,Connecticut,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111568,Colorado,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00065884,8.4497,True,1.0
+111563,New Mexico,1,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111566,Tennessee,2,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111569,Texas,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00049459,6.3431,True,1.0
+111568,Alabama,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.0006379,8.1811,True,1.0
+111566,Virginia,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00055149,7.0729,True,1.0
+111567,Vermont,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111563,Nevada,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111565,Catalonia,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00063275,8.115,True,1.0
+111567,Rio de Janeiro,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00036521,4.6838,True,1.0
+111564,Belgrade,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00060758,7.7922,True,1.0
+111564,Arizona,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111571,Massachusetts,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00071523,9.1728,True,1.0
+111569,Oregon,2,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111567,Pennsylvania,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00058165,7.4597,True,1.0
+111563,New Jersey,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111567,Connecticut,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111566,Rio de Janeiro,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.0003339,4.2823,True,1.0
+111569,Ohio,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00058205,7.4648,True,1.0
+111563,West Virginia,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00061522,7.8902,True,1.0
+111563,Virginia,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00048825,6.2618,True,1.0
+111569,New York,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00052465,6.7286,True,1.0
+111571,Mississippi,8,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00077378,9.9237,True,1.0
+111569,New Mexico,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111569,New Mexico,1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00072585,9.309,True,1.0
+111567,New Mexico,1,20.0,20.125,v5_explore_low,up,1.4,2,0.3466,0.00036521,4.6838,True,1.0
+111567,Kentucky,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00069276,8.8847,True,1.0
+111567,New Jersey,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00055775,7.1531,True,1.0
+111567,Maine,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111571,Montana,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111563,Texas,1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.0003857,4.9467,True,1.0
+111567,Missouri,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00062364,7.9981,True,1.0
+111564,England,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00029966,3.8431,True,1.0
+111564,Catalonia,-1,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111571,Illinois,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00077219,9.9033,True,1.0
+111566,Iowa,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00063219,8.1079,True,1.0
+111569,Virginia,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00057467,7.3702,True,1.0
+111566,New Jersey,2,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00053556,6.8685,True,1.0
+111566,Nevada,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111564,Maine,18,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00064355,8.2535,True,1.0
+111569,Vermont,8,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111571,Oklahoma,8,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.000778,9.9779,True,1.0
+111563,Mississippi,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111566,Rhode Island,18,20.0,20.125,v5_explore_low,up,1.4,2,0.3154,0.00037699,4.8348,True,1.0
+111566,Michigan,1,20.0,20.125,v5_explore_low,up,1.4,2,0.2841,0.00053618,6.8766,True,1.0
+111563,Arizona,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00056293,7.2196,True,1.0
+111571,District of Columbia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00078511,10.069,True,1.0
+111570,Virginia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00059848,7.6756,True,1.0
+111565,Belgrade,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00037699,4.8348,True,1.0
+111563,Vermont,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00062963,8.075,True,1.0
+111563,Kentucky,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00054331,6.968,True,1.0
+111571,District of Columbia,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0008092,10.378,True,1.0
+111571,Colorado,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00074417,9.544,True,1.0
+111571,New York,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00056903,7.2978,True,1.0
+111563,Ar Riyāḑ,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058342,7.4823,True,1.0
+111570,Vermont,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0003339,4.2823,True,1.0
+111571,Montana,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00034372,4.4082,True,1.0
+111571,Idaho,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00085024,10.9043,True,1.0
+111571,New Hampshire,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00080517,10.3263,True,1.0
+111571,Florida,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058334,7.4814,True,1.0
+111564,Minnesota,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111563,Ohio,1,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111571,West Virginia,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00080944,10.3811,True,1.0
+111563,Oklahoma,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00054552,6.9963,True,1.0
+111563,Rio de Janeiro,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00036521,4.6838,True,1.0
+111563,Alabama,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111571,Hawaii,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00082758,10.6137,True,1.0
+111564,Maryland,2,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111563,North Dakota,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058481,7.5002,True,1.0
+111571,Michigan,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0007156,9.1775,True,1.0
+111564,Kentucky,2,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111563,District of Columbia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0005674,7.2769,True,1.0
+111563,Missouri,10,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111563,Hawaii,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058029,7.4422,True,1.0
+111564,Delaware,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00060243,7.7262,True,1.0
+111571,Ohio,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00063128,8.0962,True,1.0
+111563,Nebraska,2,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111571,Oklahoma,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00075484,9.6808,True,1.0
+111564,Oregon,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00060712,7.7863,True,1.0
+111571,British Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00080692,10.3487,True,1.0
+111564,New York,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0004261,5.4647,True,1.0
+111563,Maine,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00056721,7.2745,True,1.0
+111571,Vermont,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00032463,4.1633,True,1.0
+111571,Manitoba,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00080692,10.3487,True,1.0
+111564,Sofia-Capital,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00035414,4.5418,True,1.0
+111571,Tennessee,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00069936,8.9693,True,1.0
+111564,Utah,1,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111563,British Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0003339,4.2823,True,1.0
+111564,Vermont,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111571,Oregon,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00074417,9.544,True,1.0
+111570,West Virginia,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00077725,9.9682,True,1.0
+111563,Michigan,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00051715,6.6325,True,1.0
+111563,Massachusetts,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00047445,6.0848,True,1.0
+111571,Pennsylvania,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00063121,8.0953,True,1.0
+111564,Queensland,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00037699,4.8348,True,1.0
+111568,Rio de Janeiro,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00037699,4.8348,True,1.0
+111565,Delaware,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00062739,8.0463,True,1.0
+111569,Maine,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00078836,10.1107,True,1.0
+111569,Michigan,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111567,Nevada,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111569,Michigan,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00060563,7.7672,True,1.0
+111567,Oklahoma,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00064171,8.2299,True,1.0
+111567,Ontario,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0002656,3.4064,True,1.0
+111567,Ontario,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00071059,9.1134,True,1.0
+111569,Maine,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00024865,3.1889,True,1.0
+111569,Idaho,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00019478,2.498,False,1.0
+111567,Tennessee,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00059454,7.6249,True,1.0
+111567,Washington,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111567,Wisconsin,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00062243,7.9826,True,1.0
+111568,Alaska,8,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111568,Alberta,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111569,Idaho,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00078394,10.0541,True,1.0
+111567,Nevada,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00066352,8.5097,True,1.0
+111567,Mississippi,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111569,Missouri,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00067638,8.6746,True,1.0
+111567,Minnesota,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00069008,8.8503,True,1.0
+111567,Michigan,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111567,Michigan,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00056122,7.1977,True,1.0
+111569,Nevada,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00071964,9.2294,True,1.0
+111569,Nevada,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00078005,10.0041,True,1.0
+111569,New Jersey,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00060493,7.7582,True,1.0
+111567,Iowa,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00065838,8.4438,True,1.0
+111567,Indiana,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00062135,7.9688,True,1.0
+111567,Idaho,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00072282,9.2701,True,1.0
+111567,Georgia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00057262,7.3438,True,1.0
+111567,Florida,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0004959,6.3599,True,1.0
+111567,England,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00037699,4.8348,True,1.0
+111567,District of Columbia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00066744,8.56,True,1.0
+111569,Oklahoma,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00069598,8.9259,True,1.0
+111568,Arizona,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00068962,8.8443,True,1.0
+111568,Bourgogne-Franche-Comte,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00071462,9.1649,True,1.0
+111570,Texas,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00051509,6.606,True,1.0
+111568,Mississippi,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111568,Iowa,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00068566,8.7936,True,1.0
+111568,Kentucky,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00072146,9.2528,True,1.0
+111568,Maine,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00071981,9.2316,True,1.0
+111568,Wisconsin,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00064821,8.3134,True,1.0
+111568,Michigan,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058448,7.4959,True,1.0
+111568,Michigan,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00063355,8.1252,True,1.0
+111568,Nevada,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00069101,8.8622,True,1.0
+111569,Georgia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00062105,7.965,True,1.0
+111568,New Jersey,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058086,7.4495,True,1.0
+111568,Oklahoma,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00066829,8.5709,True,1.0
+111568,Ontario,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00029216,3.747,True,1.0
+111568,Tennessee,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00061917,7.9408,True,1.0
+111568,Pennsylvania,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00055883,7.167,True,1.0
+111568,Pennsylvania,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00060575,7.7688,True,1.0
+111568,Indiana,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00064709,8.2989,True,1.0
+111569,Alaska,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00076849,9.8558,True,1.0
+111569,Alberta,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111568,Idaho,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00075276,9.6541,True,1.0
+111568,Idaho,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00069446,8.9065,True,1.0
+111569,Arkansas,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0007323,9.3917,True,1.0
+111569,Bourgogne-Franche-Comte,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00074422,9.5446,True,1.0
+111568,Georgia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00059635,7.6481,True,1.0
+111568,England,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00037699,4.8348,True,1.0
+111569,Colorado,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00068614,8.7997,True,1.0
+111568,District of Columbia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111569,Connecticut,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111569,District of Columbia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00072389,9.2839,True,1.0
+111569,Florida,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00053785,6.8979,True,1.0
+111568,California,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00045017,5.7734,True,1.0
+111569,Florida,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058595,7.5148,True,1.0
+111568,British Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00036521,4.6838,True,1.0
+111567,California,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00043225,5.5437,True,1.0
+111567,British Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00036521,4.6838,True,1.0
+111567,Bourgogne-Franche-Comte,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00068619,8.8004,True,1.0
+111565,Queensland,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00037699,4.8348,True,1.0
+111565,Nova Scotia,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00035414,4.5418,True,1.0
+111570,Missouri,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0007044,9.034,True,1.0
+111565,Ontario,8,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111565,Oregon,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111565,Ostan-e Tehran,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00063271,8.1146,True,1.0
+111570,Michigan,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00068713,8.8124,True,1.0
+111570,Michigan,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00063072,8.089,True,1.0
+111569,Pennsylvania,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058199,7.464,True,1.0
+111565,Tennessee,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00059419,7.6205,True,1.0
+111570,Manitoba,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00077482,9.9371,True,1.0
+111565,Texas,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00045575,5.845,True,1.0
+111565,Vermont,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00068288,8.758,True,1.0
+111566,Alberta,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00032463,4.1633,True,1.0
+111566,Arizona,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058659,7.523,True,1.0
+111570,Montana,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00032463,4.1633,True,1.0
+111565,North Dakota,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00063427,8.1345,True,1.0
+111565,North Carolina,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00052352,6.7141,True,1.0
+111565,New York,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00044376,5.6912,True,1.0
+111570,New Hampshire,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00077314,9.9156,True,1.0
+111570,New Jersey,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00062999,8.0796,True,1.0
+111565,Nevada,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00061178,7.846,True,1.0
+111565,Minnesota,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00063627,8.1601,True,1.0
+111570,Ohio,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00060617,7.7741,True,1.0
+111565,Maryland,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00056402,7.2335,True,1.0
+111565,Maryland,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00052033,6.6732,True,1.0
+111570,Oklahoma,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00072481,9.2957,True,1.0
+111565,Louisiana,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00058367,7.4856,True,1.0
+111565,Kentucky,2,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111570,Pennsylvania,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0006061,7.7732,True,1.0
+111565,Illinois,2,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111570,Tennessee,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00067154,8.6125,True,1.0
+111566,Belgrade,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00065897,8.4512,True,1.0
+111570,Idaho,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00081642,10.4706,True,1.0
+111570,Georgia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00064678,8.295,True,1.0
+111566,Michigan,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111567,Arizona,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111567,Alberta,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00036521,4.6838,True,1.0
+111567,Alaska,8,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111566,West Virginia,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0006949,8.9121,True,1.0
+111569,Tennessee,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00064482,8.2698,True,1.0
+111566,Utah,1,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111566,South Carolina,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00064088,8.2193,True,1.0
+111566,Oklahoma,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00061618,7.9025,True,1.0
+111566,North Dakota,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00066055,8.4716,True,1.0
+111566,Nevada,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00063712,8.1711,True,1.0
+111569,West Virginia,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00074633,9.5717,True,1.0
+111566,Mississippi,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111569,Wisconsin,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00073174,9.3846,True,1.0
+111566,Minnesota,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111570,Alberta,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00077455,9.9336,True,1.0
+111566,England,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.0006586,8.4466,True,1.0
+111566,Maine,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00069797,8.9515,True,1.0
+111566,Kentucky,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00061368,7.8705,True,1.0
+111570,British Columbia,-1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00077482,9.9371,True,1.0
+111570,California,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00049071,6.2934,True,1.0
+111566,Indiana,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111570,Colorado,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00071457,9.1643,True,1.0
+111566,Idaho,18,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00069406,8.9013,True,1.0
+111566,Georgia,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111566,Georgia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00054984,7.0517,True,1.0
+111570,Connecticut,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111570,District of Columbia,2,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00075388,9.6685,True,1.0
+111570,District of Columbia,8,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00077702,9.9652,True,1.0
+111566,England,8,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0
+111570,Florida,1,20.0,20.125,v5_explore_low,up,1.4,1,0.2933,0.00056013,7.1837,True,1.0
+111566,Arizona,18,20.0,20.125,v5_explore_low,up,1.4,1,0.3256,0.00037699,4.8348,True,1.0

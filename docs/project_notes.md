@@ -289,19 +289,30 @@ To actively use floors in bidding:
 data/
 ├── NPI_click_data_1year.csv    # Shared across datasets
 ├── NPI_click_data_20days.csv   # Shared across datasets
-├── drugs/
-│   ├── data_drugs.csv          # Main data file
+├── drugs_hcp/
+│   ├── data_drugs_hcp.csv      # Main data file
 │   ├── archive/                # Historical files
 │   ├── incoming/               # Drop new files here
 │   └── processed/              # Processed incoming files
 └── nativo_consumer/
     ├── data_nativo_consumer.csv  # Symlink to active file
     └── data_nativo_consumer_YYYYMMDD.csv  # Dated exports
+
+output/
+├── drugs_hcp/                  # Timestamped run outputs
+│   └── YYYYMMDD_HHMMSS/       # Each run gets a folder
+└── nativo_consumer/
+    └── YYYYMMDD_HHMMSS/
+
+EDA/
+├── drugs_hcp/                  # EDA notebooks
+└── nativo_consumer/
 ```
 
 ### Path Convention
 
-- Config `dataset.name: "drugs"` → `data/drugs/` (not `data_drugs/`)
+- Config `dataset.name: "drugs_hcp"` → `data/drugs_hcp/`, `output/drugs_hcp/`
+- Config `dataset.name: "nativo_consumer"` → `data/nativo_consumer/`, `output/nativo_consumer/`
 - NPI files at `data/` root (shared, not duplicated per dataset)
 
 ---

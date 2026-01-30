@@ -1,0 +1,568 @@
+{
+  "run_info": {
+    "run_id": "20260129_104936",
+    "timestamp": "2026-01-29T10:50:04.337946",
+    "memcache_file": "suggested_bids_20260129_104936.csv",
+    "version": "v5_volume_first_exploration",
+    "v5_exploration_enabled": true,
+    "v4_landscape_enabled": false
+  },
+  "config": {
+    "business": {
+      "target_margin": 0.3,
+      "target_win_rate": 0.65,
+      "win_rate_sensitivity": 0.5,
+      "exploration_mode": true,
+      "exploration_up_multiplier": 1.3,
+      "exploration_down_multiplier": 0.7,
+      "accept_negative_margin": true,
+      "max_negative_margin_pct": 0.5
+    },
+    "technical": {
+      "min_bid_cpm": 3.0,
+      "max_bid_cpm": 20.0,
+      "default_bid_cpm": 12.5,
+      "min_observations": 1,
+      "max_features": 3,
+      "ctr_shrinkage_k": 30,
+      "win_rate_shrinkage_k": 30,
+      "min_signal_score": 50.0,
+      "min_win_rate_adjustment": 0.6,
+      "max_win_rate_adjustment": 1.4,
+      "min_observations_for_empirical": 10,
+      "min_observations_for_landscape": 50,
+      "exploration_bonus_zero_obs": 0.25,
+      "exploration_bonus_low_obs": 0.15,
+      "exploration_bonus_medium_obs": 0.08
+    }
+  },
+  "bid_formula": {
+    "version": "v5_exploration",
+    "v5_formula": "bid = base_bid \u00d7 exploration_adjustment \u00d7 npi_multiplier",
+    "v5_exploration_adjustment": {
+      "under_winning": "1.0 + wr_gap \u00d7 1.3 (bid UP)",
+      "over_winning": "1.0 + wr_gap \u00d7 0.7 (bid DOWN)"
+    },
+    "v4_formula": "optimal_bid = argmax_b [(EV_cpm - b) \u00d7 P(win | b, segment)]",
+    "v3_fallback_formula": "bid = EV_cpm \u00d7 (1 - target_margin) \u00d7 win_rate_adjustment",
+    "shading_factor": 0.7,
+    "adjustment_bounds": [
+      0.6,
+      1.4
+    ]
+  },
+  "exploration_stats": {
+    "segments_bid_up": 1417,
+    "segments_bid_down": 0,
+    "segments_neutral": 37,
+    "pct_bid_up": 97.5,
+    "pct_bid_down": 0.0,
+    "asymmetry_ratio": Infinity,
+    "target_win_rate": 0.65,
+    "up_multiplier": 1.3,
+    "down_multiplier": 0.7
+  },
+  "global_stats": {
+    "median_winning_bid": 12.5,
+    "global_win_rate": 0.30307626905760277,
+    "total_bids": 207004,
+    "total_wins": 62738,
+    "derived_up_multiplier": 3.0,
+    "derived_down_multiplier": 0.5,
+    "exploration_derivation": {
+      "success": true,
+      "derived_up_multiplier": 3.0,
+      "derived_down_multiplier": 0.5,
+      "raw_multiplier": 4.232,
+      "delta_log_odds": 1.4517,
+      "delta_bid": 40.4,
+      "bid_coefficient": 0.1607,
+      "bid_std": 4.47,
+      "current_wr": 0.30307626905760277,
+      "target_wr": 0.65,
+      "current_median_bid": 12.5,
+      "implied_new_bid": 52.9,
+      "extrapolation_warning": true
+    }
+  },
+  "data_stats": {
+    "bids": {
+      "raw": 293144,
+      "clean": 207004,
+      "removed": 86140,
+      "floor_available": false
+    },
+    "views": {
+      "raw": 606705,
+      "after_dedup": 606705,
+      "removed_duplicates": 0,
+      "removed_invalid_price": 29119,
+      "clean": 577586,
+      "removed": 29119
+    },
+    "clicks": {
+      "raw": 262,
+      "clean": 262,
+      "removed": 0
+    }
+  },
+  "feature_selection": {
+    "selected_features": [
+      "internal_adspace_id",
+      "geo_region_name",
+      "os_code"
+    ],
+    "feature_scores": {
+      "geo_region_name": {
+        "cardinality": 67,
+        "null_pct": 0.0,
+        "win_rate_variance": 0.023835,
+        "signal_score": 184.3824,
+        "coverage_at_threshold": 1.0,
+        "values_with_sufficient_obs": 67,
+        "effective_cardinality": 5,
+        "dominant_value": "California",
+        "dominant_share": 0.1391
+      },
+      "os_code": {
+        "cardinality": 6,
+        "null_pct": 0.0,
+        "win_rate_variance": 0.024414,
+        "signal_score": 78.2426,
+        "coverage_at_threshold": 1.0,
+        "values_with_sufficient_obs": 6,
+        "effective_cardinality": 2,
+        "dominant_value": "-1",
+        "dominant_share": 0.6661
+      }
+    },
+    "exclusions": {
+      "hard": [],
+      "soft": [
+        {
+          "feature": "geo_country_code2",
+          "reason": "effective_cardinality=1 < 2 (98.7% in 'US')"
+        },
+        {
+          "feature": "domain",
+          "reason": "effective_cardinality=1 < 2 (100.0% in 'www.drugs.com')"
+        },
+        {
+          "feature": "browser_code",
+          "reason": "effective_cardinality=1 < 2 (93.9% in '14')"
+        },
+        {
+          "feature": "hour_of_day",
+          "reason": "signal_score=21.81 < threshold=50.0"
+        },
+        {
+          "feature": "day_of_week",
+          "reason": "signal_score=10.56 < threshold=50.0"
+        },
+        {
+          "feature": "media_type",
+          "reason": "effective_cardinality=1 < 2 (97.5% in 'display')"
+        }
+      ]
+    },
+    "num_features": 3,
+    "max_features": 3,
+    "total_samples": 207004,
+    "soft_exclusion_thresholds": {
+      "min_signal_score": 50.0,
+      "min_coverage": 0.5,
+      "max_null_pct": 30.0,
+      "min_effective_cardinality": 2,
+      "effective_cardinality_min_share": 0.05
+    }
+  },
+  "bidder_config": {
+    "feature_columns": [
+      "internal_adspace_id",
+      "geo_region_name",
+      "os_code"
+    ],
+    "feature_column_order": [
+      "internal_adspace_id",
+      "geo_region_name",
+      "os_code"
+    ],
+    "num_segments": 1454,
+    "bid_column": "suggested_bid_cpm"
+  },
+  "model_performance": {
+    "bid_landscape_model": {
+      "status": "NOT_TRAINED",
+      "reason": "Not provided"
+    },
+    "win_rate_model_empirical": {
+      "n_samples": 207004,
+      "n_positive": 62738,
+      "n_negative": 144266,
+      "global_win_rate": 0.30307626905760277,
+      "n_segments": 1454,
+      "segments_with_wins": 1113,
+      "shrinkage_k": 30,
+      "features": [
+        "internal_adspace_id",
+        "geo_region_name",
+        "os_code"
+      ],
+      "model_type": "empirical_with_shrinkage",
+      "usage": "V3_FALLBACK - empirical rates with shrinkage"
+    },
+    "win_rate_model_logreg": {
+      "n_samples": 207004,
+      "n_positive": 62738,
+      "n_negative": 144266,
+      "base_rate": 0.30307626905760277,
+      "mean_pred_raw": 0.30316137163996,
+      "mean_pred_calibrated": 0.30307626905760277,
+      "features": [
+        "internal_adspace_id",
+        "geo_region_name",
+        "os_code"
+      ],
+      "n_categorical": 1,
+      "n_numeric": 2,
+      "calibration_ece": 0.03235208021343992,
+      "passes_calibration_gate": true,
+      "ece_threshold": 0.1,
+      "calibration_method": "isotonic_regression",
+      "usage": "DIAGNOSTICS_ONLY - for calibration comparison"
+    },
+    "ctr_model": {
+      "n_samples": 577586,
+      "n_clicks": 225,
+      "global_ctr": 0.0003895523783471206,
+      "mean_pred_ctr": 0.0004741301620268171,
+      "n_segments": 1272,
+      "segments_with_clicks": 105,
+      "shrinkage_k": 30,
+      "features": [
+        "internal_adspace_id",
+        "geo_region_name",
+        "os_code"
+      ]
+    }
+  },
+  "bid_variance_stats": {},
+  "bid_method_stats": {
+    "total": 1454,
+    "config_strategy": "adaptive",
+    "exploration_mode": "gradual",
+    "exploration_max_bid_cpm": 20.0,
+    "exploration_max_wr_adjustment": 1.4,
+    "exploration_up_multiplier": 3.0,
+    "exploration_down_multiplier": 0.5,
+    "multiplier_source": "data-driven (bid landscape)",
+    "v5_explore_low_count": 633,
+    "v5_explore_low_pct": 43.5,
+    "v5_explore_medium_count": 389,
+    "v5_explore_medium_pct": 26.8,
+    "v6_landscape_volume_count": 404,
+    "v6_landscape_volume_pct": 27.8,
+    "v6_landscape_margin_count": 28,
+    "v6_landscape_margin_pct": 1.9,
+    "exploration_up_count": 1417,
+    "exploration_up_pct": 97.5,
+    "exploration_down_count": 0,
+    "exploration_down_pct": 0.0,
+    "exploration_neutral_count": 37,
+    "exploration_neutral_pct": 2.5,
+    "strategy_volume_first_count": 1426,
+    "strategy_volume_first_pct": 98.1,
+    "strategy_margin_optimize_count": 28,
+    "strategy_margin_optimize_pct": 1.9
+  },
+  "model_calibration": {
+    "win_rate_model_logreg": {
+      "expected_calibration_error": 0.0,
+      "max_calibration_error": 0.0,
+      "brier_score": 0.192016,
+      "calibration_curve": {
+        "0.00-0.10": {
+          "predicted": 0.096555,
+          "actual": 0.096555,
+          "count": 3832,
+          "calibration_error": 0.0
+        },
+        "0.10-0.20": {
+          "predicted": 0.17562,
+          "actual": 0.17562,
+          "count": 65357,
+          "calibration_error": 0.0
+        },
+        "0.20-0.30": {
+          "predicted": 0.247866,
+          "actual": 0.247866,
+          "count": 55284,
+          "calibration_error": 0.0
+        },
+        "0.30-0.40": {
+          "predicted": 0.358065,
+          "actual": 0.358065,
+          "count": 33061,
+          "calibration_error": 0.0
+        },
+        "0.40-0.50": {
+          "predicted": 0.442297,
+          "actual": 0.442297,
+          "count": 20025,
+          "calibration_error": 0.0
+        },
+        "0.50-0.60": {
+          "predicted": 0.534761,
+          "actual": 0.534761,
+          "count": 19289,
+          "calibration_error": 0.0
+        },
+        "0.60-0.70": {
+          "predicted": 0.608135,
+          "actual": 0.608135,
+          "count": 10154,
+          "calibration_error": 0.0
+        },
+        "0.90-1.00": {
+          "predicted": 1.0,
+          "actual": 1.0,
+          "count": 2,
+          "calibration_error": 0.0
+        }
+      },
+      "n_bins_with_data": 8,
+      "binning_method": "uniform",
+      "auc_roc": 0.6814,
+      "pr_auc": 0.4664,
+      "log_loss": 0.56845,
+      "normalized_entropy": 0.9266,
+      "relative_information_gain": 0.0734,
+      "calibration_sum_ratio": 1.0,
+      "baseline_entropy": 0.613448,
+      "n_positive_events": 62738,
+      "sample_warning": null
+    },
+    "win_rate_model_empirical": {
+      "expected_calibration_error": 0.014341,
+      "max_calibration_error": 0.031559,
+      "brier_score": 0.187541,
+      "calibration_curve": {
+        "0.00-0.10": {
+          "predicted": 0.088235,
+          "actual": 0.07828,
+          "count": 3232,
+          "calibration_error": 0.009956
+        },
+        "0.10-0.20": {
+          "predicted": 0.161916,
+          "actual": 0.151022,
+          "count": 50774,
+          "calibration_error": 0.010894
+        },
+        "0.20-0.30": {
+          "predicted": 0.250636,
+          "actual": 0.240558,
+          "count": 76173,
+          "calibration_error": 0.010078
+        },
+        "0.30-0.40": {
+          "predicted": 0.346572,
+          "actual": 0.360566,
+          "count": 31237,
+          "calibration_error": 0.013994
+        },
+        "0.40-0.50": {
+          "predicted": 0.445118,
+          "actual": 0.476677,
+          "count": 17129,
+          "calibration_error": 0.031559
+        },
+        "0.50-0.60": {
+          "predicted": 0.546714,
+          "actual": 0.572149,
+          "count": 18434,
+          "calibration_error": 0.025435
+        },
+        "0.60-0.70": {
+          "predicted": 0.633319,
+          "actual": 0.650175,
+          "count": 10025,
+          "calibration_error": 0.016856
+        }
+      },
+      "n_bins_with_data": 7,
+      "binning_method": "uniform",
+      "auc_roc": 0.7011,
+      "pr_auc": 0.5023,
+      "log_loss": 0.558013,
+      "normalized_entropy": 0.9096,
+      "relative_information_gain": 0.0904,
+      "calibration_sum_ratio": 0.9958,
+      "baseline_entropy": 0.613448,
+      "n_positive_events": 62738,
+      "sample_warning": null
+    },
+    "ctr_model": {
+      "expected_calibration_error": 9.9e-05,
+      "max_calibration_error": 0.000186,
+      "brier_score": 0.000389,
+      "calibration_curve": {
+        "0.000344-0.000395": {
+          "predicted": 0.000366,
+          "actual": 0.000405,
+          "count": 111241,
+          "calibration_error": 3.8e-05
+        },
+        "0.000395-0.000449": {
+          "predicted": 0.000419,
+          "actual": 0.000382,
+          "count": 117945,
+          "calibration_error": 3.7e-05
+        },
+        "0.000449-0.000498": {
+          "predicted": 0.000474,
+          "actual": 0.000411,
+          "count": 116857,
+          "calibration_error": 6.4e-05
+        },
+        "0.000498-0.000549": {
+          "predicted": 0.000523,
+          "actual": 0.000337,
+          "count": 115790,
+          "calibration_error": 0.000186
+        },
+        "0.000549-0.000832": {
+          "predicted": 0.000585,
+          "actual": 0.000415,
+          "count": 115753,
+          "calibration_error": 0.00017
+        }
+      },
+      "n_bins_with_data": 5,
+      "binning_method": "adaptive_percentile",
+      "auc_roc": 0.4975,
+      "pr_auc": 0.0004,
+      "log_loss": 0.003461,
+      "normalized_entropy": 1.004,
+      "relative_information_gain": -0.004,
+      "calibration_sum_ratio": 1.2171,
+      "baseline_entropy": 0.003448,
+      "n_positive_events": 225,
+      "sample_warning": "Only 225 positive events - metrics may be unstable"
+    }
+  },
+  "ctr_calibration_check": {
+    "mean_pred_ctr": 0.00047413,
+    "global_ctr": 0.00038955,
+    "ratio": 1.2171,
+    "status": "GOOD",
+    "interpretation": "Model predicts 1.2x the actual CTR rate"
+  },
+  "economic_analysis": {
+    "total_segments": 1454,
+    "profitable_segments": 922,
+    "unprofitable_segments": 532,
+    "pct_profitable": 63.41,
+    "bid_clipping": {
+      "clipped_to_floor": 0,
+      "clipped_to_ceiling": 633,
+      "pct_at_floor": 0.0,
+      "pct_at_ceiling": 43.54,
+      "pct_natural": 56.46
+    },
+    "raw_bid_distribution": {
+      "min": 3.0,
+      "max": 20.125,
+      "mean": 19.3317,
+      "median": 20.0,
+      "std": 2.5192
+    },
+    "expected_value_distribution": {
+      "min": 0.0245,
+      "max": 560.867,
+      "mean": 6.2562,
+      "median": 4.1281
+    },
+    "win_rate_distribution": {
+      "min": 0.06,
+      "max": 0.6831,
+      "mean": 0.3091,
+      "median": 0.2933
+    },
+    "adjustment_distribution": {
+      "min": 1.0,
+      "max": 1.4,
+      "mean": 1.2774,
+      "median": 1.4,
+      "at_min_bound": 0,
+      "at_max_bound": 972
+    },
+    "exploration_direction_breakdown": {
+      "bid_up": 1417,
+      "bid_down": 0,
+      "neutral": 37,
+      "pct_bid_up": 97.46,
+      "pct_bid_down": 0.0
+    },
+    "bid_method_breakdown": {
+      "v5_explore_low_count": 633,
+      "v5_explore_low_pct": 43.54,
+      "v5_explore_medium_count": 389,
+      "v5_explore_medium_pct": 26.75
+    }
+  },
+  "bid_summary": {
+    "count": 1454,
+    "bid_min": 3.0,
+    "bid_max": 20.0,
+    "bid_mean": 19.28,
+    "bid_median": 20.0,
+    "ctr_mean": 0.00048781,
+    "win_rate_mean": 0.3091,
+    "exploration_adjustment_min": 1.0,
+    "exploration_adjustment_max": 1.4,
+    "exploration_adjustment_mean": 1.2774,
+    "v5_explore_low_count": 633,
+    "v5_explore_medium_count": 389
+  },
+  "segment_distribution": {
+    "total_segments": 1454,
+    "excluded_low_observations": 0,
+    "excluded_unprofitable": 0,
+    "segments_in_memcache": 1454,
+    "inclusion_rate": 100.0,
+    "v5_zero_obs": 0,
+    "v5_low_obs": 633,
+    "v5_medium_obs": 389,
+    "v5_high_obs": 432
+  },
+  "warnings": [
+    "Empirical model calibration on training data is tautological by construction - segment predictions equal segment averages from same data",
+    "CTR model has only 225 clicks - AUC and other metrics may be unstable (recommend 1000+)"
+  ],
+  "clearing_price_analysis": {
+    "source": "view_records",
+    "total_views": 577586,
+    "views_with_valid_price": 577586,
+    "avg_clearing_price": 7.7479,
+    "distribution": {
+      "min": 2.25,
+      "p25": 7.5,
+      "median": 7.5,
+      "p75": 7.5,
+      "max": 25.0
+    }
+  },
+  "bid_amount_analysis": {
+    "source": "bid_records",
+    "total_bids": 207004,
+    "won_bids": 62738,
+    "win_rate": 0.3031,
+    "avg_bid_amount": 8.4315,
+    "distribution": {
+      "min": 2.25,
+      "median": 7.5,
+      "max": 25.0
+    }
+  }
+}

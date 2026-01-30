@@ -1,9 +1,9 @@
 # Optimizer Config: drugs.com (HCP Targeting)
 # ============================================
-# Run: python run_optimizer.py --config config/optimizer_config_drugs.yaml
+# Run: python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml
 
 dataset:
-  name: "drugs"  # → data/drugs/, output_drugs/
+  name: "drugs_hcp"  # → data/drugs_hcp/, output/drugs_hcp/
 
 # -----------------------------------------------------------------------------
 # WHAT TO CHANGE REGULARLY

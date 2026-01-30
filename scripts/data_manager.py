@@ -3,15 +3,15 @@
 Data Management CLI for Bid Optimizer
 
 Production Workflow:
-    1. Drop new data file(s) in data/drugs/incoming/
-    2. Run: python scripts/data_manager.py ingest --data-dir data/drugs/
-    3. Script appends to data_drugs.csv, moves processed files to processed/
+    1. Drop new data file(s) in data/drugs_hcp/incoming/
+    2. Run: python scripts/data_manager.py ingest --data-dir data/drugs_hcp/
+    3. Script appends to data_drugs_hcp.csv, moves processed files to processed/
 
 Directory Structure:
     data/
     ├── NPI_click_data_*.csv    # Shared NPI files (used across datasets)
-    ├── drugs/                  # drugs.com dataset
-    │   ├── data_drugs.csv      # Main data file (optimizer reads this)
+    ├── drugs_hcp/              # drugs.com HCP dataset
+    │   ├── data_drugs_hcp.csv  # Main data file (optimizer reads this)
     │   ├── incoming/           # Drop new files here
     │   ├── processed/          # Processed incoming files (audit trail)
     │   └── archive/            # Original separate files (historical)
@@ -25,9 +25,9 @@ Commands:
     init      - Initialize directory structure
 
 Usage:
-    python scripts/data_manager.py init --data-dir data/drugs/
-    python scripts/data_manager.py ingest --data-dir data/drugs/
-    python scripts/data_manager.py info --data-dir data/drugs/
+    python scripts/data_manager.py init --data-dir data/drugs_hcp/
+    python scripts/data_manager.py ingest --data-dir data/drugs_hcp/
+    python scripts/data_manager.py info --data-dir data/drugs_hcp/
 """
 import argparse
 import pandas as pd
@@ -516,13 +516,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Production Workflow:
-    1. Initialize:  python scripts/data_manager.py init --data-dir data/drugs/
-    2. Drop files:  Copy new CSV files to data/drugs/incoming/
-    3. Ingest:      python scripts/data_manager.py ingest --data-dir data/drugs/
-    4. Verify:      python scripts/data_manager.py info --data-dir data/drugs/
+    1. Initialize:  python scripts/data_manager.py init --data-dir data/drugs_hcp/
+    2. Drop files:  Copy new CSV files to data/drugs_hcp/incoming/
+    3. Ingest:      python scripts/data_manager.py ingest --data-dir data/drugs_hcp/
+    4. Verify:      python scripts/data_manager.py info --data-dir data/drugs_hcp/
 
 One-time Migration (from separate files):
-    python scripts/data_manager.py combine --data-dir data/drugs/
+    python scripts/data_manager.py combine --data-dir data/drugs_hcp/
         """
     )
 

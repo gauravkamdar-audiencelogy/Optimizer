@@ -1,0 +1,104 @@
+{
+  "run_id": "20260129_192434",
+  "validation_passed": true,
+  "has_warnings": true,
+  "recommendation": "review",
+  "summary": {
+    "hard_checks_passed": 4,
+    "hard_checks_failed": 0,
+    "soft_checks_passed": 2,
+    "soft_checks_failed": 1,
+    "total_checks": 7
+  },
+  "checks": [
+    {
+      "name": "bid_bounds",
+      "rule_type": "hard",
+      "passed": "True",
+      "expected": {
+        "min": 0.5,
+        "max": 20.0
+      },
+      "actual": {
+        "min": 5.41,
+        "max": 8.67
+      },
+      "message": "All bids within bounds [$0.50, $20.00]"
+    },
+    {
+      "name": "calibration",
+      "rule_type": "hard",
+      "passed": true,
+      "expected": {
+        "max_ece": 0.15
+      },
+      "actual": {
+        "ece": "N/A"
+      },
+      "message": "Calibration check skipped (no ECE data)"
+    },
+    {
+      "name": "model_success",
+      "rule_type": "hard",
+      "passed": true,
+      "expected": {
+        "models": [
+          "empirical_win_rate",
+          "ctr"
+        ]
+      },
+      "actual": {
+        "issues": "none"
+      },
+      "message": "All required models trained successfully"
+    },
+    {
+      "name": "coverage",
+      "rule_type": "hard",
+      "passed": true,
+      "expected": {
+        "note": "No previous run to compare"
+      },
+      "actual": {
+        "note": "Skipped"
+      },
+      "message": "Coverage check skipped (no previous run)"
+    },
+    {
+      "name": "floor_concentration",
+      "rule_type": "soft",
+      "passed": true,
+      "expected": {
+        "max_pct": 30.0
+      },
+      "actual": {
+        "pct": 0
+      },
+      "message": "0.0% at floor (threshold: 30.0%)"
+    },
+    {
+      "name": "ceiling_concentration",
+      "rule_type": "soft",
+      "passed": true,
+      "expected": {
+        "max_pct": 30.0
+      },
+      "actual": {
+        "pct": 0
+      },
+      "message": "0.0% at ceiling (threshold: 30.0%)"
+    },
+    {
+      "name": "profitability",
+      "rule_type": "soft",
+      "passed": false,
+      "expected": {
+        "min_pct": 40.0
+      },
+      "actual": {
+        "pct": 0
+      },
+      "message": "0.0% profitable below 40.0% threshold"
+    }
+  ]
+}

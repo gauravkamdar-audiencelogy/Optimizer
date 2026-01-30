@@ -1,0 +1,504 @@
+geo_region_name,browser_code,suggested_bid_cpm
+Alabama,-1,8.05
+Alabama,5,7.56
+Alabama,14,7.58
+Alabama,46,7.27
+Alabama,100,6.72
+Alabama,137,8.05
+Alabama,143,6.33
+Alabama,144,6.33
+Alabama,145,8.05
+Alabama,146,6.33
+Alabama,150,6.26
+Alaska,5,8.05
+Alaska,14,7.58
+Alaska,143,6.33
+Alaska,144,7.56
+Alaska,145,8.05
+Alaska,146,8.05
+Arizona,-1,8.05
+Arizona,5,8.05
+Arizona,14,7.58
+Arizona,46,8.05
+Arizona,100,6.72
+Arizona,143,6.33
+Arizona,144,6.33
+Arizona,146,8.05
+Arizona,150,7.56
+Arkansas,-1,8.05
+Arkansas,5,7.56
+Arkansas,14,7.43
+Arkansas,46,7.56
+Arkansas,100,7.56
+Arkansas,143,6.18
+Arkansas,144,6.18
+Arkansas,145,8.05
+Arkansas,146,6.18
+Arkansas,150,7.56
+California,-1,8.05
+California,5,8.05
+California,14,7.51
+California,46,8.05
+California,100,6.65
+California,143,6.26
+California,144,6.26
+California,146,7.56
+California,150,6.18
+Colorado,-1,7.56
+Colorado,5,8.05
+Colorado,14,7.51
+Colorado,46,7.56
+Colorado,100,6.72
+Colorado,143,6.33
+Colorado,144,6.26
+Colorado,145,8.05
+Colorado,146,7.56
+Colorado,150,6.26
+Connecticut,-1,7.56
+Connecticut,5,7.56
+Connecticut,14,8.44
+Connecticut,46,7.56
+Connecticut,100,7.66
+Connecticut,136,7.56
+Connecticut,137,8.05
+Connecticut,143,7.27
+Connecticut,144,7.27
+Connecticut,146,7.56
+Connecticut,150,7.19
+Delaware,5,8.05
+Delaware,14,7.43
+Delaware,46,8.05
+Delaware,100,7.56
+Delaware,143,6.18
+Delaware,144,6.18
+Delaware,146,7.56
+Delaware,150,8.05
+District of Columbia,-1,8.05
+District of Columbia,14,7.51
+District of Columbia,46,8.05
+District of Columbia,100,7.56
+District of Columbia,136,8.05
+District of Columbia,143,6.26
+District of Columbia,144,6.26
+District of Columbia,146,8.05
+District of Columbia,150,7.56
+Florida,-1,7.66
+Florida,5,7.56
+Florida,14,7.51
+Florida,46,7.19
+Florida,100,6.65
+Florida,137,8.05
+Florida,143,6.26
+Florida,144,6.26
+Florida,145,8.05
+Florida,146,6.26
+Florida,150,6.18
+Georgia,-1,7.56
+Georgia,5,7.58
+Georgia,14,7.51
+Georgia,46,7.56
+Georgia,100,6.72
+Georgia,137,8.05
+Georgia,143,6.33
+Georgia,144,6.33
+Georgia,145,8.05
+Georgia,146,6.26
+Georgia,150,6.26
+Hawaii,14,7.43
+Hawaii,46,8.05
+Hawaii,100,8.05
+Hawaii,143,6.18
+Hawaii,144,6.18
+Hawaii,146,8.05
+Hawaii,150,8.05
+Idaho,-1,8.05
+Idaho,5,8.05
+Idaho,14,7.34
+Idaho,100,8.05
+Idaho,137,8.05
+Idaho,143,6.18
+Idaho,144,6.18
+Idaho,146,8.05
+Idaho,150,7.56
+Illinois,-1,7.56
+Illinois,5,7.56
+Illinois,14,7.97
+Illinois,46,7.66
+Illinois,100,7.11
+Illinois,136,8.05
+Illinois,137,8.05
+Illinois,143,6.72
+Illinois,144,6.72
+Illinois,145,8.05
+Illinois,146,6.65
+Illinois,150,6.65
+Indiana,-1,8.05
+Indiana,5,7.56
+Indiana,14,6.65
+Indiana,46,7.56
+Indiana,100,5.88
+Indiana,137,8.05
+Indiana,143,5.41
+Indiana,144,5.41
+Indiana,145,8.05
+Indiana,146,5.41
+Indiana,150,5.41
+Iowa,-1,7.56
+Iowa,5,8.05
+Iowa,14,7.34
+Iowa,46,8.05
+Iowa,100,7.56
+Iowa,143,6.1
+Iowa,144,6.1
+Iowa,145,8.05
+Iowa,146,7.56
+Iowa,150,7.56
+Kansas,-1,7.56
+Kansas,5,8.05
+Kansas,14,7.81
+Kansas,46,7.56
+Kansas,100,7.04
+Kansas,143,6.65
+Kansas,144,6.65
+Kansas,145,8.05
+Kansas,146,7.56
+Kansas,150,7.56
+Kentucky,-1,8.05
+Kentucky,5,7.56
+Kentucky,14,7.04
+Kentucky,46,8.05
+Kentucky,100,7.56
+Kentucky,143,5.79
+Kentucky,144,5.79
+Kentucky,145,8.05
+Kentucky,146,5.79
+Kentucky,150,5.71
+Louisiana,-1,8.05
+Louisiana,5,8.05
+Louisiana,14,8.44
+Louisiana,46,8.05
+Louisiana,100,7.56
+Louisiana,137,8.05
+Louisiana,143,7.27
+Louisiana,144,7.19
+Louisiana,145,8.05
+Louisiana,146,7.19
+Louisiana,150,7.56
+Maine,-1,7.56
+Maine,5,7.56
+Maine,14,8.12
+Maine,46,8.05
+Maine,100,7.56
+Maine,143,6.88
+Maine,144,6.88
+Maine,145,8.05
+Maine,146,7.56
+Maine,150,7.56
+Maryland,-1,7.56
+Maryland,5,8.05
+Maryland,14,6.96
+Maryland,46,6.72
+Maryland,100,6.18
+Maryland,143,5.79
+Maryland,144,5.79
+Maryland,145,8.05
+Maryland,146,5.71
+Maryland,150,5.71
+Massachusetts,-1,7.56
+Massachusetts,5,7.56
+Massachusetts,14,8.05
+Massachusetts,46,7.73
+Massachusetts,100,7.27
+Massachusetts,137,8.05
+Massachusetts,143,6.88
+Massachusetts,144,6.88
+Massachusetts,145,8.05
+Massachusetts,146,6.8
+Massachusetts,150,6.8
+Michigan,-1,7.56
+Michigan,5,7.56
+Michigan,14,8.2
+Michigan,46,7.89
+Michigan,100,7.43
+Michigan,137,8.05
+Michigan,143,6.96
+Michigan,144,6.96
+Michigan,145,7.56
+Michigan,146,6.96
+Michigan,150,6.88
+Minnesota,-1,7.56
+Minnesota,5,8.05
+Minnesota,14,6.96
+Minnesota,46,7.56
+Minnesota,100,6.18
+Minnesota,137,8.05
+Minnesota,143,5.71
+Minnesota,144,5.71
+Minnesota,145,8.05
+Minnesota,146,5.71
+Minnesota,150,5.64
+Mississippi,-1,8.05
+Mississippi,5,8.05
+Mississippi,14,7.73
+Mississippi,46,8.05
+Mississippi,100,7.56
+Mississippi,143,6.5
+Mississippi,144,6.5
+Mississippi,146,7.56
+Mississippi,150,7.56
+Missouri,-1,7.56
+Missouri,5,7.56
+Missouri,14,7.97
+Missouri,46,7.66
+Missouri,100,7.19
+Missouri,143,6.8
+Missouri,144,6.8
+Missouri,146,6.72
+Missouri,149,8.05
+Missouri,150,6.72
+Montana,-1,8.05
+Montana,14,7.58
+Montana,46,8.05
+Montana,100,8.05
+Montana,143,6.33
+Montana,144,6.33
+Montana,150,8.05
+Nebraska,-1,8.05
+Nebraska,14,7.89
+Nebraska,46,7.56
+Nebraska,100,7.04
+Nebraska,143,6.65
+Nebraska,144,6.65
+Nebraska,145,8.05
+Nebraska,146,7.56
+Nebraska,150,7.56
+Nevada,14,7.58
+Nevada,100,8.05
+Nevada,143,6.33
+Nevada,144,6.33
+Nevada,146,8.05
+Nevada,150,8.05
+New Hampshire,-1,8.05
+New Hampshire,5,8.05
+New Hampshire,14,7.58
+New Hampshire,46,8.05
+New Hampshire,100,7.56
+New Hampshire,143,6.42
+New Hampshire,144,6.33
+New Hampshire,145,8.05
+New Hampshire,146,7.56
+New Hampshire,150,7.56
+New Jersey,-1,7.56
+New Jersey,5,7.56
+New Jersey,14,7.51
+New Jersey,46,7.56
+New Jersey,100,6.65
+New Jersey,143,6.26
+New Jersey,144,6.26
+New Jersey,145,8.05
+New Jersey,146,6.26
+New Jersey,150,6.18
+New Mexico,-1,7.56
+New Mexico,5,8.05
+New Mexico,14,7.89
+New Mexico,46,8.05
+New Mexico,100,8.05
+New Mexico,143,6.65
+New Mexico,144,6.65
+New Mexico,146,7.56
+New Mexico,150,7.56
+New York,-1,7.56
+New York,5,7.73
+New York,14,7.66
+New York,46,7.34
+New York,100,6.8
+New York,136,8.05
+New York,137,8.05
+New York,143,6.42
+New York,144,6.42
+New York,145,8.05
+New York,146,6.42
+New York,150,6.33
+North Carolina,-1,7.56
+North Carolina,5,7.56
+North Carolina,14,7.81
+North Carolina,46,7.56
+North Carolina,100,7.04
+North Carolina,137,8.05
+North Carolina,143,6.65
+North Carolina,144,6.57
+North Carolina,145,7.56
+North Carolina,146,6.57
+North Carolina,150,6.57
+North Dakota,-1,8.05
+North Dakota,5,8.05
+North Dakota,14,7.66
+North Dakota,46,8.05
+North Dakota,100,7.56
+North Dakota,143,6.42
+North Dakota,144,6.42
+North Dakota,146,8.05
+North Dakota,150,8.05
+Ohio,-1,7.56
+Ohio,5,7.56
+Ohio,14,7.66
+Ohio,46,7.56
+Ohio,100,6.8
+Ohio,137,8.05
+Ohio,143,6.42
+Ohio,144,6.42
+Ohio,145,8.05
+Ohio,146,6.42
+Ohio,150,6.33
+Oklahoma,-1,8.05
+Oklahoma,5,7.56
+Oklahoma,14,7.97
+Oklahoma,46,8.05
+Oklahoma,100,7.19
+Oklahoma,136,8.05
+Oklahoma,143,6.72
+Oklahoma,144,6.72
+Oklahoma,146,6.72
+Oklahoma,150,7.56
+Oregon,-1,8.05
+Oregon,5,7.56
+Oregon,14,7.58
+Oregon,46,7.56
+Oregon,100,8.05
+Oregon,143,6.42
+Oregon,144,6.42
+Oregon,145,8.05
+Oregon,146,7.56
+Oregon,150,6.33
+Pennsylvania,-1,7.56
+Pennsylvania,5,7.56
+Pennsylvania,14,7.04
+Pennsylvania,46,6.72
+Pennsylvania,100,6.18
+Pennsylvania,137,8.05
+Pennsylvania,143,5.79
+Pennsylvania,144,5.79
+Pennsylvania,145,8.05
+Pennsylvania,146,5.79
+Pennsylvania,149,8.05
+Pennsylvania,150,5.71
+Rhode Island,-1,8.05
+Rhode Island,5,8.05
+Rhode Island,14,7.51
+Rhode Island,46,8.05
+Rhode Island,100,8.05
+Rhode Island,143,6.26
+Rhode Island,144,6.26
+Rhode Island,146,8.05
+Rhode Island,150,7.56
+South Carolina,-1,7.56
+South Carolina,5,8.05
+South Carolina,14,7.81
+South Carolina,46,7.56
+South Carolina,100,7.04
+South Carolina,143,6.65
+South Carolina,144,6.65
+South Carolina,145,8.05
+South Carolina,146,6.57
+South Carolina,150,6.57
+South Dakota,14,7.66
+South Dakota,46,8.05
+South Dakota,100,8.05
+South Dakota,143,6.42
+South Dakota,144,6.42
+South Dakota,145,8.05
+South Dakota,146,7.56
+Tennessee,-1,7.56
+Tennessee,5,8.05
+Tennessee,14,7.51
+Tennessee,46,7.56
+Tennessee,100,7.56
+Tennessee,143,6.26
+Tennessee,144,6.26
+Tennessee,145,8.05
+Tennessee,146,6.26
+Tennessee,150,6.18
+Texas,-1,7.56
+Texas,5,7.56
+Texas,14,7.89
+Texas,46,7.58
+Texas,100,7.11
+Texas,137,8.05
+Texas,143,6.72
+Texas,144,6.65
+Texas,145,8.05
+Texas,146,6.65
+Texas,150,6.65
+Unknown,-1,7.56
+Unknown,5,8.05
+Unknown,14,7.51
+Unknown,46,8.05
+Unknown,100,7.56
+Unknown,121,7.56
+Unknown,143,6.26
+Unknown,144,6.26
+Unknown,146,7.56
+Unknown,150,7.56
+Utah,-1,8.05
+Utah,5,8.05
+Utah,14,7.34
+Utah,46,8.05
+Utah,100,8.05
+Utah,143,6.1
+Utah,144,6.1
+Utah,146,8.05
+Utah,150,6.03
+Vermont,-1,8.05
+Vermont,5,8.05
+Vermont,14,7.66
+Vermont,46,8.05
+Vermont,100,7.56
+Vermont,143,6.5
+Vermont,144,6.5
+Vermont,146,8.05
+Vermont,150,7.56
+Virginia,-1,7.56
+Virginia,5,7.56
+Virginia,14,7.27
+Virginia,46,6.96
+Virginia,100,6.5
+Virginia,137,8.05
+Virginia,143,6.03
+Virginia,144,6.03
+Virginia,145,8.05
+Virginia,146,6.03
+Virginia,150,5.95
+Washington,14,7.11
+Washington,46,8.05
+Washington,100,7.56
+Washington,137,8.05
+Washington,143,5.88
+Washington,144,5.88
+Washington,146,8.05
+Washington,150,7.56
+West Virginia,-1,8.05
+West Virginia,14,7.73
+West Virginia,46,7.56
+West Virginia,100,7.56
+West Virginia,143,6.5
+West Virginia,144,6.5
+West Virginia,146,6.5
+West Virginia,150,7.56
+Wisconsin,-1,7.56
+Wisconsin,5,8.67
+Wisconsin,14,8.59
+Wisconsin,46,7.56
+Wisconsin,100,7.73
+Wisconsin,143,7.34
+Wisconsin,144,7.34
+Wisconsin,145,8.05
+Wisconsin,146,7.34
+Wisconsin,150,7.27
+Wyoming,5,8.05
+Wyoming,14,7.51
+Wyoming,46,8.05
+Wyoming,100,8.05
+Wyoming,143,6.33
+Wyoming,144,7.56
+Wyoming,146,8.05
+Wyoming,150,8.05

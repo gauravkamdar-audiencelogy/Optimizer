@@ -109,7 +109,7 @@ else:
 ### Supported Datasets
 | Dataset | Targeting | NPI Data | Floor Prices |
 |---------|-----------|----------|--------------|
-| drugs | HCP (Healthcare Providers) | Yes | No |
+| drugs_hcp | HCP (Healthcare Providers) | Yes | No |
 | nativo_consumer | Consumer | No | Yes |
 
 ### Bidding Strategy
@@ -187,14 +187,14 @@ Toggle with `validation.enabled: true/false` in config.
 ### Data Pipeline
 ```bash
 # Drop new file in incoming/
-cp export.csv data_drugs/incoming/
+cp export.csv data/drugs_hcp/incoming/
 
 # Ingest + optimize in one command
-python run_optimizer.py --config config/optimizer_config_drugs.yaml --ingest
+python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml --ingest
 
 # Or separate steps
-python scripts/data_manager.py ingest --data-dir data_drugs/
-python run_optimizer.py --config config/optimizer_config_drugs.yaml
+python scripts/data_manager.py ingest --data-dir data/drugs_hcp/
+python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml
 ```
 
 ---
@@ -206,20 +206,20 @@ python run_optimizer.py --config config/optimizer_config_drugs.yaml
 # Activate environment
 source ./venv/bin/activate
 
-# Run optimizer (drugs.com)
-python run_optimizer.py --config config/optimizer_config_drugs.yaml
+# Run optimizer (drugs.com HCP)
+python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml
 
-# Run optimizer (nativo)
+# Run optimizer (nativo consumer)
 python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml
 
 # With data ingestion
-python run_optimizer.py --config config/optimizer_config_drugs.yaml --ingest
+python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml --ingest
 
 # Check integration status
 python scripts/check_integrations.py --test-connections
 
 # Data management
-python scripts/data_manager.py info --data-dir data_drugs/
+python scripts/data_manager.py info --data-dir data/drugs_hcp/
 ```
 
 ### Output Files
@@ -239,11 +239,16 @@ python scripts/data_manager.py info --data-dir data_drugs/
 optimizer_drugs_hcp/
 ├── config/                    # Dataset-specific configs
 ├── data/                      # All data files
-│   ├── NPI_click_data_*.csv  # Shared NPI files (used by drugs.com)
-│   ├── drugs/                # drugs.com data + incoming/processed
-│   └── nativo_consumer/      # nativo data
+│   ├── NPI_click_data_*.csv  # Shared NPI files (used by drugs_hcp)
+│   ├── drugs_hcp/            # drugs.com HCP data + incoming/processed
+│   └── nativo_consumer/      # nativo consumer data
 ├── docs/                     # Architecture, schemas, plans
-├── output_drugs/             # Timestamped run outputs
+├── EDA/                      # Exploratory data analysis
+│   ├── drugs_hcp/           # EDA notebooks for drugs.com
+│   └── nativo_consumer/     # EDA notebooks for nativo
+├── output/                   # Timestamped run outputs
+│   ├── drugs_hcp/           # drugs.com run outputs
+│   └── nativo_consumer/     # nativo run outputs
 ├── scripts/                  # CLI tools (data_manager, check_integrations)
 ├── src/                      # Core optimizer code
 │   ├── models/              # ML models (CTR, win rate, bid landscape, NPI, domain)

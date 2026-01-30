@@ -1,0 +1,485 @@
+{
+  "run_info": {
+    "run_id": "20260129_192220",
+    "timestamp": "2026-01-29T19:23:10.051431",
+    "memcache_file": "suggested_bids_20260129_192220.csv",
+    "version": "v5_volume_first_exploration",
+    "v5_exploration_enabled": true,
+    "v4_landscape_enabled": false
+  },
+  "config": {
+    "business": {
+      "target_margin": 0.3,
+      "target_win_rate": 0.65,
+      "win_rate_sensitivity": 0.5,
+      "exploration_mode": true,
+      "exploration_up_multiplier": 1.3,
+      "exploration_down_multiplier": 0.7,
+      "accept_negative_margin": true,
+      "max_negative_margin_pct": 0.5
+    },
+    "technical": {
+      "min_bid_cpm": 0.5,
+      "max_bid_cpm": 20.0,
+      "default_bid_cpm": 5.0,
+      "min_observations": 1,
+      "max_features": 3,
+      "ctr_shrinkage_k": 30,
+      "win_rate_shrinkage_k": 30,
+      "min_signal_score": 50.0,
+      "min_win_rate_adjustment": 0.6,
+      "max_win_rate_adjustment": 1.4,
+      "min_observations_for_empirical": 10,
+      "min_observations_for_landscape": 50,
+      "exploration_bonus_zero_obs": 0.25,
+      "exploration_bonus_low_obs": 0.15,
+      "exploration_bonus_medium_obs": 0.08
+    }
+  },
+  "bid_formula": {
+    "version": "v5_exploration",
+    "v5_formula": "bid = base_bid \u00d7 exploration_adjustment \u00d7 npi_multiplier",
+    "v5_exploration_adjustment": {
+      "under_winning": "1.0 + wr_gap \u00d7 1.3 (bid UP)",
+      "over_winning": "1.0 + wr_gap \u00d7 0.7 (bid DOWN)"
+    },
+    "v4_formula": "optimal_bid = argmax_b [(EV_cpm - b) \u00d7 P(win | b, segment)]",
+    "v3_fallback_formula": "bid = EV_cpm \u00d7 (1 - target_margin) \u00d7 win_rate_adjustment",
+    "shading_factor": 0.7,
+    "adjustment_bounds": [
+      0.6,
+      1.4
+    ]
+  },
+  "exploration_stats": {
+    "segments_bid_up": 257,
+    "segments_bid_down": 0,
+    "segments_neutral": 246,
+    "pct_bid_up": 51.1,
+    "pct_bid_down": 0.0,
+    "asymmetry_ratio": Infinity,
+    "target_win_rate": 0.65,
+    "up_multiplier": 1.3,
+    "down_multiplier": 0.7
+  },
+  "global_stats": {
+    "median_winning_bid": 5.0,
+    "global_win_rate": 0.07956082995235803,
+    "total_bids": 1032493,
+    "total_wins": 82146,
+    "derived_up_multiplier": 2.148,
+    "derived_down_multiplier": 0.5,
+    "exploration_derivation": {
+      "success": true,
+      "derived_up_multiplier": 2.148,
+      "derived_down_multiplier": 0.5,
+      "raw_multiplier": 2.148,
+      "delta_log_odds": 3.0674,
+      "delta_bid": 5.74,
+      "bid_coefficient": 0.2572,
+      "bid_std": 0.48,
+      "current_wr": 0.07956082995235803,
+      "target_wr": 0.65,
+      "current_median_bid": 5.0,
+      "implied_new_bid": 10.74,
+      "extrapolation_warning": true
+    }
+  },
+  "data_stats": {
+    "bids": {
+      "raw": 1032493,
+      "clean": 1032493,
+      "removed": 0,
+      "floor_available": true
+    },
+    "views": {
+      "raw": 82513,
+      "after_dedup": 82513,
+      "removed_duplicates": 0,
+      "removed_invalid_price": 0,
+      "clean": 82513,
+      "removed": 0
+    },
+    "clicks": {
+      "raw": 577,
+      "clean": 577,
+      "removed": 0
+    }
+  },
+  "feature_selection": {
+    "selected_features": [
+      "geo_region_name",
+      "browser_code"
+    ],
+    "feature_scores": {
+      "browser_code": {
+        "cardinality": 14,
+        "null_pct": 0.0,
+        "win_rate_variance": 0.036155,
+        "signal_score": 159.0637,
+        "coverage_at_threshold": 1.0,
+        "values_with_sufficient_obs": 14,
+        "effective_cardinality": 3,
+        "dominant_value": "143",
+        "dominant_share": 0.5508
+      }
+    },
+    "exclusions": {
+      "hard": [],
+      "soft": [
+        {
+          "feature": "os_code",
+          "reason": "signal_score=6.20 < threshold=50.0"
+        },
+        {
+          "feature": "media_type",
+          "reason": "signal_score=1.71 < threshold=50.0"
+        },
+        {
+          "feature": "hour_of_day",
+          "reason": "signal_score=14.70 < threshold=50.0"
+        },
+        {
+          "feature": "day_of_week",
+          "reason": "signal_score=10.92 < threshold=50.0"
+        }
+      ]
+    },
+    "num_features": 2,
+    "max_features": 3,
+    "total_samples": 1032493,
+    "soft_exclusion_thresholds": {
+      "min_signal_score": 50.0,
+      "min_coverage": 0.5,
+      "max_null_pct": 30.0,
+      "min_effective_cardinality": 2,
+      "effective_cardinality_min_share": 0.05
+    }
+  },
+  "bidder_config": {
+    "feature_columns": [
+      "geo_region_name",
+      "browser_code"
+    ],
+    "feature_column_order": [
+      "geo_region_name",
+      "browser_code"
+    ],
+    "num_segments": 503,
+    "bid_column": "suggested_bid_cpm"
+  },
+  "model_performance": {
+    "bid_landscape_model": {
+      "status": "NOT_TRAINED",
+      "reason": "Not provided"
+    },
+    "win_rate_model_empirical": {
+      "n_samples": 1032493,
+      "n_positive": 82146,
+      "n_negative": 950347,
+      "global_win_rate": 0.07956082995235803,
+      "n_segments": 503,
+      "segments_with_wins": 383,
+      "shrinkage_k": 30,
+      "features": [
+        "geo_region_name",
+        "browser_code"
+      ],
+      "model_type": "empirical_with_shrinkage",
+      "usage": "V3_FALLBACK - empirical rates with shrinkage"
+    },
+    "win_rate_model_logreg": {
+      "n_samples": 1032493,
+      "n_positive": 82146,
+      "n_negative": 950347,
+      "base_rate": 0.07956082995235803,
+      "mean_pred_raw": 0.0796466319701272,
+      "mean_pred_calibrated": 0.07956082995235803,
+      "features": [
+        "geo_region_name",
+        "browser_code"
+      ],
+      "n_categorical": 1,
+      "n_numeric": 1,
+      "calibration_ece": 2.3258610720127695e-05,
+      "passes_calibration_gate": true,
+      "ece_threshold": 0.1,
+      "calibration_method": "isotonic_regression",
+      "usage": "DIAGNOSTICS_ONLY - for calibration comparison"
+    },
+    "ctr_model": {
+      "n_samples": 82513,
+      "n_clicks": 177,
+      "global_ctr": 0.0021451165270927005,
+      "mean_pred_ctr": 0.00212693839827178,
+      "n_segments": 384,
+      "segments_with_clicks": 44,
+      "shrinkage_k": 30,
+      "features": [
+        "geo_region_name",
+        "browser_code"
+      ]
+    }
+  },
+  "bid_variance_stats": {},
+  "bid_method_stats": {
+    "total": 503,
+    "config_strategy": "adaptive",
+    "exploration_mode": "gradual",
+    "exploration_max_bid_cpm": 20.0,
+    "exploration_max_wr_adjustment": 1.4,
+    "exploration_up_multiplier": 2.148,
+    "exploration_down_multiplier": 0.5,
+    "multiplier_source": "data-driven (bid landscape)",
+    "v5_explore_low_count": 145,
+    "v5_explore_low_pct": 28.8,
+    "v5_explore_medium_count": 112,
+    "v5_explore_medium_pct": 22.3,
+    "v6_landscape_volume_count": 246,
+    "v6_landscape_volume_pct": 48.9,
+    "exploration_up_count": 257,
+    "exploration_up_pct": 51.1,
+    "exploration_down_count": 0,
+    "exploration_down_pct": 0.0,
+    "exploration_neutral_count": 246,
+    "exploration_neutral_pct": 48.9,
+    "strategy_volume_first_count": 503,
+    "strategy_volume_first_pct": 100.0
+  },
+  "model_calibration": {
+    "win_rate_model_logreg": {
+      "expected_calibration_error": 0.0,
+      "max_calibration_error": 0.0,
+      "brier_score": 0.07258,
+      "calibration_curve": {
+        "0.00-0.10": {
+          "predicted": 0.069682,
+          "actual": 0.069682,
+          "count": 809747,
+          "calibration_error": 0.0
+        },
+        "0.10-0.20": {
+          "predicted": 0.115472,
+          "actual": 0.115472,
+          "count": 222746,
+          "calibration_error": 0.0
+        }
+      },
+      "n_bins_with_data": 2,
+      "binning_method": "uniform",
+      "auc_roc": 0.5983,
+      "pr_auc": 0.1053,
+      "log_loss": 0.273171,
+      "normalized_entropy": 0.9837,
+      "relative_information_gain": 0.0163,
+      "calibration_sum_ratio": 1.0,
+      "baseline_entropy": 0.277695,
+      "n_positive_events": 82146,
+      "sample_warning": null
+    },
+    "win_rate_model_empirical": {
+      "expected_calibration_error": 0.000336,
+      "max_calibration_error": 0.62256,
+      "brier_score": 0.072429,
+      "calibration_curve": {
+        "0.00-0.10": {
+          "predicted": 0.067561,
+          "actual": 0.067467,
+          "count": 798230,
+          "calibration_error": 9.4e-05
+        },
+        "0.10-0.20": {
+          "predicted": 0.119593,
+          "actual": 0.120701,
+          "count": 234240,
+          "calibration_error": 0.001108
+        },
+        "0.20-0.30": {
+          "predicted": 0.266329,
+          "actual": 0.888889,
+          "count": 9,
+          "calibration_error": 0.62256
+        },
+        "0.30-0.40": {
+          "predicted": 0.304246,
+          "actual": 0.785714,
+          "count": 14,
+          "calibration_error": 0.481468
+        }
+      },
+      "n_bins_with_data": 4,
+      "binning_method": "uniform",
+      "auc_roc": 0.608,
+      "pr_auc": 0.1125,
+      "log_loss": 0.2723,
+      "normalized_entropy": 0.9806,
+      "relative_information_gain": 0.0194,
+      "calibration_sum_ratio": 0.9976,
+      "baseline_entropy": 0.277695,
+      "n_positive_events": 82146,
+      "sample_warning": null
+    },
+    "ctr_model": {
+      "expected_calibration_error": 0.000417,
+      "max_calibration_error": 0.000848,
+      "brier_score": 0.00214,
+      "calibration_curve": {
+        "0.001217-0.001718": {
+          "predicted": 0.001447,
+          "actual": 0.00128,
+          "count": 16411,
+          "calibration_error": 0.000167
+        },
+        "0.001718-0.001996": {
+          "predicted": 0.00194,
+          "actual": 0.002217,
+          "count": 16238,
+          "calibration_error": 0.000277
+        },
+        "0.001996-0.002317": {
+          "predicted": 0.002085,
+          "actual": 0.001237,
+          "count": 16162,
+          "calibration_error": 0.000848
+        },
+        "0.002317-0.002585": {
+          "predicted": 0.002415,
+          "actual": 0.002542,
+          "count": 15733,
+          "calibration_error": 0.000127
+        },
+        "0.002585-0.003162": {
+          "predicted": 0.002702,
+          "actual": 0.003339,
+          "count": 17969,
+          "calibration_error": 0.000637
+        }
+      },
+      "n_bins_with_data": 5,
+      "binning_method": "adaptive_percentile",
+      "auc_roc": 0.607,
+      "pr_auc": 0.0047,
+      "log_loss": 0.015191,
+      "normalized_entropy": 0.9914,
+      "relative_information_gain": 0.0086,
+      "calibration_sum_ratio": 0.9915,
+      "baseline_entropy": 0.015324,
+      "n_positive_events": 177,
+      "sample_warning": "Only 177 positive events - metrics may be unstable"
+    }
+  },
+  "ctr_calibration_check": {
+    "mean_pred_ctr": 0.00212694,
+    "global_ctr": 0.00214512,
+    "ratio": 0.9915,
+    "status": "GOOD",
+    "interpretation": "Model predicts 1.0x the actual CTR rate"
+  },
+  "economic_analysis": {
+    "total_segments": 503,
+    "profitable_segments": 471,
+    "unprofitable_segments": 32,
+    "pct_profitable": 93.64,
+    "bid_clipping": {
+      "clipped_to_floor": 0,
+      "clipped_to_ceiling": 0,
+      "pct_at_floor": 0.0,
+      "pct_at_ceiling": 0.0,
+      "pct_natural": 100.0
+    },
+    "raw_bid_distribution": {
+      "min": 5.41,
+      "max": 8.67,
+      "mean": 7.3087,
+      "median": 7.56,
+      "std": 0.7351
+    },
+    "expected_value_distribution": {
+      "min": 0.0647,
+      "max": 188.8534,
+      "mean": 4.5819,
+      "median": 3.7223
+    },
+    "win_rate_distribution": {
+      "min": 0.0279,
+      "max": 0.3042,
+      "mean": 0.0926,
+      "median": 0.0868
+    },
+    "adjustment_distribution": {
+      "min": 1.0,
+      "max": 1.4,
+      "mean": 1.2044,
+      "median": 1.4,
+      "at_min_bound": 0,
+      "at_max_bound": 257
+    },
+    "exploration_direction_breakdown": {
+      "bid_up": 257,
+      "bid_down": 0,
+      "neutral": 246,
+      "pct_bid_up": 51.09,
+      "pct_bid_down": 0.0
+    },
+    "bid_method_breakdown": {
+      "v5_explore_low_count": 145,
+      "v5_explore_low_pct": 28.83,
+      "v5_explore_medium_count": 112,
+      "v5_explore_medium_pct": 22.27
+    }
+  },
+  "bid_summary": {
+    "count": 503,
+    "bid_min": 5.41,
+    "bid_max": 8.67,
+    "bid_mean": 7.31,
+    "bid_median": 7.56,
+    "ctr_mean": 0.0022529,
+    "win_rate_mean": 0.0926,
+    "exploration_adjustment_min": 1.0,
+    "exploration_adjustment_max": 1.4,
+    "exploration_adjustment_mean": 1.2044,
+    "v5_explore_low_count": 145,
+    "v5_explore_medium_count": 112
+  },
+  "segment_distribution": {
+    "total_segments": 503,
+    "excluded_low_observations": 0,
+    "excluded_unprofitable": 0,
+    "segments_in_memcache": 503,
+    "inclusion_rate": 100.0,
+    "v5_zero_obs": 0,
+    "v5_low_obs": 145,
+    "v5_medium_obs": 112,
+    "v5_high_obs": 246
+  },
+  "warnings": [
+    "Empirical model calibration on training data is tautological by construction - segment predictions equal segment averages from same data",
+    "CTR model has only 177 clicks - AUC and other metrics may be unstable (recommend 1000+)"
+  ],
+  "clearing_price_analysis": {
+    "source": "view_records",
+    "total_views": 82513,
+    "views_with_valid_price": 82513,
+    "avg_clearing_price": 0.9911,
+    "distribution": {
+      "min": 0.0099,
+      "p25": 0.6898,
+      "median": 0.89,
+      "p75": 1.1598,
+      "max": 13.0
+    }
+  },
+  "bid_amount_analysis": {
+    "source": "bid_records",
+    "total_bids": 1032493,
+    "won_bids": 82146,
+    "win_rate": 0.0796,
+    "avg_bid_amount": 0.8364,
+    "distribution": {
+      "min": 0.01,
+      "median": 0.79,
+      "max": 13.0
+    }
+  }
+}

@@ -17,7 +17,7 @@ class DatasetConfig:
         return f"data/{self.name}/"
 
     def get_output_dir(self) -> str:
-        return f"output_{self.name}/"
+        return f"output/{self.name}/"
 
     def get_data_filename(self) -> str:
         return f"data_{self.name}.csv"
