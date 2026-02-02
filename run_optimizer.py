@@ -29,6 +29,7 @@ from src.models.domain_value_model import DomainValueModel
 from src.bid_calculator_v5 import VolumeFirstBidCalculator
 from src.memcache_builder import MemcacheBuilder
 from src.metrics_reporter import MetricsReporter
+from src.diagnostics_reporter import DiagnosticsReporter
 
 
 def main():
@@ -284,6 +285,11 @@ def main():
     )
     metrics_path = metrics_reporter.write_metrics(output_dir, run_id)
     print(f"  Metrics: {metrics_path.name}")
+
+    # Generate diagnostics report (human-readable)
+    diagnostics_reporter = DiagnosticsReporter(metrics, config, run_id)
+    diagnostics_path = diagnostics_reporter.save(output_dir)
+    print(f"  Diagnostics: {Path(diagnostics_path).name}")
 
     # Step 8: Validation
     validation_result = None
