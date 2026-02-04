@@ -62,11 +62,11 @@
 │        ┌─────────────┐                              ┌─────────────────────────────────────────────┐         │
 │        │             │         SELECT               │                                             │         │
 │        │   MySQL     │─────────────────────────────▶│               OPTIMIZER                     │         │
-│        │             │    config_snapshot           │                                             │         │
-│        │  opt_runs   │    FROM opt_runs             │   config = {                                │         │
-│        │             │    WHERE run_id = ?          │     "business": {"target_margin": 0.30},   │         │
-│        └─────────────┘                              │     "technical": {"min_bid": 3.00},        │         │
-│                                                     │     "features": {...}                       │         │
+│        │             │    SELECT config_key,        │                                             │         │
+│        │  opt_runs + │    config_value              │   config = {                                │         │
+│        │  opt_run_   │    FROM opt_run_configs      │     "target_win_rate": 0.65,               │         │
+│        │  configs    │    WHERE run_id = ?          │     "max_bid": 30.00,                      │         │
+│        └─────────────┘                              │     ...                                     │         │
 │                                                     │   }                                         │         │
 │                                                     └─────────────────────────────────────────────┘         │
 │                                                                                                             │
@@ -178,15 +178,15 @@
 │   │                     │   │                     │                                                       │
 │   │  s3://tn-optimizer- │   │  UPDATE opt_runs   │                                                       │
 │   │  data/drugs_com/v3/ │   │  SET status =      │                                                       │
-│   │  20260128_090000/   │   │    'success',      │                                                       │
-│   │    ├── memcache.csv │   │  completed_at =    │                                                       │
-│   │    ├── metrics.json │   │    NOW()           │                                                       │
-│   │    ├── npi.csv      │   │                    │                                                       │
-│   │    └── analysis.csv │   │  INSERT INTO       │                                                       │
-│   │                     │   │  opt_run_features  │                                                       │
-│   │                     │   │  (feature_name,    │                                                       │
-│   │                     │   │   signal_score)    │                                                       │
+│   │  20260128_090000/   │   │    'completed',    │                                                       │
+│   │    ├── memcache.csv │   │    features_used = │                                                       │
+│   │    ├── metrics.json │   │    'geo,os,browser'│                                                       │
+│   │    ├── npi.csv      │   │    segments_count, │                                                       │
+│   │    └── analysis.csv │   │    domains_count,  │                                                       │
+│   │                     │   │    completed_at    │                                                       │
 │   │                     │   │                    │                                                       │
+│   │                     │   │  INSERT INTO       │                                                       │
+│   │                     │   │  opt_run_metrics   │                                                       │
 │   └─────────────────────┘   └─────────────────────┘                                                       │
 │                                                                                                             │
 └─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
@@ -200,11 +200,11 @@
 │   │                 │      │                 │      │                                                 │   │
 │   │      MySQL      │      │       S3        │      │                    BIDDER                       │   │
 │   │                 │      │                 │      │                                                 │   │
-│   │  opt_entities   │      │  memcache.csv   │      │  ┌─────────────────────────────────────────┐   │   │
-│   │  .active_run_id │─────▶│  npi.csv        │─────▶│  │              MEMCACHE                   │   │   │
+│   │  opt_deployments│      │  memcache.csv   │      │  ┌─────────────────────────────────────────┐   │   │
+│   │  (active runs)  │─────▶│  npi.csv        │─────▶│  │              MEMCACHE                   │   │   │
 │   │                 │      │                 │      │  │                                         │   │   │
-│   │  opt_run_       │      │                 │      │  │  Key: [ADX_PLACEMENT]|[GEO]|[OS]       │   │   │
-│   │  feature_macros │      │                 │      │  │  Value: suggested_bid_cpm              │   │   │
+│   │  opt_feature_   │      │                 │      │  │  Key: [ADX_PLACEMENT]|[GEO]|[OS]       │   │   │
+│   │  macros         │      │                 │      │  │  Value: suggested_bid_cpm              │   │   │
 │   │                 │      │                 │      │  │                                         │   │   │
 │   │  Macro format:  │      │                 │      │  │  "111563|California|8" → 19.20         │   │   │
 │   │  [ADX_PLACEMENT]│      │                 │      │  │  "111563|Texas|8" → 18.50              │   │   │
