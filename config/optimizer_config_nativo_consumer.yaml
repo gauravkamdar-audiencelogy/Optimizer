@@ -16,6 +16,8 @@ technical:
   aggressive_exploration: false
   min_bid_cpm: 0.50            # Lower floor for consumer inventory
   max_bid_cpm: 20.00
+  default_bid_cpm: 5.00        # Lower default for consumer inventory
+  floor_available: true        # Nativo has floor prices
 
 bidding:
   strategy: "adaptive"
@@ -137,9 +139,6 @@ advanced:
   calibration_ece_threshold: 0.10
   min_signal_score: 50.0
   max_features: 3
-  default_bid_cpm: 5.00        # Lower default for consumer inventory
-  floor_available: true        # Nativo has floor prices
-  target_margin: 0.30
 
 # -----------------------------------------------------------------------------
 # VALIDATION (checks before deployment)

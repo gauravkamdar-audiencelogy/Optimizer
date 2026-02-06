@@ -13,9 +13,11 @@ business:
   exploration_mode: true       # Bid up on losers, down on winners
 
 technical:
-  aggressive_exploration: false  # true = faster learning, higher risk
+  aggressive_exploration: true  # true = faster learning, higher risk
   min_bid_cpm: 3.00
-  max_bid_cpm: 20.00           # Overridden by exploration preset below
+  max_bid_cpm: 30.00           # Overridden by exploration preset below
+  default_bid_cpm: 12.50
+  floor_available: false       # drugs.com has no floor prices
 
 bidding:
   strategy: "adaptive"         # volume_first | margin_optimize | adaptive
@@ -121,11 +123,6 @@ advanced:
   # Feature selection thresholds
   min_signal_score: 50.0
   max_features: 3
-
-  # Other
-  default_bid_cpm: 12.50
-  floor_available: false
-  target_margin: 0.30
 
 # -----------------------------------------------------------------------------
 # VALIDATION (checks before deployment)

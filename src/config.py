@@ -243,10 +243,8 @@ class AdvancedConfig:
     min_effective_cardinality: int = 2
     effective_cardinality_min_share: float = 0.05
 
-    # Technical settings that can be in advanced section of YAML
-    default_bid_cpm: float = 12.50
-    floor_available: bool = False
-    target_margin: float = 0.30
+    # Note: default_bid_cpm and floor_available are now only in TechnicalControls
+    # target_margin removed (unused)
 
     # Backward compatibility aliases
     @property
@@ -364,8 +362,8 @@ class OptimizerConfig:
             aggressive_exploration=tech_data.get('aggressive_exploration', False),
             min_bid_cpm=tech_data.get('min_bid_cpm', 3.00),
             max_bid_cpm=tech_data.get('max_bid_cpm', 20.00),
-            default_bid_cpm=advanced_data.get('default_bid_cpm', tech_data.get('default_bid_cpm', 12.50)),
-            floor_available=advanced_data.get('floor_available', tech_data.get('floor_available', False)),
+            default_bid_cpm=tech_data.get('default_bid_cpm', 12.50),
+            floor_available=tech_data.get('floor_available', False),
         )
 
         # Override presets if provided
