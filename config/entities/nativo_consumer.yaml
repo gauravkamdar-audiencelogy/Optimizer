@@ -1,0 +1,48 @@
+# =============================================================================
+# ENTITY CONFIG: nativo_consumer (Nativo Consumer Targeting)
+# =============================================================================
+# Run: python run_optimizer.py --entity nativo_consumer
+
+# -----------------------------------------------------------------------------
+# ENTITY IDENTITY
+# -----------------------------------------------------------------------------
+entity:
+  name: "nativo_consumer"
+  floor_available: true        # Nativo has floor prices in bid data
+  targeting_type: "consumer"   # Consumer = Domain model enabled, NPI model disabled
+
+  # Columns with bad data quality in THIS entity's data
+  # (in addition to system exclusions)
+  ssp_exclusions:
+    - internal_adspace_id      # 100% is -1 (useless)
+    - geo_country_code2        # 100% is US (no variance)
+    - ref_bundle               # URL field - too sparse
+    - ua                       # User agent - too sparse
+    - domain                   # 14K+ values - handled by domain model, not segment
+
+# -----------------------------------------------------------------------------
+# RUN CONFIG (user-facing, will come from MySQL later)
+# -----------------------------------------------------------------------------
+run:
+  # Required - user sets per run
+  target_win_rate: 0.65
+  max_bid_cpm: 20.00           # Lower ceiling for consumer inventory
+
+  # Learning mode: true = fast/aggressive, false = gradual/safe
+  fast_learning: false
+
+  # Training date window
+  training_start_date: "2026-01-28"   # Using data from Jan 28, 2026
+  training_end_date: null             # null = use all available data
+
+  # Optional: user can disable specific features for experimentation
+  user_disabled_features: []
+
+# -----------------------------------------------------------------------------
+# ENTITY-SPECIFIC OVERRIDES (optional)
+# -----------------------------------------------------------------------------
+# Override system.yaml values for this entity if needed
+overrides:
+  # Nativo consumer has lower floor prices
+  min_bid_cpm: 0.50
+  default_bid_cpm: 5.00

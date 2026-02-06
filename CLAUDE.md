@@ -1,5 +1,25 @@
 # CLAUDE.md
 
+## Working Style
+
+### Ask Questions When Unsure
+- If unsure about anything, ask as many clarifying questions as needed using the AskUserQuestion tool
+- Don't assume - clarify ambiguity before proceeding
+- It's better to ask than to build the wrong thing
+- use ask user question tool when needed
+
+### Use Sequential Thinking for Complex Reasoning
+- For non-trivial decisions, use the sequential thinking MCP tool to reason step-by-step
+- This helps organize thoughts and catch logical gaps
+- Especially useful for: config design, architecture decisions, tradeoff analysis
+
+### Stop-Think-Finalize-Then-Update
+- When making changes to documentation or code: reason through fully FIRST
+- Don't update files incrementally during exploration
+- Report back findings, get confirmation, THEN make updates
+
+---
+
 ## Core Principles
 
 ### Question Everything

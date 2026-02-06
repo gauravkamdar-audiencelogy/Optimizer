@@ -1,0 +1,49 @@
+# =============================================================================
+# ENTITY CONFIG: drugs_hcp (drugs.com HCP Targeting)
+# =============================================================================
+# Run: python run_optimizer.py --entity drugs_hcp
+
+# -----------------------------------------------------------------------------
+# ENTITY IDENTITY
+# -----------------------------------------------------------------------------
+entity:
+  name: "drugs_hcp"
+  floor_available: false       # drugs.com has no floor prices in data
+  targeting_type: "hcp"        # HCP = NPI model enabled, Domain model disabled
+
+  # Columns with bad data quality in THIS entity's data
+  # (in addition to system exclusions)
+  ssp_exclusions:
+    - pageurl_truncated        # Creates 78K+ segments (OOM)
+    - geo_postal_code          # Too sparse
+    - geo_city_name            # Too sparse
+
+# -----------------------------------------------------------------------------
+# RUN CONFIG (user-facing, will come from MySQL later)
+# -----------------------------------------------------------------------------
+run:
+  # Required - user sets per run
+  target_win_rate: 0.65        # Current target (we're at ~30%)
+  max_bid_cpm: 30.00           # Ceiling price
+
+  # Learning mode: true = fast/aggressive, false = gradual/safe
+  fast_learning: true
+
+  # Training date window
+  training_start_date: "2025-12-10"   # When loss logging started
+  training_end_date: null             # null = use all available data
+
+  # Optional: user can disable specific features for experimentation
+  user_disabled_features: []
+
+# -----------------------------------------------------------------------------
+# ENTITY-SPECIFIC OVERRIDES (optional)
+# -----------------------------------------------------------------------------
+# Override system.yaml values for this entity if needed
+overrides:
+  # Example: drugs_hcp might need higher min_bid due to premium inventory
+  min_bid_cpm: 3.00
+  default_bid_cpm: 12.50
+
+  # View date different from bid date for this entity
+  min_view_date: "2025-09-15"

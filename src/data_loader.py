@@ -29,6 +29,61 @@ class DataLoader:
         # V9: Derive dataset name from data_dir (e.g., "data_drugs" -> "drugs")
         self.dataset_name = self.data_dir.name.replace('data_', '')
 
+        # V10: Date filtering from config
+        self.training_start_date = self._parse_date(config.data.min_bid_date)
+        self.training_end_date = self._parse_date(
+            config.run.training_end_date if hasattr(config, 'run') else None
+        )
+
+    def _parse_date(self, date_str: str) -> pd.Timestamp:
+        """Parse date string to pandas Timestamp with UTC timezone."""
+        if date_str is None:
+            return None
+        try:
+            return pd.to_datetime(date_str, utc=True)
+        except Exception:
+            return None
+
+    def _apply_date_filter(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        V10: Filter data by training date window.
+
+        Uses:
+        - training_start_date: from config.data.min_bid_date (or run.training_start_date)
+        - training_end_date: from config.run.training_end_date (NEW)
+        """
+        initial_count = len(df)
+        filtered = False
+
+        if self.training_start_date is not None:
+            before_filter = len(df)
+            df = df[df['log_dt'] >= self.training_start_date]
+            removed = before_filter - len(df)
+            if removed > 0:
+                print(f"    Date filter: removed {removed:,} rows before {self.training_start_date.date()}")
+                filtered = True
+
+        if self.training_end_date is not None:
+            before_filter = len(df)
+            df = df[df['log_dt'] <= self.training_end_date]
+            removed = before_filter - len(df)
+            if removed > 0:
+                print(f"    Date filter: removed {removed:,} rows after {self.training_end_date.date()}")
+                filtered = True
+
+        if filtered:
+            print(f"    After date filtering: {len(df):,} rows (from {initial_count:,})")
+
+        # Store date range in stats
+        self.load_stats['date_filter'] = {
+            'start_date': str(self.training_start_date.date()) if self.training_start_date else None,
+            'end_date': str(self.training_end_date.date()) if self.training_end_date else None,
+            'rows_before': initial_count,
+            'rows_after': len(df)
+        }
+
+        return df
+
     def load_all(self) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Load and clean all three datasets.
 
@@ -66,6 +121,9 @@ class DataLoader:
 
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
+
+        # V10: Apply date filtering
+        df = self._apply_date_filter(df)
 
         # Standardize rec_type
         df['rec_type'] = df['rec_type'].str.lower().str.strip()
@@ -173,6 +231,9 @@ class DataLoader:
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
 
+        # V10: Apply date filtering
+        df = self._apply_date_filter(df)
+
         return self._process_bids(df)
 
     def _load_views(self) -> pd.DataFrame:
@@ -187,6 +248,9 @@ class DataLoader:
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
 
+        # V10: Apply date filtering
+        df = self._apply_date_filter(df)
+
         return self._process_views(df)
 
     def _load_clicks(self) -> pd.DataFrame:
@@ -200,6 +264,9 @@ class DataLoader:
 
         # Parse datetime
         df['log_dt'] = pd.to_datetime(df['log_dt'], format='ISO8601', utc=True)
+
+        # V10: Apply date filtering
+        df = self._apply_date_filter(df)
 
         return self._process_clicks(df)
 

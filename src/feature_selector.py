@@ -1,10 +1,19 @@
 """
-V3: Dynamic feature selection with auto soft-exclusion.
+V4: Dynamic feature selection with 5-stage feature flow.
 
-V3 Changes:
-- Split exclusions: hard (config) vs soft (algorithm-detected)
-- Auto-exclude features below signal threshold
-- Log all exclusion decisions for transparency
+5-Stage Feature Processing Flow (from config_analysis.md):
+1. SYSTEM EXCLUSIONS - Always excluded (log_txnid, internal_txn_id, log_dt)
+2. SSP-TYPE EXCLUSIONS - Entity-specific bad data (from entity.ssp_exclusions)
+3. USER DISABLED FEATURES - User experimentation (from run.user_disabled_features)
+4. MODEL ROUTING - Special columns route to dedicated models:
+   - domain → Domain Model (if consumer targeting)
+   - external_userid → NPI Model (if HCP targeting)
+5. FEATURE SELECTION - Data-driven selection from remaining candidates
+
+V4 Changes:
+- Explicit 5-stage flow documentation
+- Track exclusion sources (system, ssp, user, routing, data-driven)
+- Improved logging for transparency
 
 Key principle: Algorithm should make data-driven decisions.
 Hardcoding "hour_of_day is low signal" in config violates this.
@@ -36,18 +45,67 @@ class FeatureScore:
 class ExclusionRecord:
     """Record of why a feature was excluded."""
     feature: str
-    exclusion_type: str  # 'hard' or 'soft'
+    exclusion_type: str  # 'hard' (config) or 'soft' (data-driven)
+    source: str  # 'system', 'ssp', 'user', 'routing', 'data-driven'
     reason: str
 
 
 class FeatureSelector:
+    # System exclusions - columns that are NEVER features (join keys, timestamps)
+    SYSTEM_EXCLUSIONS = {'log_txnid', 'internal_txn_id', 'log_dt'}
+
+    # Model routing columns - handled by dedicated models, not segment model
+    ROUTING_COLUMNS = {'domain', 'external_userid'}
+
     def __init__(self, config: OptimizerConfig):
         self.config = config
         self.feature_scores: Dict[str, FeatureScore] = {}
         self.selected_features: List[str] = []
-        self.excluded_features: List[ExclusionRecord] = []  # V3: Track exclusions
+        self.excluded_features: List[ExclusionRecord] = []  # V4: Track exclusions with source
         self.n_samples: int = 0
         self.current_segment_count: int = 1
+
+        # V4: Categorize exclusions by source
+        self._categorize_exclusions()
+
+    def _categorize_exclusions(self):
+        """
+        V4: Categorize hard exclusions by their source.
+
+        Sources:
+        - system: Always excluded (join keys, timestamps)
+        - ssp: Entity-specific data quality issues
+        - user: User-disabled for experimentation
+        - routing: Handled by dedicated models (domain, external_userid)
+        """
+        # Get all hard exclusions from config
+        all_exclusions = set(self.config.features.hard_exclude_features)
+
+        # Categorize each exclusion
+        self.system_exclusions = all_exclusions & self.SYSTEM_EXCLUSIONS
+        self.routing_exclusions = all_exclusions & self.ROUTING_COLUMNS
+
+        # User disabled features (from run config)
+        if hasattr(self.config, 'run') and self.config.run.user_disabled_features:
+            self.user_exclusions = set(self.config.run.user_disabled_features)
+        else:
+            self.user_exclusions = set()
+
+        # SSP exclusions = everything else in hard_exclude
+        self.ssp_exclusions = all_exclusions - self.system_exclusions - self.routing_exclusions - self.user_exclusions
+
+    def _get_exclusion_source(self, feature: str) -> str:
+        """Determine the source of a hard exclusion."""
+        if feature in self.system_exclusions:
+            return 'system'
+        elif feature in self.routing_exclusions:
+            return 'routing'
+        elif feature in self.user_exclusions:
+            return 'user'
+        elif feature in self.ssp_exclusions:
+            return 'ssp'
+        else:
+            return 'config'
 
     def select_features(
         self,
@@ -92,13 +150,22 @@ class FeatureSelector:
             and f in df_train.columns
         ]
 
-        # Log hard exclusions
+        # Log hard exclusions with source
         for f in self.config.features.candidate_features:
             if f in hard_exclude:
+                source = self._get_exclusion_source(f)
+                reason = {
+                    'system': 'System exclusion (join key/timestamp)',
+                    'ssp': 'SSP-type exclusion (data quality issue)',
+                    'user': 'User disabled (experimentation)',
+                    'routing': 'Model routing (handled by dedicated model)',
+                    'config': 'Config exclusion'
+                }.get(source, 'Hard excluded')
                 self.excluded_features.append(ExclusionRecord(
                     feature=f,
                     exclusion_type='hard',
-                    reason='In hard_exclude_features config'
+                    source=source,
+                    reason=reason
                 ))
 
         print(f"    Evaluating {len(candidates)} candidate features...")
@@ -113,7 +180,7 @@ class FeatureSelector:
                       f"dominant={score.dominant_share:.1%}, "
                       f"coverage={score.coverage_at_threshold:.1%}")
 
-        # V3: Auto soft-exclude features below thresholds
+        # V4: Auto soft-exclude features below thresholds (data-driven)
         soft_excluded = []
         for feat, score in list(self.feature_scores.items()):
             exclude_reason = self._check_soft_exclusion(score)
@@ -122,6 +189,7 @@ class FeatureSelector:
                 self.excluded_features.append(ExclusionRecord(
                     feature=feat,
                     exclusion_type='soft',
+                    source='data-driven',
                     reason=exclude_reason
                 ))
                 print(f"    AUTO-EXCLUDED '{feat}': {exclude_reason}")
@@ -275,22 +343,32 @@ class FeatureSelector:
         return coverage, sparse_combos
 
     def _print_exclusion_summary(self):
-        """Print summary of all exclusions."""
-        hard = [e for e in self.excluded_features if e.exclusion_type == 'hard']
-        soft = [e for e in self.excluded_features if e.exclusion_type == 'soft']
+        """Print summary of all exclusions by source (5-stage flow)."""
+        # Group by source
+        by_source = {}
+        for e in self.excluded_features:
+            source = getattr(e, 'source', 'unknown')
+            if source not in by_source:
+                by_source[source] = []
+            by_source[source].append(e)
 
-        if hard or soft:
-            print(f"\n    Feature Selection Summary:")
-            print(f"      INCLUDED: {self.selected_features}")
+        print(f"\n    Feature Selection Summary (5-stage flow):")
+        print(f"      SELECTED: {self.selected_features}")
 
-            if soft:
-                print(f"      AUTO-EXCLUDED (data-driven):")
-                for e in soft:
-                    print(f"        - {e.feature}: {e.reason}")
+        # Print in order of the 5-stage flow
+        source_order = ['system', 'ssp', 'user', 'routing', 'data-driven']
+        source_labels = {
+            'system': '[1] SYSTEM EXCLUSIONS (join keys, timestamps)',
+            'ssp': '[2] SSP-TYPE EXCLUSIONS (data quality issues)',
+            'user': '[3] USER DISABLED (experimentation)',
+            'routing': '[4] MODEL ROUTING (dedicated models)',
+            'data-driven': '[5] DATA-DRIVEN (below threshold)'
+        }
 
-            if hard:
-                print(f"      HARD-EXCLUDED (config):")
-                for e in hard:
+        for source in source_order:
+            if source in by_source:
+                print(f"      {source_labels.get(source, source)}:")
+                for e in by_source[source]:
                     print(f"        - {e.feature}")
 
     def get_selection_report(self) -> Dict:
@@ -312,12 +390,17 @@ class FeatureSelector:
                 for name, score in self.feature_scores.items()
             },
             'exclusions': {
+                'by_source': {
+                    source: [e.feature for e in self.excluded_features if getattr(e, 'source', '') == source]
+                    for source in ['system', 'ssp', 'user', 'routing', 'data-driven']
+                    if any(getattr(e, 'source', '') == source for e in self.excluded_features)
+                },
                 'hard': [
-                    {'feature': e.feature, 'reason': e.reason}
+                    {'feature': e.feature, 'source': getattr(e, 'source', 'unknown'), 'reason': e.reason}
                     for e in self.excluded_features if e.exclusion_type == 'hard'
                 ],
                 'soft': [
-                    {'feature': e.feature, 'reason': e.reason}
+                    {'feature': e.feature, 'source': getattr(e, 'source', 'data-driven'), 'reason': e.reason}
                     for e in self.excluded_features if e.exclusion_type == 'soft'
                 ]
             },

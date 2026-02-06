@@ -1,12 +1,58 @@
 """
 Configuration for RTB Bid Optimizer.
 
-Loads config from YAML files with dataset-specific settings.
+Supports two loading modes:
+1. NEW: from_entity() - loads system.yaml + entities/{name}.yaml (recommended)
+2. LEGACY: from_yaml() - loads single config file (backward compatible)
 """
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
+from pathlib import Path
 import yaml
+import os
 
+
+# =============================================================================
+# NEW CONFIG CLASSES (entity-based structure)
+# =============================================================================
+
+@dataclass
+class EntityConfig:
+    """Entity identity - defines what this SSP-Type combo is."""
+    name: str = "unknown"
+    floor_available: bool = False
+    targeting_type: str = "consumer"  # 'hcp' or 'consumer'
+    ssp_exclusions: List[str] = field(default_factory=list)
+
+    @property
+    def is_hcp(self) -> bool:
+        return self.targeting_type == "hcp"
+
+    @property
+    def npi_enabled(self) -> bool:
+        """NPI model is enabled for HCP targeting."""
+        return self.is_hcp
+
+    @property
+    def domain_enabled(self) -> bool:
+        """Domain model is enabled for consumer targeting."""
+        return not self.is_hcp
+
+
+@dataclass
+class RunConfig:
+    """Per-run config - user-facing settings (will come from MySQL later)."""
+    target_win_rate: float = 0.65
+    max_bid_cpm: float = 20.00
+    fast_learning: bool = False
+    training_start_date: Optional[str] = None
+    training_end_date: Optional[str] = None
+    user_disabled_features: List[str] = field(default_factory=list)
+
+
+# =============================================================================
+# EXISTING CONFIG CLASSES (kept for backward compatibility)
+# =============================================================================
 
 @dataclass
 class DatasetConfig:
@@ -243,9 +289,6 @@ class AdvancedConfig:
     min_effective_cardinality: int = 2
     effective_cardinality_min_share: float = 0.05
 
-    # Note: default_bid_cpm and floor_available are now only in TechnicalControls
-    # target_margin removed (unused)
-
     # Backward compatibility aliases
     @property
     def ctr_shrinkage_k(self): return self.shrinkage_k
@@ -278,9 +321,18 @@ class ValidationConfig:
     previous_run_path: Optional[str] = None
 
 
+# =============================================================================
+# MASTER CONFIG CLASS
+# =============================================================================
+
 @dataclass
 class OptimizerConfig:
     """Master configuration container."""
+    # New structure
+    entity: EntityConfig = field(default_factory=EntityConfig)
+    run: RunConfig = field(default_factory=RunConfig)
+
+    # Legacy structure (populated for backward compatibility)
     dataset: DatasetConfig = field(default_factory=DatasetConfig)
     business: BusinessControls = field(default_factory=BusinessControls)
     technical: TechnicalControls = field(default_factory=TechnicalControls)
@@ -294,17 +346,213 @@ class OptimizerConfig:
 
     def __post_init__(self):
         """Wire up backward compatibility references."""
-        # Make technical settings point to advanced for backward compat
         self._wire_backward_compat()
 
     def _wire_backward_compat(self):
         """Set up backward compatibility between config sections."""
-        # Copy advanced settings to technical for backward compat
         pass  # Properties handle this now
 
     @classmethod
+    def from_entity(cls, entity_name: str, config_dir: str = "config") -> 'OptimizerConfig':
+        """
+        NEW: Load config from system.yaml + entities/{entity_name}.yaml.
+
+        This is the recommended way to load configs.
+        """
+        config_path = Path(config_dir)
+        system_path = config_path / "system.yaml"
+        entity_path = config_path / "entities" / f"{entity_name}.yaml"
+
+        # Check files exist
+        if not system_path.exists():
+            raise FileNotFoundError(f"System config not found: {system_path}")
+        if not entity_path.exists():
+            raise FileNotFoundError(f"Entity config not found: {entity_path}")
+
+        # Load both files
+        with open(system_path, 'r') as f:
+            system_data = yaml.safe_load(f)
+        with open(entity_path, 'r') as f:
+            entity_data = yaml.safe_load(f)
+
+        # Apply overrides from entity to system
+        overrides = entity_data.get('overrides', {})
+        merged_system = _deep_merge(system_data, overrides)
+
+        # Build config from merged data
+        return cls._build_from_new_structure(entity_data, merged_system)
+
+    @classmethod
+    def _build_from_new_structure(cls, entity_data: dict, system_data: dict) -> 'OptimizerConfig':
+        """Build OptimizerConfig from new entity + system structure."""
+
+        # Parse entity config
+        entity_section = entity_data.get('entity', {})
+        entity = EntityConfig(
+            name=entity_section.get('name', 'unknown'),
+            floor_available=entity_section.get('floor_available', False),
+            targeting_type=entity_section.get('targeting_type', 'consumer'),
+            ssp_exclusions=entity_section.get('ssp_exclusions', [])
+        )
+
+        # Parse run config
+        run_section = entity_data.get('run', {})
+        run = RunConfig(
+            target_win_rate=run_section.get('target_win_rate', 0.65),
+            max_bid_cpm=run_section.get('max_bid_cpm', 20.00),
+            fast_learning=run_section.get('fast_learning', False),
+            training_start_date=run_section.get('training_start_date'),
+            training_end_date=run_section.get('training_end_date'),
+            user_disabled_features=run_section.get('user_disabled_features', [])
+        )
+
+        # Get system sections
+        model_data = system_data.get('model', {})
+        feature_sel_data = system_data.get('feature_selection', {})
+        presets_data = system_data.get('exploration_presets', {})
+        npi_tier_data = system_data.get('npi_tiering', {})
+        domain_tier_data = system_data.get('domain_tiering', {})
+        validation_data = system_data.get('validation', {})
+        bidding_data = system_data.get('bidding', {})
+        overrides = entity_data.get('overrides', {})
+
+        # Build legacy structures for backward compatibility
+        dataset = DatasetConfig(name=entity.name)
+
+        business = BusinessControls(
+            target_win_rate=run.target_win_rate,
+            exploration_mode=True  # Always on in new structure
+        )
+
+        # Parse exploration presets
+        aggressive_preset = ExplorationPreset(**presets_data.get('aggressive', {})) if presets_data.get('aggressive') else ExplorationPreset()
+        gradual_preset = ExplorationPreset(**presets_data.get('gradual', {})) if presets_data.get('gradual') else ExplorationPreset(
+            bonus_zero_obs=0.25, bonus_low_obs=0.15, bonus_medium_obs=0.08,
+            max_adjustment=1.4, max_bid_cpm=20.00
+        )
+
+        technical = TechnicalControls(
+            aggressive_exploration=run.fast_learning,
+            min_bid_cpm=overrides.get('min_bid_cpm', 3.00),
+            max_bid_cpm=run.max_bid_cpm,
+            default_bid_cpm=overrides.get('default_bid_cpm', 12.50),
+            floor_available=entity.floor_available,
+            aggressive=aggressive_preset,
+            gradual=gradual_preset
+        )
+
+        bidding = BiddingStrategy(
+            strategy=bidding_data.get('strategy', 'adaptive')
+        )
+
+        data_config = DataConfig(
+            min_bid_date=run.training_start_date,
+            min_view_date=overrides.get('min_view_date', run.training_start_date)
+        )
+
+        # NPI config - enabled based on targeting_type
+        npi = NPIConfig(
+            enabled=entity.npi_enabled,
+            data_1year=npi_tier_data.get('data_1year'),
+            data_20day=npi_tier_data.get('data_20day'),
+            max_multiplier=npi_tier_data.get('max_multiplier', 3.0),
+            recency_boost=npi_tier_data.get('recency_boost', 1.2),
+            tiering_method=npi_tier_data.get('tiering_method', 'iqr'),
+            iqr_multiplier_stars=npi_tier_data.get('iqr_multiplier_stars', 1.5),
+            iqr_multiplier_extreme=npi_tier_data.get('iqr_multiplier_extreme', 3.0),
+            poor_rate_factor=npi_tier_data.get('poor_rate_factor', 0.3),
+            multiplier_extreme_elite=npi_tier_data.get('multiplier_extreme_elite', 3.00),
+            multiplier_elite=npi_tier_data.get('multiplier_elite', 2.50),
+            multiplier_cream=npi_tier_data.get('multiplier_cream', 1.80),
+            multiplier_baseline=npi_tier_data.get('multiplier_baseline', 1.00),
+            multiplier_poor=npi_tier_data.get('multiplier_poor', 0.70),
+            min_clicks_for_tiering=npi_tier_data.get('min_clicks_for_tiering', 5)
+        )
+
+        # Domain config - enabled based on targeting_type
+        domain = DomainConfig(
+            enabled=entity.domain_enabled,
+            tiering_method=domain_tier_data.get('tiering_method', 'iqr'),
+            iqr_multiplier_stars=domain_tier_data.get('iqr_multiplier_stars', 1.5),
+            iqr_multiplier_extreme=domain_tier_data.get('iqr_multiplier_extreme', 3.0),
+            poor_rate_factor=domain_tier_data.get('poor_rate_factor', 0.3),
+            multiplier_extreme_stars=domain_tier_data.get('multiplier_extreme_stars', 1.50),
+            multiplier_stars=domain_tier_data.get('multiplier_stars', 1.30),
+            multiplier_cream=domain_tier_data.get('multiplier_cream', 1.15),
+            multiplier_baseline=domain_tier_data.get('multiplier_baseline', 1.00),
+            multiplier_poor_iqr=domain_tier_data.get('multiplier_poor_iqr', 0.60),
+            multiplier_blocklist=domain_tier_data.get('multiplier_blocklist', 0.0),
+            blocklist_rate_factor=domain_tier_data.get('blocklist_rate_factor', 0.1),
+            min_bids_for_blocklist=domain_tier_data.get('min_bids_for_blocklist', 100),
+            shrinkage_k=domain_tier_data.get('shrinkage_k', 30),
+            min_bids_for_tiering=domain_tier_data.get('min_bids_for_tiering', 30),
+            # Legacy percentile settings
+            premium_percentile=domain_tier_data.get('premium_percentile', 95.0),
+            standard_percentile=domain_tier_data.get('standard_percentile', 50.0),
+            below_avg_percentile=domain_tier_data.get('below_avg_percentile', 10.0),
+            multiplier_premium=domain_tier_data.get('multiplier_premium', 1.3),
+            multiplier_standard=domain_tier_data.get('multiplier_standard', 1.0),
+            multiplier_below_avg=domain_tier_data.get('multiplier_below_avg', 0.8),
+            multiplier_poor=domain_tier_data.get('multiplier_poor', 0.5)
+        )
+
+        # Features - combine system exclusions + entity ssp_exclusions
+        system_exclusions = system_data.get('system_exclusions', ['log_txnid', 'internal_txn_id', 'log_dt'])
+        all_exclusions = list(set(system_exclusions + entity.ssp_exclusions + run.user_disabled_features))
+        features = FeatureConfig(
+            anchor=[],  # Auto-select in new structure
+            candidates=[],  # Auto-select in new structure
+            exclude=all_exclusions
+        )
+
+        # Advanced config
+        advanced = AdvancedConfig(
+            min_observations=model_data.get('min_observations', 1),
+            min_observations_for_empirical=model_data.get('min_observations_for_empirical', 10),
+            min_observations_for_landscape=model_data.get('min_observations_for_landscape', 50),
+            min_win_rate_for_margin=model_data.get('min_win_rate_for_margin', 0.55),
+            min_observations_for_margin=model_data.get('min_observations_for_margin', 100),
+            shrinkage_k=model_data.get('shrinkage_k', 30),
+            calibration_ece_threshold=model_data.get('calibration_ece_threshold', 0.10),
+            min_signal_score=feature_sel_data.get('min_signal_score', 50.0),
+            max_features=feature_sel_data.get('max_features', 3),
+            min_coverage_at_threshold=feature_sel_data.get('min_coverage_at_threshold', 0.5),
+            max_null_pct=feature_sel_data.get('max_null_pct', 30.0),
+            min_effective_cardinality=feature_sel_data.get('min_effective_cardinality', 2),
+            effective_cardinality_min_share=feature_sel_data.get('effective_cardinality_min_share', 0.05)
+        )
+
+        # Validation config - always enabled in new structure
+        validation = ValidationConfig(
+            enabled=True,  # Always on
+            hard_rules=validation_data.get('hard_rules', ValidationConfig().hard_rules),
+            soft_rules=validation_data.get('soft_rules', ValidationConfig().soft_rules),
+            previous_run_path=None
+        )
+
+        config = cls(
+            entity=entity,
+            run=run,
+            dataset=dataset,
+            business=business,
+            technical=technical,
+            bidding=bidding,
+            data=data_config,
+            npi=npi,
+            domain=domain,
+            features=features,
+            advanced=advanced,
+            validation=validation
+        )
+
+        # Wire backward compatibility after creation
+        config._setup_backward_compat()
+
+        return config
+
+    @classmethod
     def from_yaml(cls, path: str) -> 'OptimizerConfig':
-        """Load config from YAML file."""
+        """LEGACY: Load config from single YAML file (backward compatible)."""
         with open(path, 'r') as f:
             data = yaml.safe_load(f)
 
@@ -372,7 +620,26 @@ class OptimizerConfig:
         if gradual_preset:
             technical.gradual = gradual_preset
 
+        # Build entity and run from legacy structure for compatibility
+        entity = EntityConfig(
+            name=dataset.name,
+            floor_available=technical.floor_available,
+            targeting_type='hcp' if npi.enabled else 'consumer',
+            ssp_exclusions=features.exclude
+        )
+
+        run = RunConfig(
+            target_win_rate=business.target_win_rate,
+            max_bid_cpm=technical.max_bid_cpm,
+            fast_learning=technical.aggressive_exploration,
+            training_start_date=data_config.min_bid_date,
+            training_end_date=None,
+            user_disabled_features=[]
+        )
+
         config = cls(
+            entity=entity,
+            run=run,
             dataset=dataset,
             business=business,
             technical=technical,
@@ -428,3 +695,18 @@ class OptimizerConfig:
                 self.min_observations_for_eval = 1000
                 self.log_gate_decisions = True
         return _Gate(self.advanced.calibration_ece_threshold)
+
+
+# =============================================================================
+# HELPER FUNCTIONS
+# =============================================================================
+
+def _deep_merge(base: dict, override: dict) -> dict:
+    """Deep merge override dict into base dict. Override wins on conflicts."""
+    result = base.copy()
+    for key, value in override.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = _deep_merge(result[key], value)
+        else:
+            result[key] = value
+    return result

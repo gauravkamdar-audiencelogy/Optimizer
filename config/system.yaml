@@ -1,0 +1,152 @@
+# =============================================================================
+# SYSTEM CONFIG - Shared across all entities
+# =============================================================================
+# These are data-agnostic algorithm parameters. Change rarely.
+# Override specific values in entity YAML if needed.
+
+# -----------------------------------------------------------------------------
+# BIDDING
+# -----------------------------------------------------------------------------
+bidding:
+  strategy: "adaptive"         # volume_first | margin_optimize | adaptive
+
+# -----------------------------------------------------------------------------
+# MODEL PARAMETERS
+# -----------------------------------------------------------------------------
+model:
+  # Observation thresholds
+  min_observations: 1                    # Include all segments
+  min_observations_for_empirical: 10     # Use empirical model at 10+ obs
+  min_observations_for_landscape: 50     # Use bid landscape at 50+ obs
+
+  # Adaptive strategy thresholds (when to switch from volume to margin)
+  min_win_rate_for_margin: 0.55
+  min_observations_for_margin: 100
+
+  # Shrinkage and calibration
+  shrinkage_k: 30
+  calibration_ece_threshold: 0.10
+
+# -----------------------------------------------------------------------------
+# FEATURE SELECTION
+# -----------------------------------------------------------------------------
+feature_selection:
+  min_signal_score: 50.0
+  max_features: 3
+  min_coverage_at_threshold: 0.5
+  max_null_pct: 30.0
+  min_effective_cardinality: 2
+  effective_cardinality_min_share: 0.05
+
+# -----------------------------------------------------------------------------
+# EXPLORATION PRESETS
+# -----------------------------------------------------------------------------
+# Selected by fast_learning toggle in run config
+exploration_presets:
+  # fast_learning: true → aggressive
+  aggressive:
+    bonus_zero_obs: 0.50       # +50% for unknown segments
+    bonus_low_obs: 0.35        # +35% for 1-9 observations
+    bonus_medium_obs: 0.15     # +15% for 10-49 observations
+    max_adjustment: 1.8
+    max_bid_cpm: 30.00
+
+  # fast_learning: false → gradual
+  gradual:
+    bonus_zero_obs: 0.25
+    bonus_low_obs: 0.15
+    bonus_medium_obs: 0.08
+    max_adjustment: 1.4
+    max_bid_cpm: 20.00
+
+# -----------------------------------------------------------------------------
+# NPI TIERING (applied when targeting_type='hcp')
+# -----------------------------------------------------------------------------
+npi_tiering:
+  # Data sources (shared across all HCP entities)
+  data_1year: "data/NPI_click_data_1year.csv"
+  data_20day: "data/NPI_click_data_20days.csv"
+
+  # Method
+  tiering_method: iqr          # 'iqr' (recommended) or 'percentile' (legacy)
+
+  # IQR parameters
+  iqr_multiplier_stars: 1.5    # Elite threshold = Q3 + 1.5*IQR
+  iqr_multiplier_extreme: 3.0  # Extreme threshold = Q3 + 3.0*IQR
+  poor_rate_factor: 0.3        # Poor threshold = 30th percentile
+
+  # 5-tier multipliers
+  multiplier_extreme_elite: 3.00
+  multiplier_elite: 2.50
+  multiplier_cream: 1.80
+  multiplier_baseline: 1.00
+  multiplier_poor: 0.70
+
+  # Caps
+  max_multiplier: 3.0
+  recency_boost: 1.2           # Recent clickers get +20%
+  min_clicks_for_tiering: 5
+
+# -----------------------------------------------------------------------------
+# DOMAIN TIERING (applied when targeting_type='consumer')
+# -----------------------------------------------------------------------------
+domain_tiering:
+  # Method
+  tiering_method: iqr          # 'iqr' (recommended) or 'percentile' (legacy)
+
+  # IQR parameters
+  iqr_multiplier_stars: 1.5
+  iqr_multiplier_extreme: 3.0
+  poor_rate_factor: 0.3
+
+  # 5-tier multipliers (lower than NPI since domain is indirect signal)
+  multiplier_extreme_stars: 1.50
+  multiplier_stars: 1.30
+  multiplier_cream: 1.15
+  multiplier_baseline: 1.00
+  multiplier_poor_iqr: 0.60
+  multiplier_blocklist: 0.0
+
+  # Blocklist criteria
+  blocklist_rate_factor: 0.1   # Block if rate < global_rate * 0.1
+  min_bids_for_blocklist: 100
+
+  # Shrinkage
+  shrinkage_k: 30
+  min_bids_for_tiering: 30
+
+  # Legacy percentile settings (when tiering_method='percentile')
+  premium_percentile: 95.0
+  standard_percentile: 50.0
+  below_avg_percentile: 10.0
+  multiplier_premium: 1.3
+  multiplier_standard: 1.0
+  multiplier_below_avg: 0.8
+  multiplier_poor: 0.5
+
+# -----------------------------------------------------------------------------
+# VALIDATION (always on - not user-configurable)
+# -----------------------------------------------------------------------------
+validation:
+  # Hard guardrails (block deployment if violated)
+  hard_rules:
+    coverage_min_pct: 80.0
+    calibration_ece_max: 0.15
+    bid_floor_respected: true
+    bid_ceiling_respected: true
+
+  # Soft guardrails (warn but allow)
+  soft_rules:
+    bid_median_change_max_pct: 50.0
+    pct_at_floor_max: 30.0
+    pct_at_ceiling_max: 30.0
+    pct_profitable_min: 40.0
+
+# -----------------------------------------------------------------------------
+# SYSTEM EXCLUSIONS (columns that are NEVER features)
+# -----------------------------------------------------------------------------
+# These are hardcoded in preprocessing, listed here for documentation
+system_exclusions:
+  - log_txnid          # Join key
+  - internal_txn_id    # Join key
+  - log_dt             # Timestamp

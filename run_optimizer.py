@@ -3,11 +3,15 @@
 RTB Optimizer Pipeline V9
 
 Usage:
-    python run_optimizer.py --config config/optimizer_config_drugs.yaml
-    python run_optimizer.py --config config/optimizer_config_nativo_consumer.yaml
+    # NEW: Entity-based config (recommended)
+    python run_optimizer.py --entity drugs_hcp
+    python run_optimizer.py --entity nativo_consumer
+
+    # LEGACY: Single config file (still supported)
+    python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml
 
     # With automatic data ingestion (checks incoming/ folder first)
-    python run_optimizer.py --config config/optimizer_config_drugs.yaml --ingest
+    python run_optimizer.py --entity drugs_hcp --ingest
 """
 import argparse
 from pathlib import Path
@@ -37,8 +41,12 @@ def main():
     load_env()
 
     parser = argparse.ArgumentParser(description='RTB Optimizer Pipeline V9')
-    parser.add_argument('--config', type=str, default='config/optimizer_config_drugs.yaml',
-                        help='Path to config file')
+    # New entity-based config (recommended)
+    parser.add_argument('--entity', type=str, default=None,
+                        help='Entity name (e.g., drugs_hcp, nativo_consumer). Uses config/system.yaml + config/entities/{name}.yaml')
+    # Legacy single-file config (still supported)
+    parser.add_argument('--config', type=str, default=None,
+                        help='[LEGACY] Path to single config file')
     parser.add_argument('--data-dir', type=str, default=None,
                         help='Override data directory')
     parser.add_argument('--output-dir', type=str, default=None,
@@ -48,12 +56,35 @@ def main():
     args = parser.parse_args()
 
     # Load configuration
-    config_path = Path(args.config)
-    if config_path.exists():
-        config = OptimizerConfig.from_yaml(str(config_path))
+    if args.entity:
+        # NEW: Entity-based config loading
+        try:
+            config = OptimizerConfig.from_entity(args.entity)
+            print(f"Loaded config for entity: {args.entity}")
+        except FileNotFoundError as e:
+            print(f"Error: {e}")
+            print(f"Make sure config/system.yaml and config/entities/{args.entity}.yaml exist")
+            sys.exit(1)
+    elif args.config:
+        # LEGACY: Single config file loading
+        config_path = Path(args.config)
+        if config_path.exists():
+            config = OptimizerConfig.from_yaml(str(config_path))
+            print(f"Loaded legacy config from: {args.config}")
+        else:
+            print(f"Config file not found at {config_path}")
+            sys.exit(1)
     else:
-        print(f"Config file not found at {config_path}, using defaults")
-        config = OptimizerConfig()
+        # Default to legacy config for backward compatibility
+        default_config = 'config/optimizer_config_drugs_hcp.yaml'
+        if Path(default_config).exists():
+            config = OptimizerConfig.from_yaml(default_config)
+            print(f"Using default config: {default_config}")
+        else:
+            print("Error: No config specified. Use --entity or --config")
+            print("  Example: python run_optimizer.py --entity drugs_hcp")
+            print("  Example: python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml")
+            sys.exit(1)
 
     # Derive paths from config if not explicitly provided
     data_dir = args.data_dir if args.data_dir else config.dataset.get_data_dir()
