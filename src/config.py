@@ -1,15 +1,60 @@
 """
 Configuration for RTB Bid Optimizer.
 
-Supports two loading modes:
-1. NEW: from_entity() - loads system.yaml + entities/{name}.yaml (recommended)
-2. LEGACY: from_yaml() - loads single config file (backward compatible)
+Supports three loading modes:
+1. NEW: from_entity() - loads system.yaml + entities/{name}.yaml (recommended for local)
+2. MYSQL: from_mysql() - loads YAML + overrides from MySQL (for UI-triggered runs)
+3. LEGACY: from_yaml() - loads single config file (backward compatible)
 """
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any
 from pathlib import Path
 import yaml
 import os
+
+
+# =============================================================================
+# ENTITY CODE MAPPING
+# =============================================================================
+# Maps database entity_code to YAML file name and data directory name
+# Database uses short codes; YAML/data uses descriptive names
+
+ENTITY_CODE_TO_YAML = {
+    # Database entity_code -> YAML file name (without .yaml)
+    'nativo': 'nativo_consumer',
+    'drugs.com': 'drugs_hcp',
+}
+
+YAML_TO_ENTITY_CODE = {v: k for k, v in ENTITY_CODE_TO_YAML.items()}
+
+
+def resolve_entity_name(entity_code_or_yaml: str) -> str:
+    """
+    Resolve entity name to YAML file name.
+
+    Accepts either:
+    - Database entity_code (e.g., 'nativo') -> returns 'nativo_consumer'
+    - YAML file name (e.g., 'nativo_consumer') -> returns as-is
+
+    Returns:
+        YAML file name (without .yaml extension)
+    """
+    if entity_code_or_yaml in ENTITY_CODE_TO_YAML:
+        return ENTITY_CODE_TO_YAML[entity_code_or_yaml]
+    return entity_code_or_yaml
+
+
+def get_db_entity_code(yaml_name: str) -> str:
+    """
+    Get database entity_code from YAML name.
+
+    Args:
+        yaml_name: YAML file name (e.g., 'nativo_consumer')
+
+    Returns:
+        Database entity_code (e.g., 'nativo')
+    """
+    return YAML_TO_ENTITY_CODE.get(yaml_name, yaml_name)
 
 
 # =============================================================================
@@ -358,10 +403,19 @@ class OptimizerConfig:
         NEW: Load config from system.yaml + entities/{entity_name}.yaml.
 
         This is the recommended way to load configs.
+
+        Args:
+            entity_name: Entity name - can be either:
+                         - Database entity_code (e.g., 'nativo', 'drugs.com')
+                         - YAML file name (e.g., 'nativo_consumer', 'drugs_hcp')
+            config_dir: Path to config directory (default: "config")
         """
+        # Resolve entity name to YAML file name
+        yaml_entity_name = resolve_entity_name(entity_name)
+
         config_path = Path(config_dir)
         system_path = config_path / "system.yaml"
-        entity_path = config_path / "entities" / f"{entity_name}.yaml"
+        entity_path = config_path / "entities" / f"{yaml_entity_name}.yaml"
 
         # Check files exist
         if not system_path.exists():
@@ -547,6 +601,87 @@ class OptimizerConfig:
 
         # Wire backward compatibility after creation
         config._setup_backward_compat()
+
+        return config
+
+    @classmethod
+    def from_mysql(
+        cls,
+        entity_name: str,
+        run_id: int,
+        mysql_client: 'MySQLClient',
+        config_dir: str = "config"
+    ) -> 'OptimizerConfig':
+        """
+        MYSQL: Load config from YAML files + MySQL run configs.
+
+        This is used when optimizer is triggered from the UI.
+        Loads system.yaml + entities/{entity_name}.yaml as base,
+        then overrides run section with values from MySQL.
+
+        Args:
+            entity_name: Entity name - can be either:
+                         - Database entity_code (e.g., 'nativo', 'drugs.com')
+                         - YAML file name (e.g., 'nativo_consumer', 'drugs_hcp')
+            run_id: Database run_id from opt_runs table
+            mysql_client: MySQLClient instance with active connection
+            config_dir: Path to config directory (default: "config")
+
+        Returns:
+            OptimizerConfig with MySQL overrides applied
+        """
+        # Resolve entity name to YAML file name
+        yaml_entity_name = resolve_entity_name(entity_name)
+
+        config_path = Path(config_dir)
+        system_path = config_path / "system.yaml"
+        entity_path = config_path / "entities" / f"{yaml_entity_name}.yaml"
+
+        # Check files exist
+        if not system_path.exists():
+            raise FileNotFoundError(f"System config not found: {system_path}")
+        if not entity_path.exists():
+            raise FileNotFoundError(f"Entity config not found: {entity_path}")
+
+        # Load both YAML files
+        with open(system_path, 'r') as f:
+            system_data = yaml.safe_load(f)
+        with open(entity_path, 'r') as f:
+            entity_data = yaml.safe_load(f)
+
+        # Apply overrides from entity to system
+        overrides = entity_data.get('overrides', {})
+        merged_system = _deep_merge(system_data, overrides)
+
+        # Load run configs from MySQL
+        run_configs = mysql_client.get_run_configs_by_run_id(run_id)
+
+        # Override run section with MySQL values
+        if run_configs:
+            if 'run' not in entity_data:
+                entity_data['run'] = {}
+
+            # Map MySQL config keys to run section
+            mysql_to_run = {
+                'target_win_rate': 'target_win_rate',
+                'max_bid_cpm': 'max_bid_cpm',
+                'fast_learning': 'fast_learning',
+                'training_start_date': 'training_start_date',
+                'training_end_date': 'training_end_date',
+                'user_disabled_features': 'user_disabled_features',
+            }
+
+            for mysql_key, run_key in mysql_to_run.items():
+                if mysql_key in run_configs and run_configs[mysql_key] is not None:
+                    entity_data['run'][run_key] = run_configs[mysql_key]
+
+            print(f"  Applied {len(run_configs)} MySQL run configs")
+
+        # Build config from merged data
+        config = cls._build_from_new_structure(entity_data, merged_system)
+
+        # Store run_id for reference
+        config._mysql_run_id = run_id
 
         return config
 

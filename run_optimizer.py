@@ -3,9 +3,12 @@
 RTB Optimizer Pipeline V9
 
 Usage:
-    # NEW: Entity-based config (recommended)
+    # NEW: Entity-based config (recommended for local development)
     python run_optimizer.py --entity drugs_hcp
     python run_optimizer.py --entity nativo_consumer
+
+    # MYSQL: UI-triggered runs (loads config from MySQL)
+    python run_optimizer.py --entity nativo_consumer --run-id 123
 
     # LEGACY: Single config file (still supported)
     python run_optimizer.py --config config/optimizer_config_drugs_hcp.yaml
@@ -20,7 +23,7 @@ import sys
 import json
 
 from src.config import OptimizerConfig
-from src.integrations import load_env, S3Client, is_local_mode
+from src.integrations import load_env, S3Client, MySQLClient, is_local_mode
 from src.data_loader import DataLoader
 from src.feature_engineering import FeatureEngineer
 from src.feature_selector import FeatureSelector
@@ -44,6 +47,9 @@ def main():
     # New entity-based config (recommended)
     parser.add_argument('--entity', type=str, default=None,
                         help='Entity name (e.g., drugs_hcp, nativo_consumer). Uses config/system.yaml + config/entities/{name}.yaml')
+    # MySQL run ID (for UI-triggered runs)
+    parser.add_argument('--run-id', type=int, default=None,
+                        help='Database run_id (for UI-triggered runs). Loads run config from MySQL opt_run_configs table.')
     # Legacy single-file config (still supported)
     parser.add_argument('--config', type=str, default=None,
                         help='[LEGACY] Path to single config file')
@@ -56,8 +62,33 @@ def main():
     args = parser.parse_args()
 
     # Load configuration
-    if args.entity:
-        # NEW: Entity-based config loading
+    mysql_client = None
+    if args.entity and args.run_id:
+        # MYSQL: UI-triggered run - load from YAML + MySQL
+        try:
+            mysql_client = MySQLClient()
+            if not mysql_client.enabled:
+                print("Error: --run-id requires MySQL connection, but MySQL is not configured")
+                print("Check MYSQL_* environment variables in .env file")
+                sys.exit(1)
+
+            config = OptimizerConfig.from_mysql(args.entity, args.run_id, mysql_client)
+            print(f"Loaded config for entity: {args.entity} (run_id={args.run_id} from MySQL)")
+
+            # Update run status to 'running'
+            mysql_client.update_run_status(str(args.run_id), 'running')
+
+        except FileNotFoundError as e:
+            print(f"Error: {e}")
+            print(f"Make sure config/system.yaml and config/entities/{args.entity}.yaml exist")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error loading config from MySQL: {e}")
+            if mysql_client:
+                mysql_client.update_run_status(str(args.run_id), 'failed', error_message=str(e))
+            sys.exit(1)
+    elif args.entity:
+        # NEW: Entity-based config loading (local/YAML only)
         try:
             config = OptimizerConfig.from_entity(args.entity)
             print(f"Loaded config for entity: {args.entity}")
@@ -65,6 +96,10 @@ def main():
             print(f"Error: {e}")
             print(f"Make sure config/system.yaml and config/entities/{args.entity}.yaml exist")
             sys.exit(1)
+    elif args.run_id:
+        print("Error: --run-id requires --entity to be specified")
+        print("Example: python run_optimizer.py --entity nativo_consumer --run-id 123")
+        sys.exit(1)
     elif args.config:
         # LEGACY: Single config file loading
         config_path = Path(args.config)
