@@ -439,6 +439,45 @@ def main():
     else:
         print(f"\n[9/9] S3 Upload: SKIPPED (local mode)")
 
+    # Update MySQL with run results (if MySQL-triggered run)
+    if mysql_client and args.run_id:
+        try:
+            # Prepare metrics for MySQL update
+            run_metrics = {
+                'bid_summary': metrics.get('bid_summary', {}),
+                'feature_selection': {'selected_features': selected_features},
+                'global_stats': {
+                    'global_win_rate': global_stats.get('global_win_rate'),
+                    'global_ctr': metrics.get('ctr_model', {}).get('global_ctr'),
+                },
+                'data_stats': {
+                    'total_bids': len(df_bids) if df_bids is not None else 0,
+                    'total_views': len(df_views) if df_views is not None else 0,
+                    'total_clicks': len(df_clicks) if df_clicks is not None else 0,
+                    'domains_count': domain_model.get_tier_stats().get('total_domains', 0) if domain_model and domain_model.is_loaded else 0,
+                    'npis_count': npi_model.get_tier_stats().get('total_profiles', 0) if npi_model and npi_model.is_loaded else 0,
+                },
+            }
+
+            # Prepare validation result dict
+            validation_dict = None
+            if validation_result:
+                validation_dict = {
+                    'validation_passed': validation_result.passed,
+                    'recommendation': validation_result.recommendation,
+                }
+
+            mysql_client.update_run_status(
+                run_id=str(args.run_id),
+                status='completed',
+                metrics=run_metrics,
+                s3_path=s3_path,
+                validation_result=validation_dict
+            )
+            print(f"\n  MySQL: Updated run_id={args.run_id} with results")
+        except Exception as e:
+            print(f"\n  [WARNING] MySQL update failed: {e}")
+
     # Final summary
     print(f"\n{'='*60}")
     print(f"Complete: {run_id}")

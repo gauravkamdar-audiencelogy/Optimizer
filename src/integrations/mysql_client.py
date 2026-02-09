@@ -147,20 +147,34 @@ class MySQLClient:
                 return None
 
             # Load the private key manually to handle different key types
+            pkey = None
+            key_errors = []
+
+            # Try RSA first (most common)
             try:
-                # Try RSA first (most common)
                 pkey = paramiko.RSAKey.from_private_key_file(key_path)
-            except paramiko.SSHException:
+            except Exception as e:
+                key_errors.append(f"RSA: {e}")
+
+            # Try Ed25519
+            if pkey is None:
                 try:
-                    # Try Ed25519
                     pkey = paramiko.Ed25519Key.from_private_key_file(key_path)
-                except paramiko.SSHException:
-                    try:
-                        # Try ECDSA
-                        pkey = paramiko.ECDSAKey.from_private_key_file(key_path)
-                    except paramiko.SSHException:
-                        print(f"  [ERROR] Could not load SSH key (unsupported key type): {key_path}")
-                        return None
+                except Exception as e:
+                    key_errors.append(f"Ed25519: {e}")
+
+            # Try ECDSA
+            if pkey is None:
+                try:
+                    pkey = paramiko.ECDSAKey.from_private_key_file(key_path)
+                except Exception as e:
+                    key_errors.append(f"ECDSA: {e}")
+
+            if pkey is None:
+                print(f"  [ERROR] Could not load SSH key: {key_path}")
+                for err in key_errors:
+                    print(f"    {err}")
+                return None
 
             self._tunnel = SSHTunnelForwarder(
                 (self.ssh_host, self.ssh_port),
@@ -634,11 +648,16 @@ class MySQLClient:
             updates = ['status = %s']
             values = [status]
 
-            if metrics:
-                updates.append('metrics_json = %s')
-                values.append(json.dumps(metrics))
+            # Add timestamps based on status
+            if status == 'running':
+                updates.append('started_at = %s')
+                values.append(datetime.utcnow())
+            elif status in ('completed', 'failed'):
+                updates.append('completed_at = %s')
+                values.append(datetime.utcnow())
 
-                # Extract key metrics
+            if metrics:
+                # Extract key metrics from bid_summary
                 bid_summary = metrics.get('bid_summary', {})
                 if bid_summary:
                     updates.extend([
@@ -660,23 +679,46 @@ class MySQLClient:
                     updates.append('features_used = %s')
                     values.append(json.dumps(features))
 
+                # Extract global stats if provided
+                global_stats = metrics.get('global_stats', {})
+                if global_stats:
+                    if 'global_win_rate' in global_stats:
+                        updates.append('global_win_rate = %s')
+                        values.append(global_stats['global_win_rate'])
+                    if 'global_ctr' in global_stats:
+                        updates.append('global_ctr = %s')
+                        values.append(global_stats['global_ctr'])
+
+                # Extract data counts if provided
+                data_stats = metrics.get('data_stats', {})
+                if data_stats:
+                    if 'total_bids' in data_stats:
+                        updates.append('total_bids = %s')
+                        values.append(data_stats['total_bids'])
+                    if 'total_views' in data_stats:
+                        updates.append('total_views = %s')
+                        values.append(data_stats['total_views'])
+                    if 'total_clicks' in data_stats:
+                        updates.append('total_clicks = %s')
+                        values.append(data_stats['total_clicks'])
+                    if 'domains_count' in data_stats:
+                        updates.append('domains_count = %s')
+                        values.append(data_stats['domains_count'])
+                    if 'npis_count' in data_stats:
+                        updates.append('npis_count = %s')
+                        values.append(data_stats['npis_count'])
+
             if s3_path:
-                updates.append('s3_path = %s')
+                updates.append('s3_output_path = %s')
                 values.append(s3_path)
 
             if validation_result:
-                updates.append('validation_json = %s')
-                values.append(json.dumps(validation_result))
                 updates.append('validation_status = %s')
                 values.append('passed' if validation_result.get('validation_passed') else 'failed')
 
             if error_message:
                 updates.append('error_message = %s')
                 values.append(error_message)
-
-            if status == 'deployed':
-                updates.append('deployed_at = %s')
-                values.append(datetime.utcnow())
 
             # Add run_id to values for WHERE clause
             values.append(run_id)

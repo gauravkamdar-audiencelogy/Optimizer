@@ -1,4 +1,81 @@
-  Example Flow: Running Optimizer for drugs_hcp
+Summary 
+  READING from MySQL (inputs to optimizer)
+  Table: opt_entities
+  What We Read: Entity metadata (opt_entity_id, s3_base_path, snowflake_table)
+  When: At startup with --run-id
+  ────────────────────────────────────────
+  Table: opt_entity_configs
+  What We Read: Entity-level defaults (floor_available, npi_enabled, targeting_type)
+  When: At startup
+  ────────────────────────────────────────
+  Table: opt_run_configs
+  What We Read: UI-set overrides (target_win_rate, max_bid_cpm, training dates)
+  When: At startup with --run-id
+  ────────────────────────────────────────
+  Table: opt_runs
+  What We Read: Run record (to check status, get entity_id)
+  When: At startup
+  WRITING to MySQL (outputs from optimizer)
+  Table: opt_runs
+  What We Write: Status updates (running → completed/failed)
+  When: During run
+  ────────────────────────────────────────
+  Table: opt_runs
+  What We Write: Run metrics (segments_count, bid_median, global_win_rate, etc.)
+  When: After completion
+  ────────────────────────────────────────
+  Table: opt_runs
+  What We Write: S3 output path, validation_status, error_message
+  When: After completion
+  Visual Flow
+
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                           UI / Dashboard                             │
+  │  User sets: target_win_rate=60%, max_bid=25, dates, etc.            │
+  └─────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼ (writes)
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                         MySQL Tables                                 │
+  │  ┌──────────────┐  ┌───────────────────┐  ┌──────────────────┐     │
+  │  │ opt_entities │  │ opt_entity_configs │  │ opt_run_configs  │     │
+  │  │              │  │                    │  │                  │     │
+  │  │ entity_code  │  │ floor_available    │  │ target_win_rate  │     │
+  │  │ s3_base_path │  │ npi_enabled        │  │ max_bid_cpm      │     │
+  │  │ snowflake_   │  │ domain_enabled     │  │ training_start   │     │
+  │  │   table      │  │ targeting_type     │  │ training_end     │     │
+  │  └──────────────┘  └───────────────────┘  └──────────────────┘     │
+  │                              │                                       │
+  │  ┌──────────────────────────────────────────────────────────────┐   │
+  │  │                        opt_runs                               │   │
+  │  │  run_id, status, metrics, s3_output_path, validation_status  │   │
+  │  └──────────────────────────────────────────────────────────────┘   │
+  └─────────────────────────────────────────────────────────────────────┘
+            │ (reads)                              ▲ (writes)
+            ▼                                      │
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                      OPTIMIZER PIPELINE                              │
+  │                                                                      │
+  │  1. Load Config:  YAML base + MySQL overrides                       │
+  │  2. Load Data:    Snowflake/local files                             │
+  │  3. Train Models: CTR, win rate, bid landscape, NPI, domain         │
+  │  4. Generate:     suggested_bids, multipliers, blocklist            │
+  │  5. Validate:     Hard/soft guardrails                              │
+  │  6. Upload:       S3 bucket                                         │
+  │  7. Update MySQL: status=completed, metrics, s3_path                │
+  └─────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼ (uploads)
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                         S3 Bucket                                    │
+  │  suggested_bids.csv, npi_multipliers.csv, domain_multipliers.csv    │
+  │  validation_report.json, metrics.json                               │
+  └─────────────────────────────────────────────────────────────────────┘
+  
+
+  
+  
+Full Sample Flow: Running Optimizer for drugs_hcp
 
   Stage 1: UI Creates a New Run
 
